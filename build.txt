@@ -1,0 +1,3 @@
+displayName = Terrarian's Bizarre Adventure
+author = HellGoesOn
+version = 0.1
