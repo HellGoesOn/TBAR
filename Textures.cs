@@ -1,16 +1,8 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using TBAR.Attributes;
-using Terraria.ModLoader;
 
 namespace TBAR
 {
-    // Using Singleton instead of static class here so it never exists on the server
     public class Textures
     {
         [Loadable("TBAR/Textures/KeyboardInput")]
