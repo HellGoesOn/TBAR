@@ -30,7 +30,7 @@ namespace TBAR.Components
         public void Reset()
         {
             ElapsedTime = 0;
-            CurrentFrame = 0;
+            CurrentFrame = IsReversed ? FrameCount : 0;
             Active = true;
         }
 
@@ -49,31 +49,64 @@ namespace TBAR.Components
                     Looping = false;
             }
 
-            if(ElapsedTime > TimePerFrame)
+            if (ElapsedTime > TimePerFrame)
             {
-                CurrentFrame++;
-
-                if(CurrentFrame >= FrameCount)
-                {
-                    CurrentFrame = 0;
-
-                    if (!Looping)
-                    {
-                        OnAnimationEnd?.Invoke(this);
-
-                        if (LoopTime != -1)
-                        {
-                            LoopTimer = 0;
-                            Looping = true;
-                        }
-
-                        Active = false;
-                    }
-                }
+                if (!IsReversed)
+                    DefaultBehavior();
+                else
+                    ReversedBehavior();
 
                 ElapsedTime -= TimePerFrame;
             }
         }
+
+        public void DefaultBehavior()
+        {
+            CurrentFrame++;
+
+            if (CurrentFrame >= FrameCount)
+            {
+                CurrentFrame = 0;
+
+                if (!Looping)
+                {
+                    OnAnimationEnd?.Invoke(this);
+
+                    if (LoopTime != -1)
+                    {
+                        LoopTimer = 0;
+                        Looping = true;
+                    }
+
+                    Active = false;
+                }
+            }
+        }
+
+        public void ReversedBehavior()
+        {
+            CurrentFrame--;
+
+            if (CurrentFrame <= 0)
+            {
+                CurrentFrame = FrameCount;
+
+                if (!Looping)
+                {
+                    OnAnimationEnd?.Invoke(this);
+
+                    if (LoopTime != -1)
+                    {
+                        LoopTimer = 0;
+                        Looping = true;
+                    }
+
+                    Active = false;
+                }
+            }
+        }
+
+        public bool IsReversed { get; set; }
 
         public int LoopTimer { get; set; }
 

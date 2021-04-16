@@ -2,8 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using TBAR.Attributes;
 using Terraria.ModLoader;
 
 namespace TBAR
@@ -11,25 +13,22 @@ namespace TBAR
     // Using Singleton instead of static class here so it never exists on the server
     public class Textures
     {
-        public void Load()
+        [Loadable("TBAR/Textures/KeyboardInput")]
+        public Texture2D KeyboardInput { get; internal set; }
+
+        [Loadable("TBAR/Textures/EmptyPixel")]
+        public Texture2D Emptiness { get; internal set; }
+
+        [Loadable("TBAR/UI/Elements/StandCard/StandCard")]
+        public Texture2D StandCard { get; internal set; }
+
+        [Loadable("TBAR/UI/Elements/StandCard/Current")]
+        public Texture2D StandCardCurrent { get; internal set; }
+
+
+        public static void Unload()
         {
-            KeyboardInput = LoadTexture("KeyboardInput");
-            Emptiness = LoadTexture("EmptyPixel");
-        }
-
-        public void Unload()
-        {
-            KeyboardInput = null;
-            Emptiness = null;
-        }
-
-        public Texture2D KeyboardInput { get; private set; }
-
-        public Texture2D Emptiness { get; private set; }
-
-        private Texture2D LoadTexture(string name)
-        {
-            return ModContent.GetTexture("TBAR/Textures/" + name);
+            instance = null;
         }
 
         private static Textures instance;

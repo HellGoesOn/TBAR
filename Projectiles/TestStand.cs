@@ -2,10 +2,11 @@
 using TBAR.Components;
 using TBAR.Extensions;
 using TBAR.Input;
+using TBAR.Projectiles.Stands;
 using TBAR.UI;
 using Terraria;
 
-namespace TBAR.Stands
+namespace TBAR.Projectiles.Stands
 {
     public enum TestStandStates : int
     {
@@ -15,7 +16,7 @@ namespace TBAR.Stands
         Sugma
     }
 
-    public class TestStand : Stand
+    public class TestStand : StandProjectile
     {
         public TestStand() : base("Test Stand")
         {
@@ -46,16 +47,6 @@ namespace TBAR.Stands
             States[(int)TestStandStates.Sugma].AnimationPlay += Sugma;
             States[(int)TestStandStates.Sugma].AnimationPlay += OnSugmaBegin;
             States[(int)TestStandStates.Sugma].OnAnimationEnd += OnSugmaEnd; 
-        }
-
-        public override void AddCombos()
-        {
-            StandCombo sugma = new StandCombo("Sugma", ComboInput.Up, ComboInput.Down);
-            sugma.OnActivate += delegate { this.State = (int)TestStandStates.Sugma; };
-            Combos.Add(sugma);
-
-            Combos.Add(new StandCombo("Sigma", ComboInput.Up));
-            Combos.Add(new StandCombo("Sogma", ComboInput.Up, ComboInput.Down, ComboInput.Down));
         }
 
         private void Sugma(SpriteAnimation sender)

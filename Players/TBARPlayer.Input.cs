@@ -5,22 +5,22 @@ using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using TBAR.Stands;
+using Terraria.ID;
 
 namespace TBAR.Players
 {
     public partial class TBARPlayer : ModPlayer
     {
-        private const int COMBO_TIME = 120;
+        private const int COMBO_TIME = 90;
 
         public override void ProcessTriggers(TriggersSet triggersSet)
         {
-            if (TBARInputs.SummonStand.JustPressed && IsStandUser && !HasActiveStand)
+            if (TBARInputs.SummonStand.JustPressed && IsStandUser && !PlayerStand.IsActive)
             {
-                int standIndex = Projectile.NewProjectile(player.Center, Vector2.Zero, mod.ProjectileType(Stand.GetType().Name), 1, 1f, player.whoAmI);
-                ActiveStandProjectile = Main.projectile[standIndex];
+                PlayerStand.TryActivate(player);
             }
 
-            if(HasActiveStand)
+            if(IsStandUser)
             {
                 if (TBARInputs.ComboButton1.JustPressed)
                     OnInput(ComboInput.Action1);
@@ -44,14 +44,9 @@ namespace TBAR.Players
 
         public void UpdateInputs()
         {
-            if (ComboTime > 0)
-                ComboTime--;
-
             if(ComboTimeExpired)
             {
-                Stand stand = (Stand)ActiveStandProjectile.modProjectile;
-
-                stand.ReceivedInputs.AddRange(CurrentComboInputs);
+                PlayerStand.HandleInputs(player, CurrentComboInputs);
 
                 CurrentComboInputs.Clear();
             }
@@ -78,6 +73,6 @@ namespace TBAR.Players
 
         public bool ComboTimeExpired => ComboTime <= 0;
 
-        public List<ComboInput> CurrentComboInputs { get; } = new List<ComboInput>(10);
+        public List<ComboInput> CurrentComboInputs { get; private set; }
     }
 }

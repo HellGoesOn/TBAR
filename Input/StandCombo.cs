@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using System;
 using Terraria;
+using Terraria.ModLoader;
+using TBAR.Enums;
+using Terraria.ID;
 
 namespace TBAR.Input
 {
@@ -16,13 +19,14 @@ namespace TBAR.Input
                 RequiredInputs.Add(i);
         }
 
-        public bool TryActivate(List<ComboInput> inputs, bool force = false)
+        public void ForceActivate(Player player)
         {
-            if (force)
-            {
-                OnActivate?.Invoke();
-                return true;
-            }
+            Main.NewText("Activated : " + ComboName + " by " + player.name);
+            OnActivate?.Invoke(player);
+        }
+
+        public bool TryActivate(Player player, List<ComboInput> inputs)
+        {
             // if received input count is lower, we won't be able to activate the combo
             if (inputs.Count < RequiredInputs.Count)
                 return false;
@@ -32,15 +36,30 @@ namespace TBAR.Input
             // it will skip over A1-A1 and only check the last 2 inputs
             int dif = Math.Abs(RequiredInputs.Count - inputs.Count);
 
-            for (int i = 0 + dif; i < inputs.Count - 1; i++)
+            for (int i = 0 + dif; i < inputs.Count; i++)
             {
                 if (inputs[i] != RequiredInputs[i-dif])
                     return false;
             }
 
-            OnActivate?.Invoke();
+            Main.NewText("Activated : " + ComboName + " by " + player.name);
+
+            OnActivate?.Invoke(player);
+            SendPacket(player, ComboName);
 
             return true;
+        }
+
+        public static void SendPacket(Player player, string name, int fromWho = -1)
+        {
+            if (Main.netMode == NetmodeID.SinglePlayer)
+                return;
+
+            ModPacket packet = TBAR.Instance.GetPacket();
+            packet.Write((byte)PacketType.UsedCombo);
+            packet.Write((byte)player.whoAmI);
+            packet.Write(name);
+            packet.Send(-1, fromWho);
         }
 
         public string ComboName { get; }

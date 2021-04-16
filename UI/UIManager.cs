@@ -18,6 +18,11 @@ namespace TBAR.UI
 
         public TimeSkipLayer TimeSkipLayer { get; set; }
 
+        public static void Unload()
+        {
+            _instance = null;
+        }
+
         private static UIManager _instance;
 
         public static UIManager Instance

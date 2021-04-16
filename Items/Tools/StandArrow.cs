@@ -33,9 +33,9 @@ namespace TBAR.Items.Tools
         {
             TBARPlayer tBAR = TBARPlayer.Get(player);
 
-            tBAR.Stand = StandFactory.Instance.GetNewRandom(tBAR.Stand);
+            tBAR.PlayerStand = StandFactory.Instance.GetNewRandom(tBAR);
 
-            Main.NewText("You've acquired a stand: " + tBAR.Stand.StandName);
+            Main.NewText("You've acquired a stand: " + tBAR.PlayerStand.StandName);
 
             return true;
         }

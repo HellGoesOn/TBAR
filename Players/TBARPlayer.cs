@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
+using TBAR.Input;
 using TBAR.Stands;
+using TBAR.TimeStop;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
@@ -13,21 +16,52 @@ namespace TBAR.Players
 
         public static TBARPlayer Get() => Get(Main.LocalPlayer);
 
+        public override void Initialize()
+        {
+            CurrentComboInputs = new List<ComboInput>(10);
+        }
+
         public override void OnEnterWorld(Player player)
         {
-            if (Stand != null)
-                Main.NewText(Stand.StandName);
+            if (PlayerStand != null)
+                Main.NewText(PlayerStand.StandName);
+        }
+
+        public override void ResetEffects()
+        {
+            if (IsStandUser)
+            {
+                if (ComboTime > 0)
+                    ComboTime--;
+
+                PlayerStand.Update();
+            }
         }
 
         public override void PostUpdate()
         {
-            if (HasActiveStand)
+            if(TimeStopManager.Instance.IsTimeStopped && !TimeStopManager.Instance.HaveITimeStopped(player))
             {
-                UpdateInputs();
+                player.velocity *= 0;
+                player.position = player.oldPosition;
+            }
 
-                if (ActiveStandProjectile.modProjectile == null || !(ActiveStandProjectile.modProjectile is Stand))
-                    KillStand();
+            if(IsStandUser)
+            {
+                if(ComboTimeExpired)
+                {
+                    PlayerStand.HandleInputs(player, CurrentComboInputs);
 
+                    CurrentComboInputs.Clear();
+                }    
+            }
+        }
+
+        public override void UpdateDead()
+        {
+            if(IsStandUser)
+            {
+                PlayerStand.KillStand();
             }
         }
 
@@ -38,8 +72,6 @@ namespace TBAR.Players
                 {"StandName", SaveStand() }
             };
 
-            Stand = null;
-
             return tag;
         }
 
@@ -48,22 +80,17 @@ namespace TBAR.Players
             LoadStand(tag);
         }
 
-        public void KillStand()
-        {
-            ActiveStandProjectile = null;
-        }
-
         private string SaveStand()
         {
             if (!IsStandUser)
                 return "None";
 
-            return Stand.GetType().FullName;
+            return PlayerStand.GetType().FullName;
         }
 
         private void LoadStand(TagCompound tag)
         {
-            Stand = null;
+            PlayerStand = null;
 
             if (tag.GetString("StandName") == "None")
                 return;
@@ -73,16 +100,12 @@ namespace TBAR.Players
                 Type type = Assembly.GetAssembly(typeof(Stand)).GetType(tag.GetString("StandName"));
 
                 if (type != null)
-                    Stand = (Stand)Activator.CreateInstance(type);
+                    PlayerStand = (Stand)Activator.CreateInstance(type);
             }
         }
 
-        public Projectile ActiveStandProjectile { get; set; }
+        public Stand PlayerStand { get; set; }
 
-        public bool HasActiveStand => ActiveStandProjectile != null;
-
-        public Stand Stand { get; set; }
-
-        public bool IsStandUser => Stand != null;
+        public bool IsStandUser => PlayerStand != null;
     }
 }
