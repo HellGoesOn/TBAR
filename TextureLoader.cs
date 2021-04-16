@@ -8,30 +8,28 @@ namespace TBAR
     {
         public static void Load()
         {
-            foreach (PropertyInfo property in Textures.Instance.GetType().GetProperties())
+            foreach (PropertyInfo property in typeof(Textures).GetProperties())
             {
                 LoadableAttribute attr = (LoadableAttribute)property.GetCustomAttribute(typeof(LoadableAttribute));
 
                 if (attr == null)
                     continue;
 
-                property.SetValue(Textures.Instance, ModContent.GetTexture(attr.Path));
+                property.SetValue(null, ModContent.GetTexture(attr.Path));
             }
         }
 
         public static void Unload()
         {
-            foreach (PropertyInfo property in Textures.Instance.GetType().GetProperties())
+            foreach (PropertyInfo property in typeof(Textures).GetProperties())
             {
                 LoadableAttribute attr = (LoadableAttribute)property.GetCustomAttribute(typeof(LoadableAttribute));
 
                 if (attr == null)
                     continue;
 
-                property.SetValue(Textures.Instance, null);
+                property.SetValue(null, null);
             }
-
-            Textures.Unload();
         }
     }
 }

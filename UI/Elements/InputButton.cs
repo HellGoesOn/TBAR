@@ -24,7 +24,7 @@ namespace TBAR.UI.Elements
 
         protected override void DrawSelf(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Textures.Instance.KeyboardInput, GetDimensions().Position(), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
+            spriteBatch.Draw(Textures.KeyboardInput, GetDimensions().Position(), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
         }
 
         public UIText Text { get; } = new UIText("");

@@ -45,7 +45,7 @@ namespace TBAR.UI.Elements.StandCard
                 Main.LocalPlayer.mouseInterface = true;
             }
 
-            Texture2D texture = TBARPlayer.Get().PlayerStand.StandName == StandDisplayName ? Textures.Instance.StandCardCurrent : Textures.Instance.StandCard;
+            Texture2D texture = TBARPlayer.Get().PlayerStand.StandName == StandDisplayName ? Textures.StandCardCurrent : Textures.StandCard;
 
             spriteBatch.Draw(texture, dims.Position(), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
 
