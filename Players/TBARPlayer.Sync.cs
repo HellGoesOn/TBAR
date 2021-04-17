@@ -30,6 +30,13 @@ namespace TBAR.Players
             }
         }
 
+        public override void clientClone(ModPlayer clientClone)
+        {
+            TBARPlayer clone = clientClone as TBARPlayer;
+
+            clone.PlayerStand = PlayerStand;
+        }
+
         public void SendStandChangedPacket(int fromWho = -1)
         {
             Main.NewText("Packet sent");
@@ -38,13 +45,6 @@ namespace TBAR.Players
             packet.Write((byte)player.whoAmI);
             packet.Write(PlayerStand == null ? "None" : PlayerStand.GetType().Name);
             packet.Send(-1, fromWho);
-        }
-
-        public override void clientClone(ModPlayer clientClone)
-        {
-            TBARPlayer clone = clientClone as TBARPlayer;
-
-            clone.PlayerStand = PlayerStand;
         }
     }
 }

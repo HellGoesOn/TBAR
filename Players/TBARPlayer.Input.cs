@@ -57,8 +57,8 @@ namespace TBAR.Players
             ComboTime = COMBO_TIME;
 
             CurrentComboInputs.Add(input);
-            Main.NewText("Added " + input.ToString());
-            Main.NewText("Total " + CurrentComboInputs.Count);
+
+            PlayerStand.HandleImmediateInputs(player, input);
         }
 
         public bool OldUpButtonState { get; private set; }

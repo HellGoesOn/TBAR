@@ -37,8 +37,6 @@ namespace TBAR.Stands
             if (player.whoAmI != Main.myPlayer || receivedInputs.Count <= 0)
                 return;
 
-            Main.NewText("Player [" + player.whoAmI + "] received : " + receivedInputs.Count);
-
             if (IsActive)
             {
                 foreach (StandCombo combo in NormalCombos)
@@ -49,14 +47,18 @@ namespace TBAR.Stands
             foreach (StandCombo combo in GlobalCombos)
                 if (combo.TryActivate(player, receivedInputs))
                     return;
-        }   
+        }
+
+        public override void HandleImmediateInputs(Player player, ComboInput input)
+        {
+            ActiveStandProjectile?.HandleImmediateInputs(input);
+        }
 
         public override void KillStand()
         {
             IsActive = false;
 
-            if(ActiveStandProjectile != null)
-                ActiveStandProjectile.projectile.Kill();
+            ActiveStandProjectile?.projectile.Kill();
 
             ActiveStandProjectile = null;
         }

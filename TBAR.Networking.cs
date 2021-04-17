@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using Microsoft.Xna.Framework;
+using System.IO;
 using TBAR.Enums;
 using TBAR.Input;
 using TBAR.Players;
@@ -12,6 +13,10 @@ namespace TBAR
 {
     public partial class TBAR : Mod
     {
+        bool IsSender(int whoAmI) => Main.myPlayer != whoAmI;
+
+        bool IsServer => Main.netMode == NetmodeID.Server;
+
         public override void HandlePacket(BinaryReader reader, int whoAmI)
         {
             PacketType type = (PacketType)reader.ReadByte();
@@ -23,10 +28,10 @@ namespace TBAR
                     int index = reader.ReadInt32();
                     int duration = reader.ReadInt32();
 
-                    if (Main.myPlayer != whoAmI)
+                    if (!IsSender(whoAmI))
                         TimeStopManager.Instance.TryStopTime(eType, index, duration);
 
-                    if (Main.netMode == NetmodeID.Server)
+                    if (IsServer)
                         TimeStopManager.Instance.SendPacket(eType, index, duration, whoAmI);
                     break;
 
@@ -35,7 +40,7 @@ namespace TBAR
                     string name = reader.ReadString();
                     TBARPlayer plr = TBARPlayer.Get(Main.player[playerNumber]);
 
-                    if (Main.myPlayer != whoAmI)
+                    if (!IsSender(whoAmI))
                         plr.PlayerStand = StandFactory.Instance.Get(name);
 
                     break;
@@ -46,10 +51,10 @@ namespace TBAR
 
                     plr = TBARPlayer.Get(Main.player[playerNumber]);
 
-                    if (Main.myPlayer != whoAmI)
+                    if (!IsSender(whoAmI))
                         plr.PlayerStand.ForceCombo(comboName, plr.player);
 
-                    if (Main.netMode == NetmodeID.Server)
+                    if (IsServer)
                         StandCombo.SendPacket(plr.player, comboName, whoAmI);
 
                     break;
@@ -59,10 +64,10 @@ namespace TBAR
                     name = reader.ReadString();
                     plr = TBARPlayer.Get(Main.player[playerNumber]);
 
-                    if (Main.myPlayer != whoAmI)
+                    if (!IsSender(whoAmI))
                         plr.PlayerStand = StandFactory.Instance.Get(name);
 
-                    if (Main.netMode == NetmodeID.Server)
+                    if (IsServer)
                         plr.SendStandChangedPacket(playerNumber);
                     break;
             }

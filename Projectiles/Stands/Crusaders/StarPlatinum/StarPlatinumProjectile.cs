@@ -1,20 +1,22 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using TBAR.Components;
 using TBAR.Input;
 using TBAR.Players;
+using TBAR.Stands;
 using Terraria;
 
 namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
 {
-    public class StarPlatinumProjectile : StandProjectile
+    public class StarPlatinumProjectile : PunchGhostProjectile
     {
         public enum SPStates
         {
-            None,
-            Summon,
+            Summon = 1,
             Idle,
-            Despawn
+            Despawn,
+            Punch
         }
 
         public float Offset { get; set; }
@@ -29,41 +31,46 @@ namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
         {
             AuraColor = new Color(1f, 0f, 1f);
             Opacity = 0f;
-            State = (int)SPStates.Summon;
 
             string path = "Projectiles/Stands/Crusaders/StarPlatinum/";
 
-            SpriteAnimation summon = new SpriteAnimation(path + "SPSummon", 10, 15);
-            summon.AnimationPlay += OnSummon; 
-            summon.AnimationPlay += Summon;
-            summon.OnAnimationEnd += delegate { State = (int)SPStates.Idle; };
+            StandState summon = new StandState(path + "SPSummon", 10, 15);
 
-            SpriteAnimation despawn = new SpriteAnimation(path + "SPDespawn", 6, 12);
-            despawn.AnimationPlay += Despawn;
-            despawn.OnAnimationEnd += OnDespawnEnd;
+            summon.OnStateBegin += OnSummon; 
+            summon.OnStateUpdate += Summon;
+            summon.OnStateEnd += delegate { SetState((int)SPStates.Idle); };
 
-            SpriteAnimation idle = new SpriteAnimation(path + "SPIdle", 14, 15, true);
-            idle.AnimationPlay += Idle;
+            StandState despawn = new StandState(path + "SPDespawn", 6, 12);
+            despawn.OnStateUpdate += Despawn;
+            despawn.OnStateEnd += OnDespawnEnd;
+
+            StandState idle = new StandState(path + "SPIdle", 14, 15, true);
+            idle.OnStateUpdate += Idle;
+
+            SpriteAnimation punchMidLeft = new SpriteAnimation(path + "SPPunch_Middle_LeftHand", 3, 10);
+            SpriteAnimation punchMidRight = new SpriteAnimation(path + "SPPunch_Middle_RightHand", 3, 10);
+
+            StandState punchState = new StandState(punchMidLeft, punchMidRight);
+            punchState.OnStateBegin += BeginPunch;
+            punchState.OnStateUpdate += UpdatePunch;
+            punchState.OnStateEnd += EndPunch;
 
             States.Add((int)SPStates.Summon, summon);
             States.Add((int)SPStates.Idle, idle);
             States.Add((int)SPStates.Despawn, despawn);
+            States.Add((int)SPStates.Punch, punchState);
+
+            SetState((int)SPStates.Summon);
         }
 
         public override void AI()
         {
             base.AI();
 
-            if (!ReverseOffsetGain)
-            {
-                if ((Offset += 0.1f) > 4)
-                    ReverseOffsetGain = true;
-            }
-            else
-            {
-                if ((Offset -= 0.1f) <= 0)
-                    ReverseOffsetGain = false;
-            }
+            if (Math.Abs(Offset) > 4)
+                ReverseOffsetGain = !ReverseOffsetGain;
+
+            Offset += ReverseOffsetGain ? -0.1f : 0.1f;
         }
 
         public override void PostDraw(SpriteBatch spriteBatch, Color lightColor)
@@ -84,7 +91,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
         {
             if(Owner.whoAmI == Main.myPlayer && TBARInputs.SummonStand.JustPressed && State == (int)SPStates.Idle)
             {
-                State = (int)SPStates.Despawn;
+                SetState((int)SPStates.Despawn);
             }
         }
 
@@ -94,15 +101,13 @@ namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
             return false;
         }
 
-        private void OnSummon(SpriteAnimation sender)
+        private void OnSummon(StandState sender)
         {
             TBAR.Instance.PlayVoiceLine("Sounds/StarPlatinum/SP_Call");
             TBAR.Instance.PlaySound("Sounds/StarPlatinum/SP_Call");
-
-            sender.AnimationPlay -= OnSummon;
         }
 
-        private void Summon(SpriteAnimation sender)
+        private void Summon(StandState sender)
         {
             if(Opacity < 1f)
                 Opacity += 0.05f;
@@ -110,20 +115,27 @@ namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
             projectile.Center = Vector2.Lerp(projectile.Center, Owner.Center + new Vector2(-30 * Owner.direction, -32), 0.12f);
         }
 
-        private void Despawn(SpriteAnimation sender)
+        private void Despawn(StandState sender)
         {
             Opacity -= 0.05f;
             projectile.Center = Vector2.Lerp(projectile.Center, Owner.Center + new Vector2(-12 * Owner.direction, -12), 0.12f);
         }
 
-        private void OnDespawnEnd(SpriteAnimation sender)
+        private void OnDespawnEnd(StandState sender)
         {
             projectile.Kill();
         }
 
-        private void Idle(SpriteAnimation sender)
+        private void Idle(StandState sender)
         {
             projectile.Center = Vector2.Lerp(projectile.Center, Owner.Center + new Vector2(-30 * Owner.direction, -32), 0.12f);
         }
+
+        protected override int PunchAnimationIDOffset()
+        {
+            return Main.rand.Next(2);
+        }
+
+        protected override int PunchState() => (int)SPStates.Punch;
     }
 }

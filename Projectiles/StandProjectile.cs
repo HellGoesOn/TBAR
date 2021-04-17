@@ -3,8 +3,10 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.IO;
 using TBAR.Components;
+using TBAR.Enums;
 using TBAR.Input;
 using TBAR.Players;
+using TBAR.Stands;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -15,7 +17,7 @@ namespace TBAR.Projectiles.Stands
         public StandProjectile(string name)
         {
             StandName = name;
-            States = new Dictionary<int, SpriteAnimation>();
+            States = new Dictionary<int, StandState>();
         }
 
         public override void SetStaticDefaults()
@@ -30,9 +32,16 @@ namespace TBAR.Projectiles.Stands
             projectile.penetrate = -1;
             projectile.tileCollide = false;
             projectile.netImportant = true;
+            projectile.friendly = true;
+            projectile.damage = 0;
 
-            AddStates();
+            if(!Main.gameMenu || Main.dedServ)
+                AddStates();
+
+            SafeSetDefaults();
         }
+
+        public virtual void SafeSetDefaults() { }
 
         public abstract void AddStates();
 
@@ -42,29 +51,50 @@ namespace TBAR.Projectiles.Stands
 
             projectile.netUpdate = true;
 
+            if (Main.myPlayer == Owner.whoAmI)
+                MousePosition = Main.MouseWorld;
+
             if (States.Count > 0)
             {
-                CurrentState.UpdateEvent();
                 CurrentState.Update();
 
-                if (!CurrentState.Active)
+                if (!CurrentState.CurrentAnimation.Active)
                 {
-                    CurrentState.Reset();
-                    State = LastState;
+                    int temp = State;
+                    CurrentState.EndState();
+
+                    if(LastState != temp)
+                        SetState(LastState);
                 }
             }
             else // some placeholder shit
                 projectile.Kill();
         }
 
+        public virtual void HandleImmediateInputs(ComboInput input)
+        { }
+
         public override void SendExtraAI(BinaryWriter writer)
         {
-            writer.Write(State);
+            writer.Write(MousePosition.X);
+            writer.Write(MousePosition.Y);
+
+            writer.Write((byte)State);
+            TBAR.Instance.Logger.Debug($"Sent {(byte)State}");
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
-            State = reader.ReadInt32();
+            MousePosition = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+
+            byte receivedState = reader.ReadByte();
+
+            if (States.ContainsKey(receivedState))
+            {
+                TBAR.Instance.Logger.Debug($"Received {(byte)receivedState}");
+                SetState(receivedState);
+                TBAR.Instance.Logger.Debug($"State After SetState() {State}");
+            }
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
@@ -83,7 +113,9 @@ namespace TBAR.Projectiles.Stands
 
         public void DefaultDrawStand(SpriteBatch spriteBatch, Vector2 position, Color color, SpriteEffects fx = SpriteEffects.None)
         {
-            spriteBatch.Draw(CurrentState.SpriteSheet, position - Main.screenPosition, CurrentState.FrameRect, color * Opacity, 0f, CurrentState.DrawOrigin, 1f, fx, 1f);
+            SpriteAnimation animation = CurrentState.AssignedAnimations[CurrentState.CurrentAnimationID];
+
+            spriteBatch.Draw(animation.SpriteSheet, position - Main.screenPosition, animation.FrameRect, color * Opacity, 0f, animation.DrawOrigin, 1f, fx, 1f);
         }
 
         public Player Owner => Main.player[projectile.owner];
@@ -92,30 +124,81 @@ namespace TBAR.Projectiles.Stands
 
         public SpriteEffects SpriteFX { get; set; }
 
-        private int state;
-        public int State 
-        { 
-            get => state; 
-            set
+        public int GetBaseDamage(DamageType type, Player player)
+        {
+            var currentDamage = 5;
+
+            for (int i = 0; i < player.inventory.Length; i++)
             {
-                LastState = state;
-                state = value;
+                Item item = player.inventory[i];
+
+                if (item.damage > currentDamage)
+                {
+                    switch (type)
+                    {
+                        case DamageType.Melee:
+                            if (item.melee)
+                                currentDamage = item.damage;
+                            break;
+
+                        case DamageType.Ranged:
+                            if (item.ranged && item.useAmmo > 0)
+                                currentDamage = item.damage;
+                            break;
+
+                        case DamageType.Magic:
+                            if (item.magic)
+                                currentDamage = item.damage;
+                            break;
+
+                        case DamageType.Summon:
+                            if (item.summon)
+                                currentDamage = item.damage;
+                            break;
+
+                        case DamageType.Any:
+                            currentDamage = item.damage;
+                            break;
+                    }
+                }
+                else
+                    continue;
             }
+
+            return currentDamage;
         }
 
-        public int LastState { get; set; }
+        public void SetState(int value)
+        {
+            if (State == value)
+                return;
+
+            LastState = State;
+
+            State = value;
+
+            CurrentState.BeginState();
+        }
+
+        public int LastState { get; private set; }
+
+        public int State { get; private set; }
 
         public string StandName { get; set; }
 
-        public SpriteAnimation CurrentState => States[State];
+        public StandState CurrentState => States[State];
 
         public Color AuraColor { get; set; } = new Color(255, 255, 255);
 
         /// <summary>
         /// Contains all the available states for the stand
         /// </summary>
-        public Dictionary<int, SpriteAnimation> States { get; }
+        public Dictionary<int, StandState> States { get; }
+
+        public TBARPlayer User => TBARPlayer.Get(Owner);
 
         public sealed override string Texture => "TBAR/Textures/EmptyPixel";
+
+        public Vector2 MousePosition { get; set; }
     }
 }
