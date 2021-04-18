@@ -71,7 +71,7 @@ namespace TBAR.Projectiles.Stands
                 projectile.Kill();
         }
 
-        public virtual void HandleImmediateInputs(ComboInput input)
+        public virtual void HandleImmediateInputs(ImmediateInput input)
         { }
 
         public override void SendExtraAI(BinaryWriter writer)
@@ -80,7 +80,6 @@ namespace TBAR.Projectiles.Stands
             writer.Write(MousePosition.Y);
 
             writer.Write((byte)State);
-            TBAR.Instance.Logger.Debug($"Sent {(byte)State}");
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -91,9 +90,7 @@ namespace TBAR.Projectiles.Stands
 
             if (States.ContainsKey(receivedState))
             {
-                TBAR.Instance.Logger.Debug($"Received {(byte)receivedState}");
                 SetState(receivedState);
-                TBAR.Instance.Logger.Debug($"State After SetState() {State}");
             }
         }
 
@@ -108,10 +105,10 @@ namespace TBAR.Projectiles.Stands
                 return;
 
             if (States.Count > 0) 
-                DefaultDrawStand(spriteBatch, projectile.Center, Color.White, SpriteFX);
+                DrawDefault(spriteBatch, projectile.Center, Color.White, SpriteFX);
         }
 
-        public void DefaultDrawStand(SpriteBatch spriteBatch, Vector2 position, Color color, SpriteEffects fx = SpriteEffects.None)
+        public void DrawDefault(SpriteBatch spriteBatch, Vector2 position, Color color, SpriteEffects fx = SpriteEffects.None)
         {
             SpriteAnimation animation = CurrentState.AssignedAnimations[CurrentState.CurrentAnimationID];
 

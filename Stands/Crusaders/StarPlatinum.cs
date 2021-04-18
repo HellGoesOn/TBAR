@@ -1,9 +1,12 @@
-﻿using TBAR.Components;
+﻿using Microsoft.Xna.Framework;
+using TBAR.Components;
 using TBAR.Enums;
 using TBAR.Input;
 using TBAR.Projectiles.Stands.Crusaders.StarPlatinum;
+using TBAR.Projectiles.Visual;
 using TBAR.TimeStop;
 using Terraria;
+using Terraria.ModLoader;
 
 namespace TBAR.Stands.Crusaders
 {
@@ -28,7 +31,17 @@ namespace TBAR.Stands.Crusaders
 
         private void StopTime(Player player)
         {
-            TimeStopManager.Instance.TryStopTime(EntityType.Player, player.whoAmI, 300);
+            bool isTimeStopped = TimeStopManager.Instance.IsTimeStopped;
+            string path = isTimeStopped ? "" : "Sounds/StarPlatinum/SP_TimeStopSignal";
+
+            TimeStopInstance ts = new TimeStopInstance(player, 300, path) { EndSoundEffect = "Sounds/StarPlatinum/SP_TimeRestore" };
+
+            if (!isTimeStopped)
+            {
+                Projectile.NewProjectile(player.Center, Vector2.Zero, ModContent.ProjectileType<TimeStopVFX>(), 0, 0, player.whoAmI);
+                TBAR.Instance.PlayVoiceLine("Sounds/StarPlatinum/SP_TimeStopCall");
+            }
+            TimeStopManager.Instance.TryStopTime(ts);
         }
     }
 }

@@ -49,7 +49,7 @@ namespace TBAR.Stands
                     return;
         }
 
-        public override void HandleImmediateInputs(Player player, ComboInput input)
+        public override void HandleImmediateInputs(Player player, ImmediateInput input)
         {
             ActiveStandProjectile?.HandleImmediateInputs(input);
         }

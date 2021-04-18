@@ -26,7 +26,7 @@ namespace TBAR.Stands
 
         public abstract void HandleInputs(Player player, List<ComboInput> receivedInputs);
 
-        public virtual void HandleImmediateInputs(Player player, ComboInput input)
+        public virtual void HandleImmediateInputs(Player player, ImmediateInput input)
         {
 
         }

@@ -21,7 +21,7 @@ namespace TBAR.Projectiles.Stands
             projectile.height = 40;
         }
 
-        protected abstract int PunchState();
+        protected abstract int PunchState { get; }
 
         protected void BeginPunch(StandState sender)
         {
@@ -36,26 +36,28 @@ namespace TBAR.Projectiles.Stands
             projectile.damage = GetPunchDamage();
         }
 
-        protected void UpdatePunch(StandState sender)
+        protected void UpdatePunch(StandState _)
         {
             projectile.Center = Vector2.Lerp(projectile.Center, Owner.Center + PunchDirection, 0.35f);
             Owner.direction = (Owner.Center + PunchDirection).X < Owner.Center.X ? -1 : 1;
         }
 
-        protected void EndPunch(StandState sender)
+        protected void EndPunch(StandState _)
         {
             PunchStartPoint = PunchDirection = Vector2.Zero;
             projectile.damage = 0;
         }
 
-        public override void HandleImmediateInputs(ComboInput input)
+        public override void HandleImmediateInputs(ImmediateInput input)
         {
             switch(input)
             {
-                case ComboInput.Action1:
-                case ComboInput.Action2:
-                case ComboInput.Action3:
-                    SetState(PunchState());
+                case ImmediateInput.Action1:
+                case ImmediateInput.Action2:
+                case ImmediateInput.Action3:
+                case ImmediateInput.LeftClick:
+                case ImmediateInput.RightClick:
+                    SetState(PunchState);
                     break;
                 default:
                     return;

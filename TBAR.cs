@@ -38,6 +38,12 @@ namespace TBAR
                 Ref<Effect> screenRef = new Ref<Effect>(GetEffect("Effects/ShockwaveEffect")); // The path to the compiled shader file.
                 Filters.Scene["Shockwave"] = new Filter(new ScreenShaderData(screenRef, "Shockwave"), EffectPriority.VeryHigh);
                 Filters.Scene["Shockwave"].Load();
+
+                SkyManager.Instance["TBA:TimeStopInvert"] = new PerfectlyNormalSky();
+                Filters.Scene["TBA:TimeStopInvert"] = new Filter(new ScreenShaderData("FilterInvert"), EffectPriority.High);
+
+                Filters.Scene["TBA:FreezeSky"] = new Filter(new ScreenShaderData("FilterMiniTower").UseColor(.7f, .7f, .7f), EffectPriority.VeryHigh);
+                SkyManager.Instance["TBA:FreezeSky"] = new FreezeSky();
             }
 
 
@@ -79,7 +85,7 @@ namespace TBAR
 
         public void PlayVoiceLine(string SoundPath)
         {
-            if (!Instance.VoiceLinesEnabled)
+            if (!Instance.VoiceLinesEnabled || SoundPath == "")
                 return;
 
             Main.PlaySound(Instance.GetLegacySoundSlot(SoundType.Custom, SoundPath));
@@ -87,6 +93,9 @@ namespace TBAR
 
         public void PlaySound(string SoundPath)
         {
+            if (SoundPath == "")
+                return;
+
             Main.PlaySound(Instance.GetLegacySoundSlot(SoundType.Custom, SoundPath));
         }
 

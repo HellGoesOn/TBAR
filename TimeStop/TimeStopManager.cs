@@ -30,28 +30,52 @@ namespace TBAR.TimeStop
             }
         }
 
-        public void TryStopTime(EntityType type, int index, int duration)
+        public void TryStopTime(EntityType type, int index, int duration, string soundPath = "")
         {
             Entity owner = GetEntity(type, index);
 
             if (!HaveITimeStopped(owner))
-                TimeStops.Add(new TimeStopInstance(owner, duration));
+                TimeStops.Add(new TimeStopInstance(owner, duration, soundPath));
             else
             {
-                int myTimeStopIndex = TimeStops.FindIndex(x => x.Owner == owner);
-
-                TimeStops.RemoveAt(myTimeStopIndex);
+                FindAndRemoveInstance(owner);
             }
+        }
+
+        public void TryStopTime(TimeStopInstance instance)
+        {
+            Entity owner = instance.Owner;
+
+            if (!HaveITimeStopped(owner))
+                TimeStops.Add(instance);
+            else
+            {
+                FindAndRemoveInstance(owner);
+            }
+
+        }
+
+        private void FindAndRemoveInstance(Entity owner)
+        {
+            int myTimeStopIndex = TimeStops.FindIndex(x => x.Owner == owner);
+
+            if (TimeStops.Count == 1)
+                TBAR.Instance.PlaySound(TimeStops[0].EndSoundEffect);
+
+            TimeStops.RemoveAt(myTimeStopIndex);
         }
 
         public void Update()
         {
             for (int i = TimeStops.Count - 1; i >= 0; i--)
             {
-                Main.NewText(TimeStops[i].ToString());
-
                 if (--TimeStops[i].Duration <= 0)
+                {
+                    if(i == 0)
+                        TBAR.Instance.PlaySound(TimeStops[0].EndSoundEffect);
+
                     TimeStops.RemoveAt(i);
+                }
             }
         }
 

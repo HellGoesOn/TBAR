@@ -37,8 +37,16 @@ namespace TBAR.Players
                 if (HasPressedDown)
                     OnInput(ComboInput.Down);
 
+                if(HasPressedLeftClick)
+                    PlayerStand.HandleImmediateInputs(player, ImmediateInput.LeftClick);
+
+                if (HasPressedRightClick)
+                    PlayerStand.HandleImmediateInputs(player, ImmediateInput.RightClick);
+
                 OldUpButtonState = player.controlUp;
                 OldDownButtonState = player.controlDown;
+                OldLeftClickState = player.controlUseItem;
+                OldRightClickState = player.controlUseTile;
             }
         }
 
@@ -58,16 +66,20 @@ namespace TBAR.Players
 
             CurrentComboInputs.Add(input);
 
-            PlayerStand.HandleImmediateInputs(player, input);
+            PlayerStand.HandleImmediateInputs(player, (ImmediateInput)input);
         }
 
         public bool OldUpButtonState { get; private set; }
-
         public bool HasPressedUp => player.controlUp && !OldUpButtonState;
 
         public bool OldDownButtonState { get; private set; }
-
         public bool HasPressedDown => player.controlDown && !OldDownButtonState;
+
+        public bool OldLeftClickState { get; private set; }
+        public bool HasPressedLeftClick => player.controlUseItem && !OldLeftClickState;
+
+        public bool OldRightClickState { get; private set; }
+        public bool HasPressedRightClick => player.controlUseTile && !OldRightClickState;
 
         public int ComboTime { get; set; }
 

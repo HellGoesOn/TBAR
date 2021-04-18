@@ -36,7 +36,7 @@ namespace TBAR.Projectiles.Visual
             if (Main.dedServ)
                 return;
 
-            projectile.Center = Main.player[projectile.owner].Center;
+            projectile.Center = Owner.Center;
 
             if (!Filters.Scene["Shockwave"].IsActive())
             {
@@ -55,6 +55,8 @@ namespace TBAR.Projectiles.Visual
 
             Filters.Scene["Shockwave"].Deactivate();
         }
+
+        public Player Owner => Main.player[projectile.owner];
 
         public bool IsNativelyImmuneToTimeStop() => true;
 

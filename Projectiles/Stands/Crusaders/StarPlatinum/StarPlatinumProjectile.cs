@@ -81,10 +81,10 @@ namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
             for (int i = 0; i < 4; i++)
             {
                 Vector2 offset = new Vector2(Offset, 0).RotatedBy(MathHelper.PiOver2 * i);
-                DefaultDrawStand(spriteBatch, projectile.Center + offset, AuraColor * 0.5f, SpriteFX);
+                DrawDefault(spriteBatch, projectile.Center + offset, AuraColor * 0.5f, SpriteFX);
             }
 
-            DefaultDrawStand(spriteBatch, projectile.Center, Color.White, SpriteFX);
+            DrawDefault(spriteBatch, projectile.Center, Color.White, SpriteFX);
         }
 
         public override void PostAI()
@@ -136,6 +136,6 @@ namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
             return Main.rand.Next(2);
         }
 
-        protected override int PunchState() => (int)SPStates.Punch;
+        protected override int PunchState => (int)SPStates.Punch;
     }
 }
