@@ -1,7 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using TBAR.Components;
 using TBAR.Enums;
+using TBAR.Extensions;
 using TBAR.Input;
+using TBAR.Players;
+using TBAR.Projectiles.Stands;
 using TBAR.Projectiles.Stands.Crusaders.StarPlatinum;
 using TBAR.Projectiles.Visual;
 using TBAR.TimeStop;
@@ -24,7 +27,11 @@ namespace TBAR.Stands.Crusaders
             StandCombo barrage = new StandCombo("Barrage", ComboInput.Action2, ComboInput.Action1, ComboInput.Action2);
             barrage.OnActivate += Barrage;
 
+            StandCombo offensiveTimeStop = new StandCombo("Offensive Time Stop", ComboInput.Up, ComboInput.Action1, ComboInput.Up, ComboInput.Action2);
+            offensiveTimeStop.OnActivate += OffensiveTimeStop;
+
             GlobalCombos.Add(timeStop);
+            GlobalCombos.Add(offensiveTimeStop);
             NormalCombos.Add(barrage);
         }
 
@@ -53,7 +60,51 @@ namespace TBAR.Stands.Crusaders
         {
             StarPlatinumProjectile sp = ActiveStandProjectile as StarPlatinumProjectile;
 
-            sp?.SetState((int)SPStates.Barrage);
+            sp?.SetState(SPStates.Barrage.ToString());
+
+            string path = "Projectiles/Stands/Crusaders/StarPlatinum/";
+            Projectile projectile = sp.projectile;
+            int i = PunchBarrage.CreateBarrage(path + "StarFist", projectile, projectile.Center.DirectTo(ActiveStandProjectile.MousePosition, 24f), 60, path + "StarFistBack");
+            sp.Barrage = Main.projectile[i];
+        }
+
+        private void OffensiveTimeStop(Player player)
+        {
+            TBARPlayer plr = TBARPlayer.Get(player);
+
+            plr.OnRightClick += Plr_OnRightClick;
+        }
+
+        private void Plr_OnRightClick(Player sender)
+        {
+            TBARPlayer plr = TBARPlayer.Get(sender);
+
+            Entity target = null;
+
+            if (plr.TargetedNPC() != null)
+                target = (Entity)plr.TargetedNPC();
+
+            if (plr.TargetedPlayer() != null)
+                target = (Entity)plr.TargetedPlayer();
+
+            if (target != null)
+            {
+                Vector2 destination = target.Center - new Vector2(((target.width / 2) + (sender.width * 2)) * (target.direction), sender.height);
+                if (Collision.SolidCollision(destination, sender.width, sender.height))
+                    return;
+
+                sender.direction = target.direction;
+                sender.Teleport(destination, 1);
+            }
+            else
+            {
+                if (Collision.SolidCollision(Main.MouseWorld, sender.width, sender.height))
+                    return;
+
+                sender.Teleport(Main.MouseWorld, 1);
+            }
+
+            plr.OnRightClick -= Plr_OnRightClick;
         }
     }
 }

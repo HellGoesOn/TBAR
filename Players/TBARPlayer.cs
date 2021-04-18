@@ -38,6 +38,24 @@ namespace TBAR.Players
             }
         }
 
+        public override bool CanBeHitByNPC(NPC npc, ref int cooldownSlot)
+        {
+            if (TimeStopManager.Instance.IsTimeStopped && !TimeStopManager.Instance.HaveITimeStopped(npc))
+                return false;
+
+            return base.CanBeHitByNPC(npc, ref cooldownSlot);
+        }
+
+        public override bool CanBeHitByProjectile(Projectile proj)
+        {
+            if (TimeStopManager.Instance.IsTimeStopped
+                && !TimeStopManager.Instance.HaveITimeStopped(proj)
+                && !TimeStopManager.Instance.HaveITimeStopped(Main.player[proj.owner]))
+                return false;
+
+            return base.CanBeHitByProjectile(proj);
+        }
+
         public override void PostUpdate()
         {
             if(TimeStopManager.Instance.IsTimeStopped && !TimeStopManager.Instance.HaveITimeStopped(player))

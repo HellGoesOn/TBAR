@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using TBAR.Input;
+using Terraria;
 using Terraria.GameInput;
 using Terraria.ModLoader;
 
@@ -7,7 +9,7 @@ namespace TBAR.Players
 {
     public partial class TBARPlayer : ModPlayer
     {
-        private const int COMBO_TIME = 80;
+        private const int COMBO_TIME = 60;
 
         public override void ProcessTriggers(TriggersSet triggersSet)
         {
@@ -33,11 +35,17 @@ namespace TBAR.Players
                 if (HasPressedDown)
                     OnInput(ComboInput.Down);
 
-                if(HasPressedLeftClick)
+                if (HasPressedLeftClick)
+                {
+                    OnLeftClick?.Invoke(player);
                     PlayerStand.HandleImmediateInputs(player, ImmediateInput.LeftClick);
+                }
 
                 if (HasPressedRightClick)
+                {
+                    OnRightClick?.Invoke(player);
                     PlayerStand.HandleImmediateInputs(player, ImmediateInput.RightClick);
+                }
 
                 OldUpButtonState = player.controlUp;
                 OldDownButtonState = player.controlDown;
@@ -82,5 +90,33 @@ namespace TBAR.Players
         public bool ComboTimeExpired => ComboTime <= 0;
 
         public List<ComboInput> CurrentComboInputs { get; private set; }
+
+        public NPC TargetedNPC()
+        {
+            foreach (NPC n in Main.npc)
+            {
+                if (!n.active)
+                    continue;
+
+                if (n.Hitbox.Contains(Main.MouseWorld.ToPoint()))
+                    return n;
+            }
+
+            return null;
+        }
+
+        public Player TargetedPlayer()
+        {
+            foreach (Player n in Main.player)
+            {
+                if (!n.active)
+                    continue;
+
+                if (n.Hitbox.Contains(Main.MouseWorld.ToPoint()))
+                    return n;
+            }
+
+            return null;
+        }
     }
 }

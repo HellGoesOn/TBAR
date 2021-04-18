@@ -42,7 +42,13 @@ namespace TBAR.Projectiles.Stands
 
         public void Draw(SpriteBatch spriteBatch, Vector2 startPoint, Vector2 destination)
         {
-            Texture2D texture = UseAltTexture ? TBAR.Instance.GetTexture(AltTexturePath) : TBAR.Instance.GetTexture(TexturePath);
+            if (TexturePath == null || TexturePath == "")
+                return;
+
+            Texture2D texture = TBAR.Instance.GetTexture(TexturePath);
+
+            if (AltTexturePath != "" && AltTexturePath != null && UseAltTexture)
+                texture = TBAR.Instance.GetTexture(AltTexturePath);
 
             int textureOffset = IsFlipped ? 1 : 0;
 

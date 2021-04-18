@@ -4,6 +4,8 @@ using Terraria;
 using Terraria.ModLoader;
 using TBAR.Enums;
 using Terraria.ID;
+using TBAR.Helpers;
+using Microsoft.Xna.Framework;
 
 namespace TBAR.Input
 {
@@ -21,7 +23,6 @@ namespace TBAR.Input
 
         public void ForceActivate(Player player)
         {
-            Main.NewText("Activated : " + ComboName + " by " + player.name);
             OnActivate?.Invoke(player);
         }
 
@@ -42,10 +43,11 @@ namespace TBAR.Input
                     return false;
             }
 
-            Main.NewText("Activated : " + ComboName + " by " + player.name);
+            DrawHelper.CircleDust(player.Center, Vector2.Zero, 6, 8, 8, 1.85f);
 
             OnActivate?.Invoke(player);
-            SendPacket(player, ComboName);
+
+            SendPacket(player, ComboName, player.whoAmI);
 
             return true;
         }

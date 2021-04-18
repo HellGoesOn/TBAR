@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TBAR.Components;
-using TBAR.Enums;
 using TBAR.Input;
 using TBAR.Players;
 using Terraria;
@@ -58,19 +56,15 @@ namespace TBAR.Stands
 
         public virtual void ForceCombo(string name, Player player)
         {
-            TBAR.Instance.Logger.Debug(name + " was subject to force");
             StandCombo tryGlobalCombo = GlobalCombos.Find(x => x.ComboName == name);
-            TBAR.Instance.Logger.Debug(tryGlobalCombo + " is result of globalCombo search");
 
             StandCombo tryNormalCombo = NormalCombos.Find(x => x.ComboName == name);
-            TBAR.Instance.Logger.Debug(tryNormalCombo + " is result of normalCombo search");
 
             if (tryNormalCombo != null)
             {
                 tryNormalCombo.ForceActivate(player);
                 return;
             }
-
 
             if (tryGlobalCombo != null)
             {

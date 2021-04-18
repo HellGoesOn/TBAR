@@ -35,7 +35,6 @@ namespace TBAR
 
                 case PacketType.UsedCombo:
                     this.Logger.Debug("Combo packet received");
-                    this.Logger.DebugFormat("State before packet {0}", TimeStopManager.Instance.IsTimeStopped);
                     playerNumber = reader.ReadByte();
                     string comboName = reader.ReadString();
 
@@ -45,9 +44,7 @@ namespace TBAR
                     plr.PlayerStand.ForceCombo(comboName, plr.player);
 
                     if (IsServer)
-                        StandCombo.SendPacket(plr.player, comboName, whoAmI);
-
-                    this.Logger.DebugFormat("State after packet {0}", TimeStopManager.Instance.IsTimeStopped);
+                        StandCombo.SendPacket(plr.player, comboName, playerNumber);
                     break;
 
                 case PacketType.StandChanged:

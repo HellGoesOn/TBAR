@@ -1,28 +1,24 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace TBAR.Projectiles.Stands
 {
     public class PunchBarrage : ModProjectile
     {
-        public static Projectile CreateBarrage(string texturePath, Projectile parent, Vector2 destination, int damage, string altTexturePath = "")
+        public static int CreateBarrage(string texturePath, Projectile parent, Vector2 destination, int damage, string altTexturePath = "")
         {
-            int proj = Projectile.NewProjectile(parent.Center, destination, ModContent.ProjectileType<PunchBarrage>(), damage, 0, parent.owner);
-            PunchBarrage barrage = (PunchBarrage)Main.projectile[proj].modProjectile;
+            int proj = Projectile.NewProjectile(parent.Center, destination, ModContent.ProjectileType<PunchBarrage>(), damage, 0, Main.myPlayer, parent.whoAmI);
 
+            PunchBarrage barrage = (PunchBarrage)Main.projectile[proj].modProjectile;
             barrage.TexturePath = texturePath;
             barrage.AltTexturePath = altTexturePath;
-            barrage.Parent = parent;
 
-            return Main.projectile[proj];
+            return proj;
         }
 
         public override void SetDefaults()
@@ -33,18 +29,19 @@ namespace TBAR.Projectiles.Stands
             projectile.friendly = true;
             projectile.tileCollide = false;
             projectile.netUpdate = true;
+            projectile.netUpdate2 = true;
 
             Punches = new List<FakePunchData>();
         }
 
         public override void AI()
         {
-            if(projectile.timeLeft > 10)
+            if (projectile.timeLeft > 10)
             {
                 LastPosition = Parent.Center;
                 Main.player[projectile.owner].heldProj = projectile.whoAmI;
 
-                if(Punches.Count < 10)
+                if(Punches.Count < 10 && TexturePath != null)
                     Punches.Add(new FakePunchData(TexturePath, AltTexturePath));
             }
             else
@@ -61,22 +58,33 @@ namespace TBAR.Projectiles.Stands
             }
         }
 
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            if (TexturePath != null)
+                writer.Write(TexturePath);
+
+            if (AltTexturePath != null)
+                writer.Write(AltTexturePath);
+        }
+
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            string piss = reader.ReadString();
+            string shit = reader.ReadString();
+
+            if (piss != null)
+                TexturePath = piss;
+
+            if(shit != null)
+                AltTexturePath = shit;
+        }
+
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor) => false;
 
         public override void PostDraw(SpriteBatch spriteBatch, Color lightColor)
         {
             foreach (FakePunchData data in Punches)
                 data.Draw(spriteBatch, projectile.Center, projectile.velocity);
-        }
-
-        public override void SendExtraAI(BinaryWriter writer)
-        {
-            writer.Write(Parent.whoAmI);
-        }
-
-        public override void ReceiveExtraAI(BinaryReader reader)
-        {
-            Parent = Main.projectile[reader.ReadInt32()];
         }
 
         public List<FakePunchData> Punches { get; private set; }
@@ -87,7 +95,7 @@ namespace TBAR.Projectiles.Stands
 
         public override string Texture => "TBAR/Textures/EmptyPixel";
 
-        public Projectile Parent { get; set; }
+        public Projectile Parent => Main.projectile[(int)projectile.ai[0]];
 
         public Vector2 LastPosition { get; set; }
     }

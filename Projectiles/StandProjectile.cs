@@ -17,7 +17,6 @@ namespace TBAR.Projectiles.Stands
         public StandProjectile(string name)
         {
             StandName = name;
-            States = new Dictionary<int, StandState>();
         }
 
         public override void SetStaticDefaults()
@@ -27,15 +26,18 @@ namespace TBAR.Projectiles.Stands
 
         public sealed override void SetDefaults()
         {
+            States = new Dictionary<string, StandState>();
+
             projectile.ignoreWater = true;
             projectile.aiStyle = -1;
             projectile.penetrate = -1;
             projectile.tileCollide = false;
             projectile.netImportant = true;
             projectile.friendly = true;
-            projectile.damage = 0;
 
-            if(!Main.gameMenu || Main.dedServ)
+            States.Clear();
+
+            if (projectile.active)
                 AddStates(projectile);
 
             SafeSetDefaults();
@@ -48,8 +50,8 @@ namespace TBAR.Projectiles.Stands
         public override void AI()
         {
             projectile.timeLeft = 60;
-
             projectile.netUpdate = true;
+
 
             if (Main.myPlayer == Owner.whoAmI)
                 MousePosition = Main.MouseWorld;
@@ -57,14 +59,10 @@ namespace TBAR.Projectiles.Stands
             if (States.Count > 0)
             {
                 CurrentState.Update();
-
+                
                 if (!CurrentState.CurrentAnimation.Active)
                 {
-                    int temp = State;
                     CurrentState.EndState();
-
-                    if(LastState != temp)
-                        SetState(LastState);
                 }
             }
             else // some placeholder shit
@@ -79,14 +77,14 @@ namespace TBAR.Projectiles.Stands
             writer.Write(MousePosition.X);
             writer.Write(MousePosition.Y);
 
-            writer.Write((byte)State);
+            writer.Write((string)State);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
             MousePosition = new Vector2(reader.ReadSingle(), reader.ReadSingle());
 
-            byte receivedState = reader.ReadByte();
+            string receivedState = reader.ReadString();
 
             if (States.ContainsKey(receivedState))
             {
@@ -165,7 +163,7 @@ namespace TBAR.Projectiles.Stands
             return currentDamage;
         }
 
-        public void SetState(int value)
+        public void SetState(string value)
         {
             if (State == value)
                 return;
@@ -177,9 +175,9 @@ namespace TBAR.Projectiles.Stands
             CurrentState.BeginState();
         }
 
-        public int LastState { get; private set; }
+        public string LastState { get; private set; }
 
-        public int State { get; private set; }
+        public string State { get; private set; }
 
         public string StandName { get; set; }
 
@@ -190,7 +188,7 @@ namespace TBAR.Projectiles.Stands
         /// <summary>
         /// Contains all the available states for the stand
         /// </summary>
-        public Dictionary<int, StandState> States { get; }
+        public Dictionary<string, StandState> States { get; private set; }
 
         public TBARPlayer User => TBARPlayer.Get(Owner);
 

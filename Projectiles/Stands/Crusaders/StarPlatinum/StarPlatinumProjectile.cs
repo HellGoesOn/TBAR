@@ -41,7 +41,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
 
             summon.OnStateBegin += OnSummon; 
             summon.OnStateUpdate += Summon;
-            summon.OnStateEnd += delegate { SetState((int)SPStates.Idle); };
+            summon.OnStateEnd += delegate { SetState(SPStates.Idle.ToString()); };
 
             StandState despawn = new StandState(path + "SPDespawn", 6, 12);
             despawn.OnStateUpdate += Despawn;
@@ -53,21 +53,27 @@ namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
             SpriteAnimation punchMidLeft = new SpriteAnimation(path + "SPPunch_Middle_LeftHand", 3, 10);
             SpriteAnimation punchMidRight = new SpriteAnimation(path + "SPPunch_Middle_RightHand", 3, 10);
 
-            StandState punchState = new StandState(punchMidLeft, punchMidRight);
+            SpriteAnimation punchUpLeft = new SpriteAnimation(path + "SPPunch_Up_LeftHand", 3, 10);
+            SpriteAnimation punchUpRight = new SpriteAnimation(path + "SPPunch_Up_RightHand", 3, 10);
+
+            SpriteAnimation punchDownLeft = new SpriteAnimation(path + "SPPunch_Down_LeftHand", 3, 10);
+            SpriteAnimation punchDownRight = new SpriteAnimation(path + "SPPunch_Down_RightHand", 3, 10);
+
+            StandState punchState = new StandState
+                (punchMidLeft, punchMidRight, punchDownLeft, punchDownRight, punchUpRight, punchUpLeft);
+
             punchState.OnStateBegin += BeginPunch;
             punchState.OnStateUpdate += UpdatePunch;
             punchState.OnStateEnd += EndPunch;
 
             StandState barrageState = new StandState(path + "SPRush_Middle", 4, 15, true, 180);
-            barrageState.OnStateBegin += delegate
-            {
-                PunchDirection = Owner.Center.DirectTo(MousePosition, Owner.width + 16 * Range);
-                Barrage = PunchBarrage.CreateBarrage(path + "StarFist", projectile, projectile.Center.DirectTo(MousePosition, 24f), 60, path + "StarFistBack");
-            };
+            barrageState.OnStateBegin += BarrageState_OnStateBegin;
 
             barrageState.OnStateUpdate += delegate
             {
-                SpriteFX = Barrage.Center.X < projectile.Center.X ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+                if(Barrage != null)
+                    SpriteFX = Barrage.Center.X < projectile.Center.X ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+
                 projectile.Center = Vector2.Lerp(projectile.Center, Owner.Center + PunchDirection, 0.35f);
             };
 
@@ -75,15 +81,23 @@ namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
             {
                 PunchDirection = Vector2.Zero;
                 Barrage = null;
+                SetState(SPStates.Idle.ToString());
             };
 
-            States.Add((int)SPStates.Summon, summon);
-            States.Add((int)SPStates.Idle, idle);
-            States.Add((int)SPStates.Despawn, despawn);
-            States.Add((int)SPStates.Punch, punchState);
-            States.Add((int)SPStates.Barrage, barrageState);
+            States.Add(SPStates.Summon.ToString(), summon);
+            States.Add(SPStates.Idle.ToString(), idle);
+            States.Add(SPStates.Despawn.ToString(), despawn);
+            States.Add(SPStates.Punch.ToString(), punchState);
+            States.Add(SPStates.Barrage.ToString(), barrageState);
 
-            SetState((int)SPStates.Summon);
+            SetState(SPStates.Summon.ToString());
+
+            TBAR.Instance.Logger.Debug($"{this} at index {projectile.whoAmI} has {States.Count}");
+        }
+
+        private void BarrageState_OnStateBegin(StandState sender)
+        {
+            PunchDirection = Owner.Center.DirectTo(MousePosition, Owner.width + 16 * Range);
         }
 
         public override void AI()
@@ -112,9 +126,9 @@ namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
 
         public override void PostAI()
         {
-            if(Owner.whoAmI == Main.myPlayer && TBARInputs.SummonStand.JustPressed && State == (int)SPStates.Idle)
+            if(Owner.whoAmI == Main.myPlayer && TBARInputs.SummonStand.JustPressed && State == SPStates.Idle.ToString())
             {
-                SetState((int)SPStates.Despawn);
+                SetState(SPStates.Despawn.ToString());
             }
         }
 
@@ -158,11 +172,19 @@ namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
 
         protected override int PunchAnimationIDOffset()
         {
-            return Main.rand.Next(2);
+            int offset = 0;
+
+            if (MousePosition.Y > Owner.Center.Y + 120)
+                offset = 2;
+
+            if (MousePosition.Y < Owner.Center.Y - 120)
+                offset = 4;
+
+            return Main.rand.Next(0, 2) + offset;
         }
 
-        public override bool CanPunch => State == (int)SPStates.Idle;
+        public override bool CanPunch => State == SPStates.Idle.ToString();
 
-        protected override int PunchState => (int)SPStates.Punch;
+        protected override string PunchState => SPStates.Punch.ToString();
     }
 }

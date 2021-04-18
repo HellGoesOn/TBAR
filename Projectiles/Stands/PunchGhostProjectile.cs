@@ -17,11 +17,12 @@ namespace TBAR.Projectiles.Stands
 
         public override void SafeSetDefaults()
         {
+            projectile.damage = 0;
             projectile.width = 60;
             projectile.height = 60;
         }
 
-        protected abstract int PunchState { get; }
+        protected abstract string PunchState { get; }
 
         protected void BeginPunch(StandState sender)
         {
@@ -39,14 +40,15 @@ namespace TBAR.Projectiles.Stands
         protected void UpdatePunch(StandState _)
         {
             projectile.Center = Vector2.Lerp(projectile.Center, Owner.Center + PunchDirection, 0.35f);
-            SpriteFX = Owner.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Owner.direction = (Owner.Center + PunchDirection).X < Owner.Center.X ? -1 : 1;
+            SpriteFX = Owner.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
         }
 
         protected void EndPunch(StandState _)
         {
             PunchStartPoint = PunchDirection = Vector2.Zero;
             projectile.damage = 0;
+            SetState("Idle");
         }
 
         public override void HandleImmediateInputs(ImmediateInput input)
