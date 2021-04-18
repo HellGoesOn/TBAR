@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using TBAR.Enums;
+using TBAR.NPCs;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -8,7 +10,10 @@ namespace TBAR.TimeStop
 {
     public class TimeStopManager
     {
-        private TimeStopManager() { }
+        private TimeStopManager()
+        {
+            TimeStops = new List<TimeStopInstance>();
+        }
 
         private Entity GetEntity(EntityType type, int index)
         {
@@ -52,7 +57,6 @@ namespace TBAR.TimeStop
             {
                 FindAndRemoveInstance(owner);
             }
-
         }
 
         private void FindAndRemoveInstance(Entity owner)
@@ -60,26 +64,57 @@ namespace TBAR.TimeStop
             int myTimeStopIndex = TimeStops.FindIndex(x => x.Owner == owner);
 
             if (TimeStops.Count == 1)
+            {
+                HasOrderToRestore = true;
                 TBAR.Instance.PlaySound(TimeStops[0].EndSoundEffect);
+            }
 
             TimeStops.RemoveAt(myTimeStopIndex);
         }
 
         public void Update()
         {
+            if (Main.gameMenu && Main.netMode == NetmodeID.SinglePlayer)
+                TimeStops.Clear();
+
+            if (HasOrderToRestore)
+                RestoreOrder();
+
             for (int i = TimeStops.Count - 1; i >= 0; i--)
             {
                 if (--TimeStops[i].Duration <= 0)
                 {
-                    if(i == 0)
+                    if (i == 0)
+                    {
+                        HasOrderToRestore = true;
                         TBAR.Instance.PlaySound(TimeStops[0].EndSoundEffect);
-
+                    }
                     TimeStops.RemoveAt(i);
                 }
             }
+
+            /*if (Main.dedServ)
+                TBAR.Instance.Logger.Debug($"IsTimeStopped: {IsTimeStopped}");*/
         }
 
-        public void SendPacket(EntityType myType, int myIndex, int duration, int ignore = -1)
+        public void RestoreOrder()
+        {
+            // if we are playing as a client, then only the server should handle this
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+                return;
+
+            foreach (NPC npc in Main.npc)
+            {
+                if (!npc.active)
+                    continue;
+
+                TBARGlobalNPC.RestoreAction(npc);
+            }
+
+            HasOrderToRestore = false;
+        }
+
+        /*public void SendPacket(EntityType myType, int myIndex, int duration, int ignore = -1)
         {
             if (Main.netMode == NetmodeID.SinglePlayer)
                 return;
@@ -92,13 +127,15 @@ namespace TBAR.TimeStop
             packet.Write((int)duration);
 
             packet.Send(-1, ignore);
-        }
+        }*/
 
-        public List<TimeStopInstance> TimeStops { get; } = new List<TimeStopInstance>();
+        public List<TimeStopInstance> TimeStops { get; }
 
         public bool HaveITimeStopped(Entity e) => TimeStops.Find(x => x.Owner == e) != null;
 
         public bool IsTimeStopped => TimeStops.Count > 0;
+
+        public bool HasOrderToRestore { get; set; }
 
         public static void Unload()
         {

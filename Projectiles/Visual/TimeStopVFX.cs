@@ -45,6 +45,7 @@ namespace TBAR.Projectiles.Visual
 
             float progress = (240f - projectile.timeLeft) / 60f;
 
+            Filters.Scene["Shockwave"].GetShader().UseTargetPosition(projectile.Center);
             Filters.Scene["Shockwave"].GetShader().UseProgress(progress).UseOpacity(DISTORT_STRENGTH * (progress / 3f));
         }
 

@@ -1,17 +1,13 @@
-﻿using Terraria;
+﻿using System.Collections.Generic;
 using TBAR.Input;
 using Terraria.GameInput;
 using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
-using System.Collections.Generic;
-using TBAR.Stands;
-using Terraria.ID;
 
 namespace TBAR.Players
 {
     public partial class TBARPlayer : ModPlayer
     {
-        private const int COMBO_TIME = 90;
+        private const int COMBO_TIME = 80;
 
         public override void ProcessTriggers(TriggersSet triggersSet)
         {

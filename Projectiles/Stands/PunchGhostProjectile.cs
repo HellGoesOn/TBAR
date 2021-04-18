@@ -1,10 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
-using TBAR.Components;
 using TBAR.Enums;
 using TBAR.Extensions;
 using TBAR.Input;
 using TBAR.Stands;
-using Terraria;
 
 namespace TBAR.Projectiles.Stands
 {
@@ -17,8 +15,8 @@ namespace TBAR.Projectiles.Stands
 
         public override void SafeSetDefaults()
         {
-            projectile.width = 40;
-            projectile.height = 40;
+            projectile.width = 60;
+            projectile.height = 60;
         }
 
         protected abstract int PunchState { get; }

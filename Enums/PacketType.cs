@@ -4,7 +4,6 @@
     {
         SyncStand,
         StandChanged,
-        UsedCombo,
-        TimeStopServer
+        UsedCombo
     }
 }

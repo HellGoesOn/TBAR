@@ -13,8 +13,6 @@ namespace TBAR
 {
     public partial class TBAR : Mod
     {
-        bool IsSender(int whoAmI) => Main.myPlayer != whoAmI;
-
         bool IsServer => Main.netMode == NetmodeID.Server;
 
         public override void HandlePacket(BinaryReader reader, int whoAmI)
@@ -23,40 +21,33 @@ namespace TBAR
 
             switch (type)
             {
-                case PacketType.TimeStopServer:
-                    EntityType eType = (EntityType)reader.ReadByte();
-                    int index = reader.ReadInt32();
-                    int duration = reader.ReadInt32();
-
-                    if (!IsSender(whoAmI))
-                        TimeStopManager.Instance.TryStopTime(eType, index, duration);
-
-                    if (IsServer)
-                        TimeStopManager.Instance.SendPacket(eType, index, duration, whoAmI);
-                    break;
-
                 case PacketType.SyncStand:
                     byte playerNumber = reader.ReadByte();
                     string name = reader.ReadString();
                     TBARPlayer plr = TBARPlayer.Get(Main.player[playerNumber]);
 
-                    if (!IsSender(whoAmI))
+                    plr.PlayerStand = StandFactory.Instance.Get(name);
+
+                    if(IsServer)
                         plr.PlayerStand = StandFactory.Instance.Get(name);
 
                     break;
 
                 case PacketType.UsedCombo:
+                    this.Logger.Debug("Combo packet received");
+                    this.Logger.DebugFormat("State before packet {0}", TimeStopManager.Instance.IsTimeStopped);
                     playerNumber = reader.ReadByte();
                     string comboName = reader.ReadString();
 
+                    this.Logger.Debug($"Combo Name {comboName}");
                     plr = TBARPlayer.Get(Main.player[playerNumber]);
 
-                    if (!IsSender(whoAmI))
-                        plr.PlayerStand.ForceCombo(comboName, plr.player);
+                    plr.PlayerStand.ForceCombo(comboName, plr.player);
 
                     if (IsServer)
                         StandCombo.SendPacket(plr.player, comboName, whoAmI);
 
+                    this.Logger.DebugFormat("State after packet {0}", TimeStopManager.Instance.IsTimeStopped);
                     break;
 
                 case PacketType.StandChanged:
@@ -64,11 +55,13 @@ namespace TBAR
                     name = reader.ReadString();
                     plr = TBARPlayer.Get(Main.player[playerNumber]);
 
-                    if (!IsSender(whoAmI))
-                        plr.PlayerStand = StandFactory.Instance.Get(name);
+                    plr.PlayerStand = StandFactory.Instance.Get(name);
 
                     if (IsServer)
+                    {
+                        plr.PlayerStand = StandFactory.Instance.Get(name);
                         plr.SendStandChangedPacket(playerNumber);
+                    }
                     break;
             }
         }

@@ -34,13 +34,14 @@ namespace TBAR.Stands.Crusaders
             bool isTimeStopped = TimeStopManager.Instance.IsTimeStopped;
             string path = isTimeStopped ? "" : "Sounds/StarPlatinum/SP_TimeStopSignal";
 
-            TimeStopInstance ts = new TimeStopInstance(player, 300, path) { EndSoundEffect = "Sounds/StarPlatinum/SP_TimeRestore" };
+            TimeStopInstance ts = new TimeStopInstance(player, 600, path) { EndSoundEffect = "Sounds/StarPlatinum/SP_TimeRestore" };
 
             if (!isTimeStopped)
             {
                 Projectile.NewProjectile(player.Center, Vector2.Zero, ModContent.ProjectileType<TimeStopVFX>(), 0, 0, player.whoAmI);
                 TBAR.Instance.PlayVoiceLine("Sounds/StarPlatinum/SP_TimeStopCall");
             }
+
             TimeStopManager.Instance.TryStopTime(ts);
         }
     }

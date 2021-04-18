@@ -48,15 +48,10 @@ namespace TBAR
 
 
             On.Terraria.Main.Update += Main_Update;
+            OnEdits.Instance.LoadEdits();
 
             StandFactory.Instance.Load();
             TBARInputs.Load(this);
-        }
-
-        private void Main_Update(On.Terraria.Main.orig_Update orig, Main self, GameTime gameTime)
-        {
-            orig.Invoke(self, gameTime);
-            TimeStopManager.Instance.Update();
         }
 
         public override void UpdateUI(GameTime gameTime)
@@ -74,6 +69,9 @@ namespace TBAR
             TimeStopManager.Unload();
 
             TBARInputs.Unload();
+            OnEdits.Instance.UnloadEdits();
+
+            OnEdits.EndLife();
 
             Instance = null;
         }
@@ -100,5 +98,11 @@ namespace TBAR
         }
 
         public bool VoiceLinesEnabled { get; set; } = true;
+
+        private void Main_Update(On.Terraria.Main.orig_Update orig, Main self, GameTime gameTime)
+        {
+            orig.Invoke(self, gameTime);
+            TimeStopManager.Instance.Update();
+        }
     }
 }
