@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using TBAR.Components;
+using TBAR.Extensions;
 using TBAR.Input;
 using TBAR.Players;
 using TBAR.Stands;
@@ -9,15 +10,17 @@ using Terraria;
 
 namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
 {
+    public enum SPStates
+    {
+        Summon = 1,
+        Idle,
+        Despawn,
+        Punch,
+        Barrage
+    }
+
     public class StarPlatinumProjectile : PunchGhostProjectile
     {
-        public enum SPStates
-        {
-            Summon = 1,
-            Idle,
-            Despawn,
-            Punch
-        }
 
         public float Offset { get; set; }
         public bool ReverseOffsetGain { get; set; }
@@ -27,7 +30,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
 
         }
 
-        public override void AddStates()
+        public override void AddStates(Projectile projectile)
         {
             AuraColor = new Color(1f, 0f, 1f);
             Opacity = 0f;
@@ -55,10 +58,30 @@ namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
             punchState.OnStateUpdate += UpdatePunch;
             punchState.OnStateEnd += EndPunch;
 
+            StandState barrageState = new StandState(path + "SPRush_Middle", 4, 15, true, 180);
+            barrageState.OnStateBegin += delegate
+            {
+                PunchDirection = Owner.Center.DirectTo(MousePosition, Owner.width + 16 * Range);
+                Barrage = PunchBarrage.CreateBarrage(path + "StarFist", projectile, projectile.Center.DirectTo(MousePosition, 24f), 60, path + "StarFistBack");
+            };
+
+            barrageState.OnStateUpdate += delegate
+            {
+                SpriteFX = Barrage.Center.X < projectile.Center.X ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+                projectile.Center = Vector2.Lerp(projectile.Center, Owner.Center + PunchDirection, 0.35f);
+            };
+
+            barrageState.OnStateEnd += delegate
+            {
+                PunchDirection = Vector2.Zero;
+                Barrage = null;
+            };
+
             States.Add((int)SPStates.Summon, summon);
             States.Add((int)SPStates.Idle, idle);
             States.Add((int)SPStates.Despawn, despawn);
             States.Add((int)SPStates.Punch, punchState);
+            States.Add((int)SPStates.Barrage, barrageState);
 
             SetState((int)SPStates.Summon);
         }
@@ -97,7 +120,6 @@ namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            SpriteFX = Owner.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             return false;
         }
 
@@ -109,7 +131,8 @@ namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
 
         private void Summon(StandState sender)
         {
-            if(Opacity < 1f)
+            SpriteFX = Owner.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            if (Opacity < 1f)
                 Opacity += 0.05f;
 
             projectile.Center = Vector2.Lerp(projectile.Center, Owner.Center + new Vector2(-30 * Owner.direction, -32), 0.12f);
@@ -117,6 +140,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
 
         private void Despawn(StandState sender)
         {
+            SpriteFX = Owner.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Opacity -= 0.05f;
             projectile.Center = Vector2.Lerp(projectile.Center, Owner.Center + new Vector2(-12 * Owner.direction, -12), 0.12f);
         }
@@ -128,6 +152,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
 
         private void Idle(StandState sender)
         {
+            SpriteFX = Owner.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             projectile.Center = Vector2.Lerp(projectile.Center, Owner.Center + new Vector2(-30 * Owner.direction, -32), 0.12f);
         }
 
@@ -135,6 +160,8 @@ namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
         {
             return Main.rand.Next(2);
         }
+
+        public override bool CanPunch => State == (int)SPStates.Idle;
 
         protected override int PunchState => (int)SPStates.Punch;
     }

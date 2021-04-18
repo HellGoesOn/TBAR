@@ -80,6 +80,12 @@ namespace TBAR.TimeStop
             if (HasOrderToRestore)
                 RestoreOrder();
 
+            if (IsTimeStopped)
+            {
+                Main.windSpeed = 0;
+                Main.time--;
+            }
+
             for (int i = TimeStops.Count - 1; i >= 0; i--)
             {
                 if (--TimeStops[i].Duration <= 0)

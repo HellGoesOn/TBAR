@@ -44,6 +44,8 @@ namespace TBAR
 
                 Filters.Scene["TBA:FreezeSky"] = new Filter(new ScreenShaderData("FilterMiniTower").UseColor(.7f, .7f, .7f), EffectPriority.VeryHigh);
                 SkyManager.Instance["TBA:FreezeSky"] = new FreezeSky();
+                AddEquipTexture(null, EquipType.Head, "DiavoloHead", "TBAR/Items/Vanity/VinegarDisguise/DiavoloHead_Head");
+                AddEquipTexture(null, EquipType.Body, "DiavoloBody", "TBAR/Items/Vanity/VinegarDisguise/DiavoloChest_Body", "TBAR/Items/Vanity/VinegarDisguise/DiavoloChest_Arms");
             }
 
 

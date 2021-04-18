@@ -1,8 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using TBAR.Enums;
 using TBAR.Extensions;
 using TBAR.Input;
 using TBAR.Stands;
+using Terraria;
 
 namespace TBAR.Projectiles.Stands
 {
@@ -37,6 +39,7 @@ namespace TBAR.Projectiles.Stands
         protected void UpdatePunch(StandState _)
         {
             projectile.Center = Vector2.Lerp(projectile.Center, Owner.Center + PunchDirection, 0.35f);
+            SpriteFX = Owner.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Owner.direction = (Owner.Center + PunchDirection).X < Owner.Center.X ? -1 : 1;
         }
 
@@ -55,7 +58,8 @@ namespace TBAR.Projectiles.Stands
                 case ImmediateInput.Action3:
                 case ImmediateInput.LeftClick:
                 case ImmediateInput.RightClick:
-                    SetState(PunchState);
+                    if(CanPunch)
+                        SetState(PunchState);
                     break;
                 default:
                     return;
@@ -73,6 +77,10 @@ namespace TBAR.Projectiles.Stands
 
         public Vector2 PunchDirection { get; set; }
 
+        public virtual bool CanPunch => true;
+
         public float Range { get; set; } = 2.0f;
+
+        public Projectile Barrage { get; set; }
     }
 }

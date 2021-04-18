@@ -36,14 +36,14 @@ namespace TBAR.Projectiles.Stands
             projectile.damage = 0;
 
             if(!Main.gameMenu || Main.dedServ)
-                AddStates();
+                AddStates(projectile);
 
             SafeSetDefaults();
         }
 
         public virtual void SafeSetDefaults() { }
 
-        public abstract void AddStates();
+        public abstract void AddStates(Projectile projectile);
 
         public override void AI()
         {

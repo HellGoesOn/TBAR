@@ -21,7 +21,11 @@ namespace TBAR.Stands.Crusaders
             StandCombo timeStop = new StandCombo("Time Stop", ComboInput.Action1, ComboInput.Action1, ComboInput.Action2);
             timeStop.OnActivate += StopTime;
 
+            StandCombo barrage = new StandCombo("Barrage", ComboInput.Action2, ComboInput.Action1, ComboInput.Action2);
+            barrage.OnActivate += Barrage;
+
             GlobalCombos.Add(timeStop);
+            NormalCombos.Add(barrage);
         }
 
         public override SpriteAnimation AlbumEntryAnimation()
@@ -43,6 +47,13 @@ namespace TBAR.Stands.Crusaders
             }
 
             TimeStopManager.Instance.TryStopTime(ts);
+        }
+
+        private void Barrage(Player player)
+        {
+            StarPlatinumProjectile sp = ActiveStandProjectile as StarPlatinumProjectile;
+
+            sp?.SetState((int)SPStates.Barrage);
         }
     }
 }
