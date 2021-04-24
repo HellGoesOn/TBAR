@@ -126,6 +126,8 @@ namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
 
         public override void PostAI()
         {
+            base.PostAI();
+
             if(Owner.whoAmI == Main.myPlayer && TBARInputs.SummonStand.JustPressed && State == SPStates.Idle.ToString())
             {
                 SetState(SPStates.Despawn.ToString());

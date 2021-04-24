@@ -1,10 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 using TBAR.Enums;
 using TBAR.Extensions;
 using TBAR.Input;
 using TBAR.Stands;
+using TBAR.Structs;
 using Terraria;
+using System.Linq;
 
 namespace TBAR.Projectiles.Stands
 {
@@ -20,6 +23,32 @@ namespace TBAR.Projectiles.Stands
             projectile.damage = 0;
             projectile.width = 60;
             projectile.height = 60;
+            projectile.penetrate = 1;
+
+            HitNPCs = new List<HitNPCData>();
+        }
+
+        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        {
+            projectile.penetrate++;
+
+            HitNPCs.Add(new HitNPCData(target.whoAmI, ElapsedTime));
+        }
+
+        public override bool? CanHitNPC(NPC target)
+        {
+            return HitNPCs.Count(x => x.Index == target.whoAmI) <= 0;
+        }
+
+        public override void PostAI()
+        {
+            base.PostAI();
+
+            ElapsedTime++;
+
+            for(int i = HitNPCs.Count - 1; i >= 0; i--)
+                if (HitNPCs[i].TimeOfHit + AttackSpeed < ElapsedTime)
+                    HitNPCs.RemoveAt(i);
         }
 
         protected abstract string PunchState { get; }
@@ -84,5 +113,11 @@ namespace TBAR.Projectiles.Stands
         public float Range { get; set; } = 2.0f;
 
         public Projectile Barrage { get; set; }
+
+        public uint ElapsedTime { get; set; }
+
+        public int AttackSpeed { get; set; } = 20;
+
+        public List<HitNPCData> HitNPCs { get; private set; }
     }
 }
