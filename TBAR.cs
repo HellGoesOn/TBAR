@@ -81,6 +81,7 @@ namespace TBAR
         public override void ModifyInterfaceLayers(List<GameInterfaceLayer> layers)
         {
             layers.Add(UIManager.Instance.TimeSkipLayer);
+            layers.Insert(0, UIManager.Instance.StandAlbumLayer);
         }
 
         public void PlayVoiceLine(string SoundPath)

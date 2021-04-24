@@ -64,6 +64,8 @@ namespace TBAR.Input
             packet.Send(-1, fromWho);
         }
 
+        public string Description { get; set; }
+
         public string ComboName { get; }
 
         public List<ComboInput> RequiredInputs { get; } = new List<ComboInput>();

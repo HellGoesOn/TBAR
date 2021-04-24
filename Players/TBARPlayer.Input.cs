@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using TBAR.Input;
+using TBAR.UI;
 using Terraria;
 using Terraria.GameInput;
 using Terraria.ModLoader;
@@ -16,6 +17,11 @@ namespace TBAR.Players
             if (TBARInputs.SummonStand.JustPressed && IsStandUser && !PlayerStand.IsActive)
             {
                 PlayerStand.TryActivate(player);
+            }
+
+            if(TBARInputs.OpenStandAlbum.JustPressed)
+            {
+                UIManager.Instance.StandAlbumLayer.ToggleVisibility();
             }
 
             if(IsStandUser)

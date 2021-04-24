@@ -16,6 +16,8 @@ namespace TBAR.Input
             ComboButton1 = mod.RegisterHotKey("Combo Button 1", "X");
             ComboButton2 = mod.RegisterHotKey("Combo Button 2", "C");
             ComboButton3 = mod.RegisterHotKey("Combo Button 3", "V");
+
+            OpenStandAlbum = mod.RegisterHotKey("Open Stand Album", "O");
         }
 
         public static void Unload()
@@ -24,7 +26,10 @@ namespace TBAR.Input
             ComboButton1 = null;
             ComboButton2 = null;
             ComboButton3 = null;
+            OpenStandAlbum = null;
         }
+
+        public static ModHotKey OpenStandAlbum { get; set; }
 
         public static ModHotKey SummonStand { get; set; }
 

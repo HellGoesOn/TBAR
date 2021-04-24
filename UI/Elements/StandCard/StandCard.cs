@@ -1,10 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TBAR.Components;
 using TBAR.Players;
 using TBAR.Stands;
@@ -15,11 +10,14 @@ namespace TBAR.UI.Elements.StandCard
 {
     public class StandCard : UIElement
     {
-        public StandCard(Stand stand)
+        public StandCard()
         {
             Width.Set(140, 0);
             Height.Set(200, 0);
+        }
 
+        public void SetStand(Stand stand)
+        {
             Stand = stand;
             StandDisplayName = Stand.StandName;
 
@@ -31,8 +29,8 @@ namespace TBAR.UI.Elements.StandCard
             base.Update(gameTime);
 
 
-            if (Main.GameUpdateCount % 1 == 0)
-                Idle.Update();
+            if (Main.GameUpdateCount % 2 == 0)
+                Idle?.Update();
         }
 
         protected override void DrawSelf(SpriteBatch spriteBatch)
@@ -45,7 +43,11 @@ namespace TBAR.UI.Elements.StandCard
                 Main.LocalPlayer.mouseInterface = true;
             }
 
-            Texture2D texture = TBARPlayer.Get().PlayerStand.StandName == StandDisplayName ? Textures.StandCardCurrent : Textures.StandCard;
+            Stand stand = TBARPlayer.Get().PlayerStand;
+
+            bool existsAndMatches = stand != null && stand.StandName == StandDisplayName;
+
+            Texture2D texture = existsAndMatches ? Textures.StandCardCurrent : Textures.StandCard;
 
             spriteBatch.Draw(texture, dims.Position(), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
 
@@ -56,21 +58,21 @@ namespace TBAR.UI.Elements.StandCard
             }
 
             if (Unlocked)
-            {
+            {*/
                 Vector2 anchor = dims.Position() + new Vector2(16, 160);
-                spriteBatch.Draw(Idle.SpriteSheet, dims.Position() + new Vector2(70), Idle.FrameRect, Color.White, 0f, Idle.DrawOrigin, 1f, SpriteEffects.None, 1f);
+                spriteBatch.Draw(Idle.SpriteSheet, dims.Position() + new Vector2(70), Idle.FrameRect, Color.White, 0f, Idle.DrawOrigin, 1f, SpriteEffects.FlipHorizontally, 1f);
                 Utils.DrawBorderString(spriteBatch, StandDisplayName, anchor, Color.White, 1);
-            }*/
+            //}
         }
 
-        public string StandUnlocalizedName { get; }
+        public string StandUnlocalizedName { get; private set; }
 
-        public string StandDisplayName { get; }
+        public string StandDisplayName { get; private set; }
 
         public string CallPath { get; }
 
-        public SpriteAnimation Idle { get; }
+        public SpriteAnimation Idle { get; private set; }
 
-        public Stand Stand { get; }
+        public Stand Stand { get; private set; }
     }
 }

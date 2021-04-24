@@ -8,15 +8,20 @@ namespace TBAR.UI
         internal void Initialize()
         {
             TimeSkipLayer = new TimeSkipLayer();
+            StandAlbumLayer = new StandAlbumLayer();
         }
 
         public void Update(GameTime gameTime)
         {
             TimeSkipLayer.State.Update(gameTime);
             TimeSkipLayer.State.Visible = TimeSkipManager.Instance.VFX.Animation.Active;
+
+            StandAlbumLayer.Update(gameTime);
         }
 
         public TimeSkipLayer TimeSkipLayer { get; set; }
+
+        public StandAlbumLayer StandAlbumLayer { get; set; }
 
         public static void Unload()
         {

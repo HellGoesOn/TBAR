@@ -29,6 +29,7 @@ namespace TBAR.Stands.Crusaders
 
             StandCombo offensiveTimeStop = new StandCombo("Offensive Time Stop", ComboInput.Up, ComboInput.Action1, ComboInput.Up, ComboInput.Action2);
             offensiveTimeStop.OnActivate += OffensiveTimeStop;
+            offensiveTimeStop.Description = "Allows you to prepare a Quick Time Stop.\nAfter use, Right-Click on a location to teleport there.\nClicking on an Entity will cause you to teleport behind it.";
 
             GlobalCombos.Add(timeStop);
             GlobalCombos.Add(offensiveTimeStop);
