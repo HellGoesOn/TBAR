@@ -24,6 +24,7 @@ namespace TBAR.Projectiles.Stands
             projectile.width = 60;
             projectile.height = 60;
             projectile.penetrate = 1;
+            BaseDPS = -1;
 
             HitNPCs = new List<HitNPCData>();
         }
@@ -43,6 +44,9 @@ namespace TBAR.Projectiles.Stands
         public override void PostAI()
         {
             base.PostAI();
+
+            if(BaseDPS == -1)
+                BaseDPS = Owner.HeldItem.GetDamageData(Owner).DPS;
 
             ElapsedTime++;
 
@@ -117,6 +121,8 @@ namespace TBAR.Projectiles.Stands
         public uint ElapsedTime { get; set; }
 
         public int AttackSpeed { get; set; } = 20;
+
+        public int BaseDPS { get; set; }
 
         public List<HitNPCData> HitNPCs { get; private set; }
     }

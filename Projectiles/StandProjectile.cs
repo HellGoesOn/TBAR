@@ -37,6 +37,8 @@ namespace TBAR.Projectiles.Stands
 
             States.Clear();
 
+            Scale = Vector2.One;
+
             if (projectile.active)
                 AddStates(projectile);
 
@@ -110,7 +112,7 @@ namespace TBAR.Projectiles.Stands
         {
             SpriteAnimation animation = CurrentState.AssignedAnimations[CurrentState.CurrentAnimationID];
 
-            spriteBatch.Draw(animation.SpriteSheet, position - Main.screenPosition, animation.FrameRect, color * Opacity, 0f, animation.DrawOrigin, 1f, fx, 1f);
+            spriteBatch.Draw(animation.SpriteSheet, position - Main.screenPosition, animation.FrameRect, color * Opacity, 0f, animation.DrawOrigin, Scale, fx, 1f);
         }
 
         public Player Owner => Main.player[projectile.owner];
@@ -180,6 +182,8 @@ namespace TBAR.Projectiles.Stands
         public string State { get; private set; }
 
         public string StandName { get; set; }
+
+        public Vector2 Scale { get; set; }
 
         public StandState CurrentState => States[State];
 

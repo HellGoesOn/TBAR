@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using TBAR.Components;
+using TBAR.Enums;
 using TBAR.Extensions;
 using TBAR.Input;
 using TBAR.Players;
@@ -183,6 +184,11 @@ namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
                 offset = 4;
 
             return Main.rand.Next(0, 2) + offset;
+        }
+
+        protected override int GetPunchDamage()
+        {
+            return (int)(12 + BaseDPS * 1.2f);
         }
 
         public override bool CanPunch => State == SPStates.Idle.ToString();
