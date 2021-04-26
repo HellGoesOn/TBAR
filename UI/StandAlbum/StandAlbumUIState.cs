@@ -44,9 +44,11 @@ namespace TBAR.UI.ScreenEffects.TimeSkip
             scrollBar.HAlign = 0.985f;
             scrollBar.VAlign = 0.5f;
 
-            Card = new StandCard();
-            Card.HAlign = 0.5f;
-            Card.VAlign = 0.015f;
+            Card = new StandCard
+            {
+                HAlign = 0.5f,
+                VAlign = 0.015f
+            };
 
             ComboGrid = new UIGrid();
             ComboGrid.Width.Set(ComboPanel.WIDTH + 40, 0);
