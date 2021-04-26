@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TBAR.Enums;
 using TBAR.NPCs;
 using Terraria;
 using Terraria.ID;
-using Terraria.ModLoader;
 
 namespace TBAR.TimeStop
 {
@@ -63,13 +61,16 @@ namespace TBAR.TimeStop
         {
             int myTimeStopIndex = TimeStops.FindIndex(x => x.Owner == owner);
 
-            if (TimeStops.Count == 1)
+            int preRemoveCount = TimeStops.Count;
+
+            if (TimeStops.Count - 1 == 0)
             {
                 HasOrderToRestore = true;
                 TBAR.Instance.PlaySound(TimeStops[0].EndSoundEffect);
             }
 
-            TimeStops.RemoveAt(myTimeStopIndex);
+            if (TimeStops.Count > 0)
+                TimeStops.RemoveAt(myTimeStopIndex);
         }
 
         public void Update()

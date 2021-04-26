@@ -41,6 +41,11 @@ namespace TBAR.Projectiles.Stands
             return HitNPCs.Count(x => x.Index == target.whoAmI) <= 0;
         }
 
+        public override void ModifyHitPvp(Player target, ref int damage, ref bool crit)
+        {
+            projectile.penetrate++;
+        }
+
         public override void PostAI()
         {
             base.PostAI();
