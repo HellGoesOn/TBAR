@@ -61,12 +61,15 @@ namespace TBAR.Stands.Crusaders
         {
             StarPlatinumProjectile sp = ActiveStandProjectile as StarPlatinumProjectile;
 
-            sp?.SetState(SPStates.Barrage.ToString());
+            if (sp?.State == "Idle")
+            {
+                sp?.SetState(SPStates.Barrage.ToString());
 
-            string path = "Projectiles/Stands/Crusaders/StarPlatinum/";
-            Projectile projectile = sp.projectile;
-            int i = PunchBarrage.CreateBarrage(path + "StarFist", projectile, projectile.Center.DirectTo(ActiveStandProjectile.MousePosition, 24f), 60, path + "StarFistBack");
-            sp.Barrage = Main.projectile[i];
+                string path = "Projectiles/Stands/Crusaders/StarPlatinum/";
+                Projectile projectile = sp.projectile;
+                int i = PunchBarrage.CreateBarrage(path + "StarFist", projectile, projectile.Center.DirectTo(ActiveStandProjectile.MousePosition, 24f), 60, path + "StarFistBack");
+                sp.Barrage = Main.projectile[i];
+            }
         }
 
         private void OffensiveTimeStop(Player player)

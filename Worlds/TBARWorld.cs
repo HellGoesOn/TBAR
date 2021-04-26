@@ -1,4 +1,6 @@
-﻿using Terraria;
+﻿using TBAR.TimeStop;
+using TBAR.UI;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -10,20 +12,20 @@ namespace TBAR.Worlds
         {
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {
+                TimeStopManager.Instance.Update();
                 TimeSkipManager.Instance.Update();
+                UIManager.Instance.StandAlbumLayer?.State?.Card?.Idle?.Update();
             }
-
-            base.PostDrawTiles();
         }
 
         public override void PreUpdate()
         {
             if (Main.netMode == NetmodeID.SinglePlayer || Main.dedServ)
             {
+                TimeStopManager.Instance.Update();
                 TimeSkipManager.Instance.Update();
+                UIManager.Instance.StandAlbumLayer?.State?.Card?.Idle?.Update();
             }
-
-            base.PreUpdate();
         }
     }
 }

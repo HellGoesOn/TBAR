@@ -27,10 +27,6 @@ namespace TBAR.UI.Elements.StandCard
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
-
-
-            if (Main.GameUpdateCount % 2 == 0)
-                Idle?.Update();
         }
 
         protected override void DrawSelf(SpriteBatch spriteBatch)

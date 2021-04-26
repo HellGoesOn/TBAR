@@ -48,8 +48,6 @@ namespace TBAR
                 AddEquipTexture(null, EquipType.Body, "DiavoloBody", "TBAR/Items/Vanity/VinegarDisguise/DiavoloChest_Body", "TBAR/Items/Vanity/VinegarDisguise/DiavoloChest_Arms");
             }
 
-
-            On.Terraria.Main.Update += Main_Update;
             OnEdits.Instance.LoadEdits();
 
             StandFactory.Instance.Load();
@@ -101,11 +99,5 @@ namespace TBAR
         }
 
         public bool VoiceLinesEnabled { get; set; } = true;
-
-        private void Main_Update(On.Terraria.Main.orig_Update orig, Main self, GameTime gameTime)
-        {
-            orig.Invoke(self, gameTime);
-            TimeStopManager.Instance.Update();
-        }
     }
 }
