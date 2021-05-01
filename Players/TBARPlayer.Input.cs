@@ -12,6 +12,12 @@ namespace TBAR.Players
     {
         private const int COMBO_TIME = 60;
 
+        public override void SetControls()
+        {
+            if (InputBlockers.Count > 0)
+                BlockInputs();
+        }
+
         public override void ProcessTriggers(TriggersSet triggersSet)
         {
             if (TBARInputs.SummonStand.JustPressed && IsStandUser && !PlayerStand.IsActive)
@@ -60,16 +66,6 @@ namespace TBAR.Players
             }
         }
 
-        public void UpdateInputs()
-        {
-            if(ComboTimeExpired)
-            {
-                PlayerStand.HandleInputs(player, CurrentComboInputs);
-
-                CurrentComboInputs.Clear();
-            }
-        }
-
         private void OnInput(ComboInput input)
         {
             ComboTime = COMBO_TIME;
@@ -78,6 +74,36 @@ namespace TBAR.Players
 
             PlayerStand.HandleImmediateInputs(player, (ImmediateInput)input);
         }
+
+        private void BlockInputs(bool blockDirections = true, bool blockJumps = true, bool blockItemUse = true, bool blockOther = true)
+        {
+            if (blockDirections)
+            {
+                player.controlDown = false;
+                player.controlUp = false;
+                player.controlLeft = false;
+                player.controlRight = false;
+            }
+
+            if (blockJumps)
+                player.controlJump = false;
+
+            if (blockItemUse)
+            {
+                player.controlUseItem = false;
+                player.controlUseTile = false;
+            }
+
+            if (blockOther)
+            {
+                player.controlThrow = false;
+                player.controlMount = false;
+                player.controlHook = false;
+                player.mount?.Dismount(player);
+            }
+        }
+
+        public List<InputBlocker> InputBlockers { get; set; }
 
         public bool OldUpButtonState { get; private set; }
         public bool HasPressedUp => player.controlUp && !OldUpButtonState;

@@ -1,13 +1,17 @@
-﻿using TBAR.Players;
+﻿using TBAR.Input;
+using TBAR.Players;
 using TBAR.Stands;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using TBAR.ScreenModifiers;
 
 namespace TBAR.Items.Tools
 {
     public class StandArrow : ModItem
     {
+        public const int CUTSCENE_DURATION = 600;
+
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Bizarre Arrow");
@@ -19,19 +23,25 @@ namespace TBAR.Items.Tools
             item.value = Item.sellPrice(0, 20, 0, 0);
             item.width = item.height = 30;
             item.useStyle = ItemUseStyleID.SwingThrow;
-            item.useAnimation = 15;
-            item.useTime = 15;
+            item.useAnimation = item.useTime = CUTSCENE_DURATION;
             item.rare = ItemRarityID.Quest;
+            item.noUseGraphic = true;
         }
 
         public override bool CanUseItem(Player player)
         {
-            return !TBARPlayer.Get(player).IsStandUser;
+            return true; //!TBARPlayer.Get(player).IsStandUser;
         }
 
         public override bool UseItem(Player player)
         {
             TBARPlayer tBAR = TBARPlayer.Get(player);
+
+            InputBlocker.BlockInputs(player, CUTSCENE_DURATION);
+
+            player.mount.Dismount(player);
+
+            tBAR.ArrowProgress = tBAR.ArrowProgressMax;
 
             tBAR.PlayerStand = StandFactory.Instance.GetNewRandom(tBAR);
 

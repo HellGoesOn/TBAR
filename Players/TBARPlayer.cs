@@ -18,6 +18,7 @@ namespace TBAR.Players
 
         public override void Initialize()
         {
+            InputBlockers = new List<InputBlocker>();
             CurrentComboInputs = new List<ComboInput>(10);
         }
 
@@ -29,6 +30,8 @@ namespace TBAR.Players
 
         public override void ResetEffects()
         {
+            UpdateArrowUseProgress();
+
             if (IsStandUser)
             {
                 if (ComboTime > 0)
@@ -73,6 +76,12 @@ namespace TBAR.Players
                     CurrentComboInputs.Clear();
                 }    
             }
+
+
+            foreach (InputBlocker blocker in InputBlockers)
+                blocker.Duration--;
+
+            InputBlockers.RemoveAll(x => x.Duration == 0);
         }
 
         public override void UpdateDead()

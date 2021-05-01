@@ -98,6 +98,22 @@ namespace TBAR
             Main.PlaySound(Instance.GetLegacySoundSlot(SoundType.Custom, SoundPath));
         }
 
+        public override void UpdateMusic(ref int music, ref MusicPriority priority)
+        {
+            if (Main.myPlayer == -1 || Main.gameMenu || !Main.LocalPlayer.active)
+            {
+                return;
+            }
+
+            TBARPlayer plr = TBARPlayer.Get();
+
+            if (plr.IsUsingArrow)
+            {
+                music = GetSoundSlot(SoundType.Music, "Sounds/Music/StandObtain");
+                priority = MusicPriority.BossHigh;
+            }
+        }
+
         public bool VoiceLinesEnabled { get; set; } = true;
     }
 }

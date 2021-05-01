@@ -36,6 +36,8 @@ namespace TBAR.Projectiles.Stands
 
         public override void AI()
         {
+            projectile.netUpdate = true;
+
             if (projectile.timeLeft > 10)
             {
                 LastPosition = Parent.Center;

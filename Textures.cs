@@ -16,5 +16,8 @@ namespace TBAR
 
         [Loadable("TBAR/UI/Elements/StandCard/Current")]
         public static Texture2D StandCardCurrent { get; internal set; }
+
+        [Loadable("TBAR/Items/Tools/StandArrow")]
+        public static Texture2D StandArrow { get; internal set; }
     }
 }
