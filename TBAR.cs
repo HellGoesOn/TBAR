@@ -109,7 +109,7 @@ namespace TBAR
 
             if (plr.IsUsingArrow)
             {
-                music = GetSoundSlot(SoundType.Music, "Sounds/Music/StandObtain");
+                music = GetSoundSlot(SoundType.Music, "Sounds/Music/StandObtain2");
                 priority = MusicPriority.BossHigh;
             }
         }

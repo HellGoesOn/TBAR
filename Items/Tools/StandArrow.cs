@@ -11,7 +11,7 @@ namespace TBAR.Items.Tools
 {
     public class StandArrow : ModItem
     {
-        public const int CUTSCENE_DURATION = 600;
+        public const int CUTSCENE_DURATION = 500;
 
         public override void SetStaticDefaults()
         {
@@ -45,6 +45,9 @@ namespace TBAR.Items.Tools
             tBAR.ArrowProgress = tBAR.ArrowProgressMax;
 
             tBAR.PlayerStand = StandFactory.Instance.GetNewRandom(tBAR);
+
+            tBAR.ScreenModifiers.Add(new SmoothStepScreenModifier(player.Center, player.Center - new Vector2(0, 64), 0.025f));
+            tBAR.ScreenModifiers.Add(new ScreenModifier(player.Center - new Vector2(0, 64)));
 
             tBAR.UsePosition = player.Center + new Vector2(0, player.height * 0.5f);
 

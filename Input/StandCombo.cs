@@ -6,6 +6,7 @@ using TBAR.Enums;
 using Terraria.ID;
 using TBAR.Helpers;
 using Microsoft.Xna.Framework;
+using TBAR.Players.Visuals;
 
 namespace TBAR.Input
 {

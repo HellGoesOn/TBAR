@@ -81,6 +81,11 @@ namespace TBAR.Projectiles.Stands
                 AltTexturePath = shit;
         }
 
+        public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
+        {
+            target.immune[projectile.owner] = 6;
+        }
+
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor) => false;
 
         public override void PostDraw(SpriteBatch spriteBatch, Color lightColor)

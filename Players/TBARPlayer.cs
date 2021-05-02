@@ -18,6 +18,7 @@ namespace TBAR.Players
 
         public override void Initialize()
         {
+            BeamVisuals = new List<Visuals.BeamVisual>();
             InputBlockers = new List<InputBlocker>();
             CurrentComboInputs = new List<ComboInput>(10);
         }

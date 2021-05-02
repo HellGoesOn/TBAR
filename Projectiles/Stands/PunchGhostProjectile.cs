@@ -38,7 +38,10 @@ namespace TBAR.Projectiles.Stands
 
         public override bool? CanHitNPC(NPC target)
         {
-            return HitNPCs.Count(x => x.Index == target.whoAmI) <= 0;
+            if (HitNPCs.Count(x => x.Index == target.whoAmI) > 0)
+                return false;
+
+            return base.CanHitNPC(target);
         }
 
         public override void ModifyHitPvp(Player target, ref int damage, ref bool crit)
@@ -112,6 +115,8 @@ namespace TBAR.Projectiles.Stands
         }
 
         protected virtual int GetPunchDamage() => GetBaseDamage(DamageType.Melee, Owner);
+
+        public virtual int GetBarrageDamage() => GetBaseDamage(DamageType.Melee, Owner);
 
         public Vector2 PunchStartPoint { get; set; }
 

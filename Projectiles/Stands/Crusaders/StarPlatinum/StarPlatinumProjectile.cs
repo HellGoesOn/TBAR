@@ -188,8 +188,10 @@ namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
 
         protected override int GetPunchDamage()
         {
-            return (int)(12 + BaseDPS * 1.2f);
+            return (int)(12 + BaseDPS * 1.7f);
         }
+
+        public override int GetBarrageDamage() => (int)(12 + BaseDPS * 1.2f);
 
         public override bool CanPunch => State == SPStates.Idle.ToString();
 

@@ -4,6 +4,7 @@ using TBAR.Enums;
 using TBAR.Extensions;
 using TBAR.Input;
 using TBAR.Players;
+using TBAR.Players.Visuals;
 using TBAR.Projectiles.Stands;
 using TBAR.Projectiles.Stands.Crusaders.StarPlatinum;
 using TBAR.Projectiles.Visual;
@@ -67,7 +68,7 @@ namespace TBAR.Stands.Crusaders
 
                 string path = "Projectiles/Stands/Crusaders/StarPlatinum/";
                 Projectile projectile = sp.projectile;
-                int i = PunchBarrage.CreateBarrage(path + "StarFist", projectile, projectile.Center.DirectTo(ActiveStandProjectile.MousePosition, 24f), 60, path + "StarFistBack");
+                int i = PunchBarrage.CreateBarrage(path + "StarFist", projectile, projectile.Center.DirectTo(ActiveStandProjectile.MousePosition, 24f), sp.GetBarrageDamage(), path + "StarFistBack");
                 sp.Barrage = Main.projectile[i];
             }
         }
@@ -76,7 +77,10 @@ namespace TBAR.Stands.Crusaders
         {
             TBARPlayer plr = TBARPlayer.Get(player);
 
+            plr.OnRightClick -= Plr_OnRightClick;
             plr.OnRightClick += Plr_OnRightClick;
+
+            BeamVisual.AddBeamVisual(player, 30, 1200, 45, 15, Color.Yellow);
         }
 
         private void Plr_OnRightClick(Player sender)

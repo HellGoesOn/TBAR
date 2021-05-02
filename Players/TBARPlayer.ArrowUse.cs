@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TBAR.Helpers;
 using TBAR.Items.Tools;
 using TBAR.PlayerLayers;
+using TBAR.Players.Visuals;
 using TBAR.ScreenModifiers;
 using Terraria;
 using Terraria.ID;
@@ -20,12 +21,17 @@ namespace TBAR.Players
         {
             int armIndex = layers.FindIndex(x => x.Name.Equals("Arms"));
 
+            if(BeamVisuals.Count > 0)
+            {
+                layers.Insert(0, TBARLayers.BeamLayer);
+            }
+
             if (IsUsingArrow)
             {
                 if (ArrowProgress > 0)
-                    layers.Insert(armIndex, ArrowUseLayer.StandArrowUseLayer);
+                    layers.Insert(armIndex, TBARLayers.StandArrowUseLayer);
                 else
-                    layers.Insert(0, ArrowUseLayer.StandArrowUseLayer);
+                    layers.Insert(0, TBARLayers.StandArrowUseLayer);
 
                 if (ArrowProgress >= ArrowProgressMax * 0.65f)
                     player.bodyFrame.Y = TBARPlayer.BODY_HANDS_UP;
@@ -33,6 +39,7 @@ namespace TBAR.Players
                     player.bodyFrame.Y = TBARPlayer.BODY_HANDS_MID;
                 else
                     player.bodyFrame.Y = TBARPlayer.BODY_HANDS_DOWN;
+
             }
             else
             {
@@ -45,6 +52,11 @@ namespace TBAR.Players
 
         public void UpdateArrowUseProgress()
         {
+            foreach (BeamVisual beam in BeamVisuals)
+                beam.Update();
+
+            BeamVisuals.RemoveAll(x => x.TimeLeft <= 0);
+
             if (ArrowProgress > 0)
                 ArrowProgress--;
 
@@ -56,14 +68,19 @@ namespace TBAR.Players
 
                     if (ArrowXOffset <= -6f)
                     {
-                        ScreenModifiers.Add(new SmoothStepScreenModifier(player.Center, player.Center - new Vector2(0, 64), 0.025f));
-                        ScreenModifiers.Add(new ShakeScreenModifier(player.Center - new Vector2(0, 64), 120, 3, 0.25f));
-                        ScreenModifiers.Add(new SmoothStepScreenModifier(player.Center - new Vector2(0, 64), player.Center, 0.025f));
                         BeganPiercing = true;
                     }
                 }
                 else
                 {
+                    if (BeamVisuals.Count <= 0)
+                    {
+                        ScreenModifiers.Clear();
+                        ScreenModifiers.Add(new ShakeScreenModifier(player.Center - new Vector2(0, 64), 120, 3, 0.25f));
+                        ScreenModifiers.Add(new SmoothStepScreenModifier(player.Center - new Vector2(0, 64), player.Center, 0.025f));
+                        BeamVisual.AddBeamVisual(player, 30, 1200, player.itemAnimation, 60, Color.Goldenrod);
+                    }
+
                     Lighting.AddLight(player.Center, Color.PaleGoldenrod.ToVector3() * 2f);
                     for (int i = 0; i < 3; i++)
                     {
@@ -90,5 +107,7 @@ namespace TBAR.Players
         public bool IsUsingArrow => player.HeldItem.type == ModContent.ItemType<StandArrow>() && player.itemAnimation > 0;
 
         public int ArrowProgressMax { get; } = 80;
+
+        public List<BeamVisual> BeamVisuals { get; private set; } 
     }
 }

@@ -92,5 +92,21 @@ namespace TBAR.Helpers
                      );
             #endregion
         }
+
+        public static void DrawRectangle(Vector2 position, int width, int height, Color color, SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw
+                 (
+                     Main.magicPixel,
+                     position,
+                     new Rectangle(0, 0, width, height),
+                     color,
+                     0f,
+                     Vector2.Zero,
+                     1f,
+                     SpriteEffects.None,
+                     1
+                 );
+        }
     }
 }
