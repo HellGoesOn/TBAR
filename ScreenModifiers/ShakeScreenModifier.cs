@@ -17,7 +17,7 @@ namespace TBAR.ScreenModifiers
             BasePosition = position;
             Amount = amount;
             Intensity = intensity;
-            Range = new Vector2(70, 70);
+            Range = new Vector2(60, 60);
         }
 
         public ShakeScreenModifier(Vector2 position, Vector2 range, int lifeTime, int intensity, float amount) : this(position, lifeTime, intensity, amount)

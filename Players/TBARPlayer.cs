@@ -46,6 +46,9 @@ namespace TBAR.Players
             if (TimeStopManager.Instance.IsTimeStopped && !TimeStopManager.Instance.HaveITimeStopped(npc))
                 return false;
 
+            if (IsUsingArrow)
+                return false;
+
             return base.CanBeHitByNPC(npc, ref cooldownSlot);
         }
 
@@ -54,6 +57,9 @@ namespace TBAR.Players
             if (TimeStopManager.Instance.IsTimeStopped
                 && !TimeStopManager.Instance.HaveITimeStopped(proj)
                 && !TimeStopManager.Instance.HaveITimeStopped(Main.player[proj.owner]))
+                return false;
+
+            if (IsUsingArrow)
                 return false;
 
             return base.CanBeHitByProjectile(proj);

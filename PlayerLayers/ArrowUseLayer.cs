@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using TBAR.Helpers;
 using TBAR.Players;
 using Terraria;
 using Terraria.DataStructures;
@@ -46,6 +47,16 @@ namespace TBAR.PlayerLayers
                 SpriteEffects.None,
                 1
                 );
+
+            int beamWidth = 20;
+            int beamHeight = 1200;
+
+            int p_beamWidth = (int)(beamWidth * (1 - progress));
+            int p_beamHeight = (int)(beamHeight * (1 - progress));
+
+            DrawHelper.DrawBorderedRectangle(drawPlayer.Center - new Vector2(p_beamWidth * 1.45f * 0.5f, -(drawPlayer.height * 0.5f - beamHeight)) - Main.screenPosition, (int)(p_beamWidth * 1.45f), beamHeight, Color.PaleGoldenrod * 0.15f, Color.White * 0f, Main.spriteBatch);
+            DrawHelper.DrawBorderedRectangle(drawPlayer.Center - new Vector2(p_beamWidth * 0.5f, -(drawPlayer.height * 0.5f - beamHeight)) - Main.screenPosition, p_beamWidth, beamHeight, Color.PaleGoldenrod * 0.35f, Color.White * 0f, Main.spriteBatch);
+            DrawHelper.DrawBorderedRectangle(drawPlayer.Center - new Vector2(p_beamWidth * .65f * 0.5f, -(drawPlayer.height * 0.5f - beamHeight)) - Main.screenPosition, (int)(p_beamWidth * .65f), beamHeight, Color.White * 0.75f, Color.White * 0f, Main.spriteBatch);
 
             Main.playerDrawData.Add(drawData);
         }

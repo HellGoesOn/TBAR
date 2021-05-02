@@ -5,6 +5,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using TBAR.ScreenModifiers;
+using Microsoft.Xna.Framework;
 
 namespace TBAR.Items.Tools
 {
@@ -44,6 +45,10 @@ namespace TBAR.Items.Tools
             tBAR.ArrowProgress = tBAR.ArrowProgressMax;
 
             tBAR.PlayerStand = StandFactory.Instance.GetNewRandom(tBAR);
+
+            tBAR.UsePosition = player.Center + new Vector2(0, player.height * 0.5f);
+
+            player.velocity = Vector2.Zero;
 
             Main.NewText("You've acquired a stand: " + tBAR.PlayerStand.StandName);
 
