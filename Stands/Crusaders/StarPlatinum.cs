@@ -94,7 +94,7 @@ namespace TBAR.Stands.Crusaders
             plr.OnRightClick -= Plr_OnRightClick;
             plr.OnRightClick += Plr_OnRightClick;
 
-            BeamVisual.AddBeamVisual(player, 30, 1200, 45, 15, Color.Yellow);
+            BeamVisual.AddBeamVisual(player, 20, 1200, 30, 15, Color.Beige);
         }
 
         private void Plr_OnRightClick(Player sender)

@@ -118,6 +118,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
 
         private void UpperCutState_OnStateBegin(StandState sender)
         {
+            NonTimedAttack = true;
             projectile.damage = GetUppercutDamage();
         }
 
@@ -194,6 +195,8 @@ namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
 
         private void Idle(StandState sender)
         {
+            NonTimedAttack = false;
+            HitNPCs.RemoveAll(x => !x.IsTimed);
             SpriteFX = Owner.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             projectile.Center = Vector2.Lerp(projectile.Center, Owner.Center + new Vector2(-30 * Owner.direction, -32), 0.12f);
         }

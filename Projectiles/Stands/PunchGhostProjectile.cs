@@ -33,7 +33,7 @@ namespace TBAR.Projectiles.Stands
         {
             projectile.penetrate++;
 
-            HitNPCs.Add(new HitNPCData(target.whoAmI, ElapsedTime));
+            HitNPCs.Add(new HitNPCData(target.whoAmI, ElapsedTime, !NonTimedAttack));
         }
 
         public override bool? CanHitNPC(NPC target)
@@ -60,9 +60,7 @@ namespace TBAR.Projectiles.Stands
 
             ElapsedTime++;
 
-            for(int i = HitNPCs.Count - 1; i >= 0; i--)
-                if (HitNPCs[i].TimeOfHit + AttackSpeed < ElapsedTime)
-                    HitNPCs.RemoveAt(i);
+            HitNPCs.RemoveAll(x => x.IsTimed && (x.TimeOfHit + AttackSpeed) < ElapsedTime);
         }
 
         protected abstract string PunchState { get; }
@@ -133,6 +131,8 @@ namespace TBAR.Projectiles.Stands
         public uint ElapsedTime { get; set; }
 
         public int AttackSpeed { get; set; } = 20;
+
+        public bool NonTimedAttack { get; set; }
 
         public int BaseDPS { get; set; }
 
