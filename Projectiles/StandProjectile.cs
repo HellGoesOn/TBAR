@@ -67,7 +67,7 @@ namespace TBAR.Projectiles.Stands
                     CurrentState.EndState();
                 }
             }
-            else // some placeholder shit
+            else // some placeholder shit ?
                 projectile.Kill();
         }
 

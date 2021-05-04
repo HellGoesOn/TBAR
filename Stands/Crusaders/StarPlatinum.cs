@@ -25,6 +25,9 @@ namespace TBAR.Stands.Crusaders
             StandCombo timeStop = new StandCombo("Time Stop", ComboInput.Action1, ComboInput.Action1, ComboInput.Action2);
             timeStop.OnActivate += StopTime;
 
+            StandCombo upperCut = new StandCombo("Upper Cut", ComboInput.Up, ComboInput.Up, ComboInput.Action1);
+            upperCut.OnActivate += UpperCut_OnActivate;
+
             StandCombo barrage = new StandCombo("Barrage", ComboInput.Action2, ComboInput.Action1, ComboInput.Action2);
             barrage.OnActivate += Barrage;
 
@@ -35,6 +38,17 @@ namespace TBAR.Stands.Crusaders
             GlobalCombos.Add(timeStop);
             GlobalCombos.Add(offensiveTimeStop);
             NormalCombos.Add(barrage);
+            NormalCombos.Add(upperCut);
+        }
+
+        private void UpperCut_OnActivate(Player player)
+        {
+            StarPlatinumProjectile sp = ActiveStandProjectile as StarPlatinumProjectile;
+
+            if (sp?.State == "Idle")
+            {
+                sp?.SetState(SPStates.Uppercut.ToString());
+            }
         }
 
         public override SpriteAnimation AlbumEntryAnimation()

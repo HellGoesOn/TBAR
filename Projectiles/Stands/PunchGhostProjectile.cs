@@ -53,6 +53,8 @@ namespace TBAR.Projectiles.Stands
         {
             base.PostAI();
 
+            projectile.Center = projectile.Center.RetardedMethodName(Owner.Center, Range * 64f);
+
             if(BaseDPS == -1)
                 BaseDPS = Owner.HeldItem.GetDamageData(Owner).DPS;
 

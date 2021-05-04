@@ -17,7 +17,8 @@ namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
         Idle,
         Despawn,
         Punch,
-        Barrage
+        Barrage,
+        Uppercut
     }
 
     public class StarPlatinumProjectile : PunchGhostProjectile
@@ -50,6 +51,13 @@ namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
 
             StandState idle = new StandState(path + "SPIdle", 14, 15, true);
             idle.OnStateUpdate += Idle;
+
+            SpriteAnimation upperCut = new SpriteAnimation(path + "SPDonutPunch", 15, 12);
+
+            StandState upperCutState = new StandState(upperCut);
+            upperCutState.OnStateBegin += UpperCutState_OnStateBegin;
+            upperCutState.OnStateUpdate += UpperCutState_OnStateUpdate;
+            upperCutState.OnStateEnd += UpperCutState_OnStateEnd;
 
             SpriteAnimation punchMidLeft = new SpriteAnimation(path + "SPPunch_Middle_LeftHand", 3, 10);
             SpriteAnimation punchMidRight = new SpriteAnimation(path + "SPPunch_Middle_RightHand", 3, 10);
@@ -90,10 +98,27 @@ namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
             States.Add(SPStates.Despawn.ToString(), despawn);
             States.Add(SPStates.Punch.ToString(), punchState);
             States.Add(SPStates.Barrage.ToString(), barrageState);
+            States.Add(SPStates.Uppercut.ToString(), upperCutState);
 
             SetState(SPStates.Summon.ToString());
 
             TBAR.Instance.Logger.Debug($"{this} at index {projectile.whoAmI} has {States.Count}");
+        }
+
+        private void UpperCutState_OnStateUpdate(StandState sender)
+        {
+            projectile.Center = Vector2.Lerp(projectile.Center, MousePosition, 0.25f);
+        }
+
+        private void UpperCutState_OnStateEnd(StandState sender)
+        {
+            projectile.damage = 0;
+            SetState("Idle");
+        }
+
+        private void UpperCutState_OnStateBegin(StandState sender)
+        {
+            projectile.damage = GetUppercutDamage();
         }
 
         private void BarrageState_OnStateBegin(StandState sender)
@@ -192,6 +217,8 @@ namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
         }
 
         public override int GetBarrageDamage() => (int)(12 + BaseDPS * 1.2f);
+
+        public int GetUppercutDamage() => (int)(60 + BaseDPS * 6.66f);
 
         public override bool CanPunch => State == SPStates.Idle.ToString();
 

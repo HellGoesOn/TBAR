@@ -11,5 +11,13 @@ namespace TBAR.Extensions
         }
 
         public static Vector2 ToMouse(this Vector2 v, float speed = 1) => v.DirectTo(Main.MouseWorld, speed);
+
+        public static Vector2 RetardedMethodName(this Vector2 v, Vector2 clampPoint, float length)
+        {
+            if (Vector2.DistanceSquared(v, clampPoint) > length * length)
+                return clampPoint - v.DirectTo(clampPoint, length);
+
+            return v;
+        }
     }
 }
