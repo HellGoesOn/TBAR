@@ -32,7 +32,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
 
         }
 
-        public override void AddStates(Projectile projectile)
+        public override void InitializeStates(Projectile projectile)
         {
             AuraColor = new Color(1f, 0f, 1f);
             Opacity = 0f;

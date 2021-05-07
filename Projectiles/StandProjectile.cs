@@ -40,14 +40,14 @@ namespace TBAR.Projectiles.Stands
             Scale = Vector2.One;
 
             if (projectile.active)
-                AddStates(projectile);
+                InitializeStates(projectile);
 
             SafeSetDefaults();
         }
 
         public virtual void SafeSetDefaults() { }
 
-        public abstract void AddStates(Projectile projectile);
+        public abstract void InitializeStates(Projectile projectile);
 
         public override void AI()
         {
@@ -175,6 +175,21 @@ namespace TBAR.Projectiles.Stands
             State = value;
 
             CurrentState.BeginState();
+        }
+
+        /// <summary>
+        /// Allows you to add multiple states in one line
+        /// </summary>
+        /// <param name="states">Every specified state needs to contain a Key</param>
+        protected void AddStates(params StandState[] states)
+        {
+            foreach (StandState s in states)
+            {
+                if (s.Key == null || s.Key == "")
+                    throw new System.Exception("Invalid AddStates usage: State contained no Key");
+
+                States.Add(s.Key, s);
+            }
         }
 
         public string LastState { get; private set; }

@@ -13,6 +13,8 @@ namespace TBAR.Projectiles.Stands
 {
     public abstract class PunchGhostProjectile : StandProjectile
     {
+        public event OnHitEventHandler OnHit;
+
         protected PunchGhostProjectile(string name) : base(name)
         {
             PunchDirection = Vector2.Zero;
@@ -33,6 +35,8 @@ namespace TBAR.Projectiles.Stands
         {
             projectile.penetrate++;
 
+            OnHit?.Invoke(this, target);
+
             HitNPCs.Add(new HitNPCData(target.whoAmI, ElapsedTime, !NonTimedAttack));
         }
 
@@ -47,6 +51,8 @@ namespace TBAR.Projectiles.Stands
         public override void ModifyHitPvp(Player target, ref int damage, ref bool crit)
         {
             projectile.penetrate++;
+
+            OnHit?.Invoke(this, target);
         }
 
         public override void PostAI()
@@ -80,7 +86,7 @@ namespace TBAR.Projectiles.Stands
 
         protected void UpdatePunch(StandState _)
         {
-            projectile.Center = Vector2.Lerp(projectile.Center, Owner.Center + PunchDirection, 0.35f);
+            projectile.Center = Vector2.Lerp(projectile.Center, MousePosition, 0.25f);
             Owner.direction = (Owner.Center + PunchDirection).X < Owner.Center.X ? -1 : 1;
             SpriteFX = Owner.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
         }
@@ -114,9 +120,18 @@ namespace TBAR.Projectiles.Stands
             return 0;
         }
 
-        protected virtual int GetPunchDamage() => GetBaseDamage(DamageType.Melee, Owner);
+        protected void ClearOnHitEffects()
+        {
+            if (OnHit != null)
+            {
+                foreach (var d in OnHit.GetInvocationList())
+                    OnHit -= (d as OnHitEventHandler);
+            }
+        }
 
-        public virtual int GetBarrageDamage() => GetBaseDamage(DamageType.Melee, Owner);
+        protected virtual int GetPunchDamage() => 10 + BaseDPS;
+
+        public virtual int GetBarrageDamage() => BaseDPS;
 
         public Vector2 PunchStartPoint { get; set; }
 

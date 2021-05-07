@@ -24,10 +24,26 @@ namespace TBAR.Stands
                 AssignedAnimations.Add(sa);
             }
         }
+        
+        public StandState(string key, params SpriteAnimation[] animations) : this()
+        {
+            foreach(SpriteAnimation sa in animations)
+            {
+                AssignedAnimations.Add(sa);
+            }
+
+            Key = key;
+        }
 
         public StandState(string sheetPath, int frameCount, float fps = 5f, bool looping = false, int loopTime = -1) : this()
         {
             AssignedAnimations.Add(new SpriteAnimation(sheetPath, frameCount, fps, looping, loopTime));
+        }
+
+        public StandState(string key, string sheetPath, int frameCount, float fps = 5f, bool looping = false, int loopTime = -1) : this()
+        {
+            AssignedAnimations.Add(new SpriteAnimation(sheetPath, frameCount, fps, looping, loopTime));
+            Key = key;
         }
 
         public void BeginState()
@@ -55,5 +71,7 @@ namespace TBAR.Stands
         public SpriteAnimation CurrentAnimation => AssignedAnimations[CurrentAnimationID];
 
         public List<SpriteAnimation> AssignedAnimations { get; }
+
+        public string Key { get; set; }
     }
 }

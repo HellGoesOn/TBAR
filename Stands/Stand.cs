@@ -13,14 +13,14 @@ namespace TBAR.Stands
             StandName = name;
             GlobalCombos = new List<StandCombo>();
             NormalCombos = new List<StandCombo>();
-            AddCombos();
+            InitializeCombos();
             SortCombos(NormalCombos);
             SortCombos(GlobalCombos);
         }
 
         public abstract void TryActivate(Player player);
 
-        public abstract void AddCombos();
+        public abstract void InitializeCombos();
 
         public abstract void HandleInputs(Player player, List<ComboInput> receivedInputs);
 
@@ -71,6 +71,18 @@ namespace TBAR.Stands
                 tryGlobalCombo.ForceActivate(player);
                 return;
             }
+        }
+
+        public void AddGlobalCombos(params StandCombo[] combos)
+        {
+            foreach (StandCombo s in combos)
+                GlobalCombos.Add(s);
+        }
+
+        public void AddNormalCombos(params StandCombo[] combos)
+        {
+            foreach (StandCombo s in combos)
+                NormalCombos.Add(s);
         }
 
         public List<StandCombo> GlobalCombos { get; }

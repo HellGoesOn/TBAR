@@ -19,5 +19,7 @@ namespace TBAR
 
         [Loadable("TBAR/Items/Tools/StandArrow")]
         public static Texture2D StandArrow { get; internal set; }
+
+        public static string EmptinessPath => "TBAR/Textures/EmptyPixel";
     }
 }

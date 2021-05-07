@@ -20,7 +20,7 @@ namespace TBAR.Stands.Crusaders
         {
         }
 
-        public override void AddCombos()
+        public override void InitializeCombos()
         {
             StandCombo timeStop = new StandCombo("Time Stop", ComboInput.Action1, ComboInput.Action1, ComboInput.Action2);
             timeStop.OnActivate += StopTime;
@@ -35,10 +35,9 @@ namespace TBAR.Stands.Crusaders
             offensiveTimeStop.OnActivate += OffensiveTimeStop;
             offensiveTimeStop.Description = "Allows you to prepare a Quick Time Stop.\nAfter use, Right-Click on a location to teleport there.\nClicking on an Entity will cause you to teleport behind it.";
 
-            GlobalCombos.Add(timeStop);
-            GlobalCombos.Add(offensiveTimeStop);
-            NormalCombos.Add(barrage);
-            NormalCombos.Add(upperCut);
+            AddGlobalCombos(timeStop, offensiveTimeStop);
+            
+            AddNormalCombos(barrage, upperCut);
         }
 
         private void UpperCut_OnActivate(Player player)
