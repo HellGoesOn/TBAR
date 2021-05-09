@@ -1,13 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
-using TBAR.Enums;
+using System.Linq;
 using TBAR.Extensions;
 using TBAR.Input;
 using TBAR.Stands;
 using TBAR.Structs;
 using Terraria;
-using System.Linq;
 
 namespace TBAR.Projectiles.Stands
 {
@@ -28,7 +27,7 @@ namespace TBAR.Projectiles.Stands
             projectile.penetrate = 1;
             BaseDPS = -1;
 
-            HitNPCs = new List<HitNPCData>();
+            HitNPCs = new List<HitEntityData>();
         }
 
         public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
@@ -37,7 +36,7 @@ namespace TBAR.Projectiles.Stands
 
             OnHit?.Invoke(this, target);
 
-            HitNPCs.Add(new HitNPCData(target.whoAmI, ElapsedTime, !NonTimedAttack));
+            HitNPCs.Add(new HitEntityData(target.whoAmI, ElapsedTime, !NonTimedAttack));
         }
 
         public override bool? CanHitNPC(NPC target)
@@ -151,6 +150,6 @@ namespace TBAR.Projectiles.Stands
 
         public int BaseDPS { get; set; }
 
-        public List<HitNPCData> HitNPCs { get; private set; }
+        public List<HitEntityData> HitNPCs { get; private set; }
     }
 }

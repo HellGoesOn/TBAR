@@ -6,6 +6,8 @@ using TBAR.Input;
 using TBAR.Stands;
 using Terraria;
 using Terraria.ModLoader;
+using TBAR.Projectiles.Stands.Crusaders.TheWorld.RoadRoller;
+using TBAR.Players;
 
 namespace TBAR.Projectiles.Stands.Crusaders.TheWorld
 {
@@ -26,6 +28,8 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld
             SpriteAnimation summon = new SpriteAnimation(path + "TheWorldSpawn", 7, 15);
             SpriteAnimation despawn = new SpriteAnimation(path + "TheWorldSpawn", 7, 15) { IsReversed = true };
             SpriteAnimation idle = new SpriteAnimation(path + "TheWorldIdle", 8, 10, true);
+            SpriteAnimation flyUp = new SpriteAnimation(path + "TheWorldIdle", 8, 10, true, 90);
+            SpriteAnimation slamDunk = new SpriteAnimation(path + "TheWorldSlamDunk", 1, 5, true, 90);
             SpriteAnimation throwAnimation = new SpriteAnimation(path + "TheWorldKnifeThrow", 14, 15);
 
             SpriteAnimation punchMidLeft = new SpriteAnimation(path + "TheWorldPunchMiddle", 7, 15);
@@ -50,20 +54,67 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld
 
             StandState punchState = new StandState
                 (punchMidLeft, punchMidRight, punchDownLeft, punchDownRight, punchUpRight, punchUpLeft)
-            { Key = TWStates.Punch.ToString() } ;
+            { Key = TWStates.Punch.ToString() };
+
+            punchState.OnStateBegin += BeginPunch;
+            punchState.OnStateUpdate += UpdatePunch;
+            punchState.OnStateEnd += EndPunch;
+
+            StandState flyUpState = new StandState("FlyUp", flyUp);
+            flyUpState.OnStateUpdate += FlyUpState_OnStateUpdate;
+            flyUpState.OnStateBegin += FlyUpState_OnStateBegin;
+            flyUpState.OnStateEnd += delegate { SetState("SlamDunk"); };
+
+            StandState slamDunkState = new StandState("SlamDunk", slamDunk);
+            slamDunkState.OnStateEnd += SlamDunkState_OnStateEnd;
+            slamDunkState.OnStateBegin += SlamDunkState_OnStateBegin;
+            slamDunkState.OnStateUpdate += SlamDunkState_OnStateUpdate;
 
             StandState knifeThrowState = new StandState(throwAnimation) { Key = TWStates.KnifeThrow.ToString() };
             knifeThrowState.OnStateEnd += GoIdle;
             knifeThrowState.OnStateEnd += delegate { knifeThrowState.OnStateUpdate += ThrowingKnives; };
             knifeThrowState.OnStateUpdate += ThrowingKnives;
 
-            punchState.OnStateBegin += BeginPunch;
-            punchState.OnStateUpdate += UpdatePunch;
-            punchState.OnStateEnd += EndPunch;
-
-            AddStates(summonState, despawnState, idleState, punchState, knifeThrowState);
+            AddStates(summonState, despawnState, idleState, punchState, knifeThrowState, flyUpState, slamDunkState);
 
             SetState(TWStates.Summon.ToString());
+        }
+
+        private void FlyUpState_OnStateBegin(StandState sender)
+        {
+            InputBlocker.BlockInputs(Owner, 90);
+            SlamDunkPosition = new Vector2(MousePosition.X, MousePosition.Y - 400);
+        }
+
+        private void SlamDunkState_OnStateEnd(StandState sender)
+        {
+            GoIdle(sender);
+
+            MyRoller = null;
+        }
+
+        private void SlamDunkState_OnStateUpdate(StandState sender)
+        {
+            if (MyRoller != null && MyRoller.modProjectile is RoadRollerProjectile roller && !roller.HasHitSomething)
+            {
+                projectile.Center = MyRoller.Center + new Vector2(60, -30);
+                SpriteFX = SpriteEffects.None;
+                Owner.direction = -1;
+                Owner.Center = projectile.Center - new Vector2(0, 60);
+            }
+        }
+
+        private void SlamDunkState_OnStateBegin(StandState sender)
+        {
+            Owner.Center = SlamDunkPosition;
+            MyRoller = RoadRollerProjectile.CreateRoller(SlamDunkPosition, this);
+        }
+
+        private void FlyUpState_OnStateUpdate(StandState sender)
+        {
+            projectile.Center -= new Vector2(0, 16);
+            Owner.velocity = Vector2.Zero;
+            Owner.Center = projectile.Center + new Vector2(0, 32);
         }
 
         public override void HandleImmediateInputs(ImmediateInput input)
@@ -128,6 +179,9 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld
             {
                 SetState(TWStates.Despawn.ToString());
             }
+
+            if (SickBeatTime > 0)
+                SickBeatTime--;
         }
 
         protected override int PunchAnimationIDOffset()
@@ -145,13 +199,34 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld
 
         private void Idle(StandState sender)
         {
+            projectile.GetGlobal().HitRoadRollerInLifeTime = false;
             NonTimedAttack = false;
             HitNPCs.RemoveAll(x => !x.IsTimed);
             SpriteFX = Owner.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             projectile.Center = Vector2.Lerp(projectile.Center, Owner.Center + new Vector2(-30 * Owner.direction, -32), 0.12f);
         }
 
+        public override void PostDraw(SpriteBatch spriteBatch, Color lightColor)
+        {
+            if (!TBARPlayer.Get().IsStandUser)
+                return;
+
+            for (int i = 0; i < 4; i++)
+            {
+                Vector2 offset = new Vector2(4, 0).RotatedBy(MathHelper.PiOver2 * i);
+                DrawDefault(spriteBatch, projectile.Center + offset, AuraColor * 0.5f, SpriteFX);
+            }
+
+            DrawDefault(spriteBatch, projectile.Center, Color.White, SpriteFX);
+        }
+
         public int KnifeDamage => (int)(8 + BaseDPS * 0.25f);
+
+        public int SickBeatTime { get; set; }
+
+        public Vector2 SlamDunkPosition { get; set; }
+
+        public Projectile MyRoller { get; set; }
     }
 
     public enum TWStates

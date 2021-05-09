@@ -1,28 +1,26 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
-using System.IO;
-using TBAR.Enums;
+using TBAR.Components;
 using TBAR.Input;
-using TBAR.Players;
 using TBAR.Stands;
 using TBAR.TimeStop;
 using TBAR.UI;
 using Terraria;
 using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
-using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.UI;
 
 namespace TBAR
 {
-	public partial class TBAR : Mod
+    public partial class TBAR : Mod
 	{
         public static TBAR Instance { get; private set; }
 
         public TBAR()
         {
+            Tracks = new List<TBARMusic>();
             Instance = this;
         }
 
@@ -96,22 +94,6 @@ namespace TBAR
                 return;
 
             Main.PlaySound(Instance.GetLegacySoundSlot(SoundType.Custom, SoundPath));
-        }
-
-        public override void UpdateMusic(ref int music, ref MusicPriority priority)
-        {
-            if (Main.myPlayer == -1 || Main.gameMenu || !Main.LocalPlayer.active)
-            {
-                return;
-            }
-
-            TBARPlayer plr = TBARPlayer.Get();
-
-            if (plr.IsUsingArrow)
-            {
-                music = GetSoundSlot(SoundType.Music, "Sounds/Music/StandObtain2");
-                priority = MusicPriority.BossHigh;
-            }
         }
 
         public bool VoiceLinesEnabled { get; set; } = true;

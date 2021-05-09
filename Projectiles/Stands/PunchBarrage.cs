@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.IO;
+using TBAR.Extensions;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -37,6 +38,9 @@ namespace TBAR.Projectiles.Stands
         public override void AI()
         {
             projectile.netUpdate = true;
+
+            if (projectile.timeLeft % 4 == 0)
+                projectile.GetGlobal().HitRoadRollerInLifeTime = false;
 
             if (projectile.timeLeft > 10)
             {

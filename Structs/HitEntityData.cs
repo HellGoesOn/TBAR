@@ -1,6 +1,6 @@
 ﻿namespace TBAR.Structs
 {
-    public struct HitNPCData
+    public struct HitEntityData
     {
         public int Index { get; }
 
@@ -8,7 +8,7 @@
 
         public uint TimeOfHit { get; }
 
-        public HitNPCData(int index, uint hitTime, bool timed = true)
+        public HitEntityData(int index, uint hitTime, bool timed = true)
         {
             Index = index;
             TimeOfHit = hitTime;

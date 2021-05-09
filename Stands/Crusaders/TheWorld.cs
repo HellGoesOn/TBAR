@@ -4,7 +4,9 @@ using TBAR.Input;
 using TBAR.Players;
 using TBAR.Players.Visuals;
 using TBAR.Projectiles.Stands.Crusaders.TheWorld;
+using TBAR.Projectiles.Stands.Crusaders.TheWorld.RoadRoller;
 using TBAR.Projectiles.Visual;
+using TBAR.ScreenModifiers;
 using TBAR.TimeStop;
 using Terraria;
 using Terraria.ModLoader;
@@ -27,6 +29,38 @@ namespace TBAR.Stands.Crusaders
             offensiveTimeStop.Description = "Allows you to prepare a Quick Time Stop.\nAfter use, Right-Click on a location to teleport there.\nClicking on an Entity will cause you to teleport behind it.";
 
             AddGlobalCombos(tsCombo, offensiveTimeStop);
+
+            StandCombo slamDunk = new StandCombo("Road Roller", ComboInput.Up, ComboInput.Action1, ComboInput.Action2, ComboInput.Action3, ComboInput.Up);
+            slamDunk.OnActivate += SlamDunk_OnActivate;
+            slamDunk.Description = "Drops a Road Roller from hammerspace onto your Mouse Position.\nRoad Roller deals damage on impact and after it explodes";
+
+            AddNormalCombos(slamDunk);
+
+        }
+
+        private void SlamDunk_OnActivate(Player player)
+        {
+            if (ActiveStandProjectile != null && ActiveStandProjectile is TheWorldProjectile tw)
+            {
+                tw.SetState("FlyUp");
+
+                ScreenModifier holdPos = new ScreenModifier(player.Center, 15);
+                ScreenModifier holdPos2 = new ScreenModifier(new Vector2(tw.MousePosition.X, player.Center.Y), 160);
+                SmoothStepScreenModifier smoothStep = new SmoothStepScreenModifier(player.Center, new Vector2(tw.MousePosition.X, player.Center.Y), 0.25f, 120);
+
+                ScreenModifier.AddModifiersToPlayer(player, holdPos, smoothStep, holdPos2);
+            }
+
+            TBARMusic.AddTrackToQueue("Sounds/Music/TWTheme", 1260);
+
+            bool isTimeStopped = TimeStopManager.Instance.IsTimeStopped;
+            string path = isTimeStopped ? "" : "Sounds/TheWorld/TheWorld_ZaWarudoSFX";
+
+            TimeStopInstance ts = new TimeStopInstance(player, 1200, path) { EndSoundEffect = "Sounds/TheWorld/TheWorld_ZaWarudoReleaseSFX" };
+
+            Projectile.NewProjectile(player.Center, Vector2.Zero, ModContent.ProjectileType<TimeStopVFX>(), 0, 0, player.whoAmI);
+
+            TimeStopManager.Instance.TryStopTime(ts);
         }
 
         private void TimeStop(Player player)
@@ -84,6 +118,11 @@ namespace TBAR.Stands.Crusaders
                     return;
 
                 sender.Teleport(Main.MouseWorld, 1);
+            }
+
+            if(ActiveStandProjectile is TheWorldProjectile world)
+            {
+                world.SetState("Idle");
             }
 
             plr.OnRightClick -= Plr_OnRightClick;

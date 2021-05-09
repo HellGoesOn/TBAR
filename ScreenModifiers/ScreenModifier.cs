@@ -1,10 +1,18 @@
 ﻿using Microsoft.Xna.Framework;
+using TBAR.Players;
 using Terraria;
 
 namespace TBAR.ScreenModifiers
 {
     public class ScreenModifier
     {
+        public static void AddModifiersToPlayer(Player player, params ScreenModifier[] modifiers)
+        {
+            foreach(ScreenModifier mod in modifiers)
+            {
+                TBARPlayer.Get(player).ScreenModifiers.Add(mod);
+            }
+        }
          
         public ScreenModifier(Vector2 position)
         {
