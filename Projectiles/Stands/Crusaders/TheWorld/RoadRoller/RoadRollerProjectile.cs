@@ -56,7 +56,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld.RoadRoller
             {
                 if (TimeStopManager.Instance.HaveITimeStopped(Main.player[projectile.owner]))
                 {
-                    projectile.timeLeft = TimeStopManager.Instance.TimeStops.Find(x => x.Owner == Main.player[projectile.owner]).Duration + 2;
+                    projectile.timeLeft = TimeStopManager.Instance.FindInstance(x => x.Owner == Main.player[projectile.owner]).Duration + 2;
                 }
 
                 triedToAdjustTimeLeft = true;
@@ -74,7 +74,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld.RoadRoller
                 if (Target != null)
                     projectile.Center = Target.Center;
 
-                projectile.damage = explosiveBurstDamage;
+                projectile.damage = (int)(900 + (explosiveBurstDamage * ExplodeScaling));
             }
 
             if (CollisionVector.Y == 0)
@@ -173,16 +173,16 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld.RoadRoller
 
         public override void SendExtraAI(BinaryWriter writer)
         {
-            writer.Write(genshinImpactDamage);
             writer.Write(explosiveBurstDamage);
+            writer.Write(genshinImpactDamage);
             writer.Write(HasHitSomething);
             writer.Write(ExplodeScaling);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
-            genshinImpactDamage = reader.ReadInt32();
             explosiveBurstDamage = reader.ReadInt32();
+            genshinImpactDamage = reader.ReadInt32();
             HasHitSomething = reader.ReadBoolean();
             ExplodeScaling = reader.ReadSingle();
         }
@@ -190,7 +190,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld.RoadRoller
         public void SetDamage(TheWorldProjectile tw)
         {
             genshinImpactDamage = (int)(100 + (tw.BaseDPS * 0.4f));
-            explosiveBurstDamage = (int)(900 + (tw.BaseDPS * ExplodeScaling));
+            explosiveBurstDamage = tw.BaseDPS;
             projectile.netUpdate = true;
         }
 

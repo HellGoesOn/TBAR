@@ -127,5 +127,11 @@ namespace TBAR.Stands.Crusaders
 
             plr.OnRightClick -= Plr_OnRightClick;
         }
+
+        public override string GetDamageScalingText => "12 + 170% of DPS";
+
+        public override string GetEffectiveRangeText => "2m";
+
+        public override DamageType StandDamageType => DamageType.Melee;
     }
 }

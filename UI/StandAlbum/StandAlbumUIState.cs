@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.Linq;
+using TBAR.Enums;
 using TBAR.Input;
 using TBAR.Players;
 using TBAR.UI.Elements;
@@ -16,16 +17,18 @@ namespace TBAR.UI.ScreenEffects.TimeSkip
 {
     public class StandAlbumUIState : UIState
     {
+        private const float TOP_OFFSET = 215;
+
         public override void OnInitialize()
         {
             MainPanel = new UIPanel();
-            MainPanel.Width.Set(720, 0);
+            MainPanel.Width.Set(760, 0);
             MainPanel.Height.Set(440, 0);
             MainPanel.HAlign = 0.5f;
             MainPanel.VAlign = 0.5f;
 
             UIPanel standInfoPanel = new UIPanel();
-            standInfoPanel.Width.Set(180, 0);
+            standInfoPanel.Width.Set(220, 0);
             standInfoPanel.Height.Set(400, 0);
             standInfoPanel.HAlign = 0.005f;
             standInfoPanel.VAlign = 0.5f;
@@ -63,8 +66,19 @@ namespace TBAR.UI.ScreenEffects.TimeSkip
 
             MainPanel.Append(gridPanel);
 
-            standInfoPanel.Append(Card);
+            ////////////////////////////////////////////////////////////
+            // Stand's Stats
+            DamageStat = new UIDamageStat(DamageType.Any);
+            DamageStat.Top.Set(TOP_OFFSET, 0);
 
+            RangeStat = new UIRangeStat();
+            RangeStat.Top.Set(TOP_OFFSET + 46, 0);
+
+            standInfoPanel.Append(Card);
+            standInfoPanel.Append(DamageStat);
+            standInfoPanel.Append(RangeStat);
+            ////////////////////////////////////////////////////////////
+            
             MainPanel.Append(standInfoPanel);
             base.Append(MainPanel);
         }
@@ -77,6 +91,12 @@ namespace TBAR.UI.ScreenEffects.TimeSkip
 
             if(plr.IsStandUser)
             {
+                DamageStat.DamageType = plr.PlayerStand.StandDamageType;
+
+                DamageStat.DamageScaleText?.SetText(plr.PlayerStand.GetDamageScalingText);
+
+                RangeStat.RangeText?.SetText(plr.PlayerStand.GetEffectiveRangeText);
+
                 Card.SetStand(plr.PlayerStand);
 
                 List<StandCombo> combos = new List<StandCombo>(plr.PlayerStand.GlobalCombos.Count + plr.PlayerStand.NormalCombos.Count);
@@ -114,6 +134,9 @@ namespace TBAR.UI.ScreenEffects.TimeSkip
         public StandCard Card { get; set; }
 
         public UIGrid ComboGrid { get; set; }
+
+        public UIDamageStat DamageStat { get; set; }
+        public UIRangeStat RangeStat { get; set; }
 
         public bool Visible { get; set; }
     }

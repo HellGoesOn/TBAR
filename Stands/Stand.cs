@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using TBAR.Components;
+using TBAR.Enums;
 using TBAR.Input;
 using TBAR.Players;
+using TBAR.UI.Elements;
 using Terraria;
 
 namespace TBAR.Stands
@@ -85,6 +87,10 @@ namespace TBAR.Stands
                 NormalCombos.Add(s);
         }
 
+        public virtual string GetDamageScalingText => "???";
+
+        public virtual string GetEffectiveRangeText => "???";
+
         public List<StandCombo> GlobalCombos { get; }
 
         public List<StandCombo> NormalCombos { get; }
@@ -94,5 +100,7 @@ namespace TBAR.Stands
         public virtual bool CanAcquire(TBARPlayer player) => true;
 
         public abstract SpriteAnimation AlbumEntryAnimation();
+
+        public virtual DamageType StandDamageType => DamageType.Any;
     }
 }

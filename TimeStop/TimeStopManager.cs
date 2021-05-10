@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using TBAR.Enums;
 using TBAR.NPCs;
 using Terraria;
@@ -10,7 +11,7 @@ namespace TBAR.TimeStop
     {
         private TimeStopManager()
         {
-            TimeStops = new List<TimeStopInstance>();
+            timeStops = new List<TimeStopInstance>();
         }
 
         private Entity GetEntity(EntityType type, int index)
@@ -38,7 +39,7 @@ namespace TBAR.TimeStop
             Entity owner = GetEntity(type, index);
 
             if (!HaveITimeStopped(owner))
-                TimeStops.Add(new TimeStopInstance(owner, duration, soundPath));
+                timeStops.Add(new TimeStopInstance(owner, duration, soundPath));
             else
             {
                 FindAndRemoveInstance(owner);
@@ -50,33 +51,38 @@ namespace TBAR.TimeStop
             Entity owner = instance.Owner;
 
             if (!HaveITimeStopped(owner))
-                TimeStops.Add(instance);
+                timeStops.Add(instance);
             else
             {
                 FindAndRemoveInstance(owner);
             }
         }
 
+        public void ForceStop(TimeStopInstance instance)
+        {
+            timeStops.Add(instance);
+        }
+
         private void FindAndRemoveInstance(Entity owner)
         {
-            int myTimeStopIndex = TimeStops.FindIndex(x => x.Owner == owner);
+            int myTimeStopIndex = timeStops.FindIndex(x => x.Owner == owner);
 
-            int preRemoveCount = TimeStops.Count;
+            int preRemoveCount = timeStops.Count;
 
-            if (TimeStops.Count - 1 == 0)
+            if (timeStops.Count - 1 == 0)
             {
                 HasOrderToRestore = true;
-                TBAR.Instance.PlaySound(TimeStops[0].EndSoundEffect);
+                TBAR.Instance.PlaySound(timeStops[0].EndSoundEffect);
             }
 
-            if (TimeStops.Count > 0)
-                TimeStops.RemoveAt(myTimeStopIndex);
+            if (timeStops.Count > 0)
+                timeStops.RemoveAt(myTimeStopIndex);
         }
 
         public void Update()
         {
             if (Main.gameMenu && Main.netMode == NetmodeID.SinglePlayer)
-                TimeStops.Clear();
+                timeStops.Clear();
 
             if (HasOrderToRestore)
                 RestoreOrder();
@@ -87,16 +93,16 @@ namespace TBAR.TimeStop
                 Main.time--;
             }
 
-            for (int i = TimeStops.Count - 1; i >= 0; i--)
+            for (int i = timeStops.Count - 1; i >= 0; i--)
             {
-                if (--TimeStops[i].Duration <= 0)
+                if (--timeStops[i].Duration <= 0)
                 {
                     if (i == 0)
                     {
                         HasOrderToRestore = true;
-                        TBAR.Instance.PlaySound(TimeStops[0].EndSoundEffect);
+                        TBAR.Instance.PlaySound(timeStops[0].EndSoundEffect);
                     }
-                    TimeStops.RemoveAt(i);
+                    timeStops.RemoveAt(i);
                 }
             }
 
@@ -136,17 +142,22 @@ namespace TBAR.TimeStop
             packet.Send(-1, ignore);
         }*/
 
-        public List<TimeStopInstance> TimeStops { get; }
+        private readonly List<TimeStopInstance> timeStops;
 
-        public bool HaveITimeStopped(Entity e) => TimeStops.Find(x => x.Owner == e) != null;
+        public bool HaveITimeStopped(Entity e) => timeStops.Find(x => x.Owner == e) != null;
 
-        public bool IsTimeStopped => TimeStops.Count > 0;
+        public bool IsTimeStopped => timeStops.Count > 0;
 
         public bool HasOrderToRestore { get; set; }
 
         public static void Unload()
         {
             instance = null;
+        }
+
+        public TimeStopInstance FindInstance(Predicate<TimeStopInstance> predicate)
+        {
+            return timeStops.FindLast(predicate);
         }
 
         private static TimeStopManager instance;

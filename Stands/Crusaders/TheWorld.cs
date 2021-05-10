@@ -1,8 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using TBAR.Components;
+using TBAR.Enums;
+using TBAR.Extensions;
 using TBAR.Input;
 using TBAR.Players;
 using TBAR.Players.Visuals;
+using TBAR.Projectiles.Stands;
 using TBAR.Projectiles.Stands.Crusaders.TheWorld;
 using TBAR.Projectiles.Stands.Crusaders.TheWorld.RoadRoller;
 using TBAR.Projectiles.Visual;
@@ -33,8 +36,11 @@ namespace TBAR.Stands.Crusaders
             StandCombo slamDunk = new StandCombo("Road Roller", ComboInput.Up, ComboInput.Action1, ComboInput.Action2, ComboInput.Action3, ComboInput.Up);
             slamDunk.OnActivate += SlamDunk_OnActivate;
             slamDunk.Description = "Drops a Road Roller from hammerspace onto your Mouse Position.\nRoad Roller deals damage on impact and after it explodes";
+            
+            StandCombo barrage = new StandCombo("Barrage", ComboInput.Action2, ComboInput.Action1, ComboInput.Action2);
+            barrage.OnActivate += Barrage;
 
-            AddNormalCombos(slamDunk);
+            AddNormalCombos(slamDunk, barrage);
 
         }
 
@@ -60,7 +66,22 @@ namespace TBAR.Stands.Crusaders
 
             Projectile.NewProjectile(player.Center, Vector2.Zero, ModContent.ProjectileType<TimeStopVFX>(), 0, 0, player.whoAmI);
 
-            TimeStopManager.Instance.TryStopTime(ts);
+            TimeStopManager.Instance.ForceStop(ts);
+        }
+
+        private void Barrage(Player player)
+        {
+            TheWorldProjectile tw = ActiveStandProjectile as TheWorldProjectile;
+
+            if (tw?.State == "Idle")
+            {
+                tw?.SetState(TWStates.Barrage.ToString());
+
+                string path = "Projectiles/Stands/Crusaders/TheWorld/";
+                Projectile projectile = tw.projectile;
+                int i = PunchBarrage.CreateBarrage(path + "TWRush", projectile, projectile.Center.DirectTo(ActiveStandProjectile.MousePosition, 24f), tw.GetBarrageDamage(), path + "TWRushBack");
+                tw.Barrage = Main.projectile[i];
+            }
         }
 
         private void TimeStop(Player player)
@@ -132,5 +153,11 @@ namespace TBAR.Stands.Crusaders
         {
             return new SpriteAnimation("Projectiles/Stands/Crusaders/TheWorld/TheWorldIdle", 8, 10, true);
         }
+
+        public override string GetDamageScalingText => "30 + 120% of DPS";
+
+        public override string GetEffectiveRangeText => "10m";
+
+        public override DamageType StandDamageType => DamageType.Melee;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using TBAR.Input;
 using Terraria.GameContent.UI.Elements;
 using Terraria.UI;
 
@@ -7,9 +8,8 @@ namespace TBAR.UI.Elements
 {
     public class InputButton : UIElement
     {
-        public InputButton(string text)
+        public InputButton(ComboInput input)
         {
-            Name = text;
             this.OverflowHidden = false;
 
             this.Width.Set(50, 0f);
@@ -20,24 +20,17 @@ namespace TBAR.UI.Elements
             Text.TextColor = Color.Yellow;
 
             this.Append(Text);
+
+            Offset = (int)input;
         }
 
         protected override void DrawSelf(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Textures.KeyboardInput, GetDimensions().Position(), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
+            spriteBatch.Draw(Textures.KeyboardInput, GetDimensions().Position(), new Rectangle(0, 50 * Offset, 48, 48), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
         }
 
         public UIText Text { get; } = new UIText("");
 
-        private string name;
-        public string Name
-        {
-            get => name;
-            set
-            {
-                name = value;
-                Text.SetText(name);
-            }
-        }
+        public int Offset { get; }
     }
 }

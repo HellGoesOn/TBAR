@@ -50,7 +50,7 @@ namespace TBAR.UI.Elements.ComboPanel
             for(int i = 0; i < combo.RequiredInputs.Count; i++)
             {
                 ComboInput c = combo.RequiredInputs[i];
-                InputButton button = new InputButton(c.ToString());
+                InputButton button = new InputButton(c);
 
                 button.Top.Set(CLOSED_HEIGHT * 0.33f, 0);
                 button.Left.Set(2 + ((button.Width.Pixels + 4) * i), 0);

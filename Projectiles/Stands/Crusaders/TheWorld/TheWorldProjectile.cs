@@ -21,7 +21,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld
 
         public override void InitializeStates(Projectile projectile)
         {
-            Range = 4f;
+            Range = 5f;
 
             string path = "Projectiles/Stands/Crusaders/TheWorld/";
 
@@ -73,9 +73,27 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld
             StandState knifeThrowState = new StandState(throwAnimation) { Key = TWStates.KnifeThrow.ToString() };
             knifeThrowState.OnStateEnd += GoIdle;
             knifeThrowState.OnStateEnd += delegate { knifeThrowState.OnStateUpdate += ThrowingKnives; };
-            knifeThrowState.OnStateUpdate += ThrowingKnives;
+            knifeThrowState.OnStateUpdate += ThrowingKnives; 
 
-            AddStates(summonState, despawnState, idleState, punchState, knifeThrowState, flyUpState, slamDunkState);
+            StandState barrageState = new StandState(TWStates.Barrage.ToString(), path + "TheWorldRushMiddle", 4, 15, true, 180);
+            barrageState.OnStateBegin += BarrageState_OnStateBegin;
+
+            barrageState.OnStateUpdate += delegate
+            {
+                if (Barrage != null)
+                    SpriteFX = Barrage.Center.X < projectile.Center.X ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+
+                projectile.Center = Vector2.Lerp(projectile.Center, Owner.Center + PunchDirection, 0.35f);
+            };
+
+            barrageState.OnStateEnd += delegate
+            {
+                PunchDirection = Vector2.Zero;
+                Barrage = null;
+                SetState(TWStates.Idle.ToString());
+            };
+
+            AddStates(summonState, despawnState, idleState, punchState, knifeThrowState, flyUpState, slamDunkState, barrageState);
 
             SetState(TWStates.Summon.ToString());
         }
@@ -93,6 +111,11 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld
             MyRoller = null;
         }
 
+        private void BarrageState_OnStateBegin(StandState sender)
+        {
+            PunchDirection = Owner.Center.DirectTo(MousePosition, Owner.width + 16 * Range);
+        }
+
         private void SlamDunkState_OnStateUpdate(StandState sender)
         {
             if (MyRoller != null && MyRoller.modProjectile is RoadRollerProjectile roller && !roller.HasHitSomething)
@@ -107,7 +130,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld
         private void SlamDunkState_OnStateBegin(StandState sender)
         {
             Owner.Center = SlamDunkPosition;
-            MyRoller = RoadRollerProjectile.CreateRoller(SlamDunkPosition, this);
+            MyRoller = RoadRollerProjectile.CreateRoller(SlamDunkPosition, (projectile.modProjectile as TheWorldProjectile));
         }
 
         private void FlyUpState_OnStateUpdate(StandState sender)
@@ -129,7 +152,6 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld
                         SetState(PunchState);
                     break;
                 case ImmediateInput.RightClick:
-                    if (CanPunch)
                         SetState(TWStates.KnifeThrow.ToString());
                         break;
                 default:
@@ -227,6 +249,12 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld
         public Vector2 SlamDunkPosition { get; set; }
 
         public Projectile MyRoller { get; set; }
+
+        protected override int GetPunchDamage() => (int)(30 + BaseDPS * 1.2f);
+
+        public override int GetBarrageDamage() => (int)(20 + BaseDPS * 0.8f);
+
+        public override bool CanPunch => State == TWStates.Idle.ToString() || State == TWStates.KnifeThrow.ToString();
     }
 
     public enum TWStates
@@ -235,6 +263,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld
         Despawn,
         Idle,
         Punch,
-        KnifeThrow
+        KnifeThrow,
+        Barrage
     }
 }

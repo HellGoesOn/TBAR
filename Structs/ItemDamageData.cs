@@ -49,7 +49,7 @@ namespace TBAR.Structs
                 case DamageType.Magic:
                     damage = (int)(item.damage * player.magicDamage * player.allDamage);
                     break;
-                case DamageType.Summon:
+                case DamageType.Summoner:
                     damage = (int)(item.damage * player.minionDamage * player.allDamage);
                     break;
                 default:

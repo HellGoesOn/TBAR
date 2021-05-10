@@ -20,7 +20,7 @@ namespace TBAR.Extensions
             if (item.ranged)
                 return DamageType.Ranged;
             if (item.summon)
-                return DamageType.Summon;
+                return DamageType.Summoner;
 
             return DamageType.Any;
         }

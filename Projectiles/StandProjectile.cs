@@ -148,7 +148,7 @@ namespace TBAR.Projectiles.Stands
                                 currentDamage = item.damage;
                             break;
 
-                        case DamageType.Summon:
+                        case DamageType.Summoner:
                             if (item.summon)
                                 currentDamage = item.damage;
                             break;

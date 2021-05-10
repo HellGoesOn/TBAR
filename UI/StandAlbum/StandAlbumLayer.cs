@@ -6,7 +6,7 @@ namespace TBAR.UI.ScreenEffects.TimeSkip
 {
     public class StandAlbumLayer : GameInterfaceLayer
     {
-        public StandAlbumLayer() : base("TBAR:Stand Album Layer", InterfaceScaleType.None)
+        public StandAlbumLayer() : base("TBAR:Stand Album Layer", InterfaceScaleType.UI)
         {
             State = new StandAlbumUIState();
             State.Activate();

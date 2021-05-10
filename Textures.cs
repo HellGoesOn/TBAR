@@ -5,11 +5,17 @@ namespace TBAR
 {
     public static class Textures
     {
-        [Loadable("TBAR/Textures/KeyboardInput")]
+        [Loadable("TBAR/Textures/ComboButtons")]
         public static Texture2D KeyboardInput { get; internal set; }
 
         [Loadable("TBAR/Textures/EmptyPixel")]
         public static Texture2D Emptiness { get; internal set; }
+        
+        [Loadable("TBAR/Textures/DMGLogo")]
+        public static Texture2D DamageTypeIcon { get; internal set; }
+
+        [Loadable("TBAR/Textures/Range")]
+        public static Texture2D RangeIcon { get; internal set; }
 
         [Loadable("TBAR/UI/Elements/StandCard/StandCard")]
         public static Texture2D StandCard { get; internal set; }
