@@ -8,12 +8,12 @@ namespace TBAR.TimeSkip
     {
         public TimeSkipManager() : base()
         {
-            VisualEffects = new List<TimeSkipVisualEffect>();
+            VisualEffects = new List<TimeSkipVisual>();
         }
 
         public void UpdateVisuals()
         {
-            foreach(TimeSkipVisualEffect ts in VisualEffects)
+            foreach(TimeSkipVisual ts in VisualEffects)
             {
                 ts.Update();
             }
@@ -21,6 +21,8 @@ namespace TBAR.TimeSkip
             VisualEffects.RemoveAll(x => !x.Animation.Active);
         }
 
-        public List<TimeSkipVisualEffect> VisualEffects { get; } 
+        public bool IsTimeSkipped => EffectCount > 0;
+
+        public List<TimeSkipVisual> VisualEffects { get; } 
     }
 }

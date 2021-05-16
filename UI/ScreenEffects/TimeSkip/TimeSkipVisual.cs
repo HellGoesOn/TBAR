@@ -7,18 +7,23 @@ using TBAR.TimeSkip;
 
 namespace TBAR.UI.ScreenEffects.TimeSkip
 {
-    public class TimeSkipVisualEffect
+    public class TimeSkipVisual
     {
         /// <summary>
         /// Creates a new instance and adds it to the queue
         /// </summary>
-        public static void Start()
+        /// <returns>Reference to that instance</returns>
+        public static TimeSkipVisual Start()
         {
-            if(Main.netMode != NetmodeID.Server)
-                TBAR.TimeSkipManager.VisualEffects.Add(new TimeSkipVisualEffect());
+            TimeSkipVisual result = new TimeSkipVisual();
+
+            if (Main.netMode != NetmodeID.Server)
+                TBAR.TimeSkipManager.VisualEffects.Add(result);
+
+            return result;
         }
 
-        public TimeSkipVisualEffect()
+        public TimeSkipVisual()
         {
             Animation =
                 new SpriteAnimation("Textures/TimeSkipVFX", 22, 30)

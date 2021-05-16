@@ -17,7 +17,7 @@ namespace TBAR.TimeSkip
 
             Duration = duration;
 
-            TimeSkipVisualEffect.Start();
+            TimeSkipVisual.Start();
         }
 
         public Entity Owner()
@@ -28,6 +28,9 @@ namespace TBAR.TimeSkip
         public void Update()
         {
             Duration--;
+
+            if (Duration == 22)
+                TimeSkipVisual.Start();
         }
 
         public int Duration { get; set; }

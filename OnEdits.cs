@@ -21,10 +21,10 @@ namespace TBAR
 
         public void LoadEdits()
         {
-            /*On.Terraria.Main.DrawTiles += Main_DrawTiles;
+            On.Terraria.Main.DrawTiles += Main_DrawTiles;
             On.Terraria.Main.DrawBlack += Main_DrawBlack;
 
-            On.Terraria.Main.DrawWalls += Main_DrawWalls;*/
+            On.Terraria.Main.DrawWalls += Main_DrawWalls;
 
             On.Terraria.NPC.VanillaAI += NPC_VanillaAI;
 
@@ -44,10 +44,10 @@ namespace TBAR
         }
 
         public void UnloadEdits()
-        {/*
+        {
             On.Terraria.Main.DrawTiles -= Main_DrawTiles;
             On.Terraria.Main.DrawBlack -= Main_DrawBlack;
-            On.Terraria.Main.DrawWalls -= Main_DrawWalls;*/
+            On.Terraria.Main.DrawWalls -= Main_DrawWalls;
 
             On.Terraria.NPC.VanillaAI -= NPC_VanillaAI;
 
@@ -120,23 +120,23 @@ namespace TBAR
                 orig.Invoke(self);
         }
 
-        /*private void Main_DrawWalls(On.Terraria.Main.orig_DrawWalls orig, Main self)
+        private void Main_DrawWalls(On.Terraria.Main.orig_DrawWalls orig, Main self)
         {
-            if (!TBAMod.Instance.DisableTileDraw)
+            if (!TBAR.Instance.DisableTileDraw)
                 orig.Invoke(self);
         }
 
         private void Main_DrawBlack(On.Terraria.Main.orig_DrawBlack orig, Main self, bool force)
         {
-            if (!TBAMod.Instance.DisableTileDraw)
+            if (!TBAR.Instance.DisableTileDraw)
                 orig.Invoke(self, force);
         }
 
         private void Main_DrawTiles(On.Terraria.Main.orig_DrawTiles orig, Main self, bool solidOnly, int waterStyleOverride)
         {
-            if (!TBAMod.Instance.DisableTileDraw)
+            if (!TBAR.Instance.DisableTileDraw)
                 orig.Invoke(self, solidOnly, waterStyleOverride);
-        }*/
+        }
 
         private void NPC_UpdateNPC(On.Terraria.NPC.orig_UpdateNPC orig, NPC self, int i)
         {

@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using System.Linq;
 using TBAR.Components;
 using TBAR.Input;
 using TBAR.Stands;
@@ -102,5 +103,7 @@ namespace TBAR
         }
 
         public bool VoiceLinesEnabled { get; set; } = true;
+
+        public bool DisableTileDraw => TimeSkipManager.EffectCount > 0;
     }
 }

@@ -1,8 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using TBAR.Input;
-using TBAR.UI.Elements;
-using Terraria;
+﻿using Microsoft.Xna.Framework.Graphics;
 using Terraria.UI;
 
 namespace TBAR.UI.ScreenEffects.TimeSkip
@@ -14,7 +10,7 @@ namespace TBAR.UI.ScreenEffects.TimeSkip
         {
             base.Draw(spriteBatch);
 
-            foreach(TimeSkipVisualEffect vfx in TimeSkipManager.Instance.TimeSkipEffects)
+            foreach(TimeSkipVisual vfx in TBAR.TimeSkipManager.VisualEffects)
             {
                 vfx.DrawEffect(spriteBatch);
             }

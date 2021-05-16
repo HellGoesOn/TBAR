@@ -11,9 +11,22 @@ namespace TBAR.Projectiles.Visual
     //This code is disgusting. Too bad!
     public class FakeTilesProjectile : ModProjectile
     {
+        private int _duration;
+
+        public static int Create(Vector2 pos, int duration = 600)
+        {
+            int returnValue = Projectile.NewProjectile(pos, Vector2.Zero, ModContent.ProjectileType<FakeTilesProjectile>(), 0, 0, Main.myPlayer);
+
+            FakeTilesProjectile faker = (FakeTilesProjectile)Main.projectile[returnValue].modProjectile;
+            faker._duration = duration;
+            faker.projectile.timeLeft = duration + 12;
+
+            return returnValue;
+        }
+
         public override void SetDefaults()
         {
-            projectile.timeLeft = 612;
+            projectile.timeLeft = _duration + 12;
             projectile.friendly = false;
             projectile.hide = true;
             projectile.hostile = false;
@@ -56,7 +69,7 @@ namespace TBAR.Projectiles.Visual
                 }
             }
 
-            if (projectile.timeLeft == 575)
+            if (projectile.timeLeft == _duration - 25)
             {
                 foreach (FakeTileData fakes in FakeTiles)
                     fakes.SetData();
@@ -65,7 +78,7 @@ namespace TBAR.Projectiles.Visual
                     fakes.SetData();
             }
 
-            if (projectile.timeLeft < 575)
+            if (projectile.timeLeft < _duration - 25)
             {
                 foreach (FakeTileData fakes in FakeTiles)
                     fakes.Update();
@@ -74,7 +87,7 @@ namespace TBAR.Projectiles.Visual
                     fakes.Update();
             }
 
-            if (projectile.timeLeft > 575 && projectile.timeLeft < 600)
+            if (projectile.timeLeft > _duration - 25 && projectile.timeLeft < _duration)
             {
                 foreach (FakeTileData fakes in FakeTiles)
                 {
