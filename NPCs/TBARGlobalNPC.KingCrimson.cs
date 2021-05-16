@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using TBAR.Projectiles.Stands;
 using TBAR.TimeSkip;
 using Terraria;
 using Terraria.ID;
@@ -29,7 +30,7 @@ namespace TBAR.NPCs
                 {
                     TimeSkipStates.Add
                     (
-                        new TimeSkipData(npc.Center - npc.visualOffset, npc.velocity, npc.scale, npc.rotation, npc.frame, npc.direction, npc.ai)
+                        new TimeSkipData(npc.Center, npc.velocity, npc.scale, npc.rotation, npc.frame, npc.direction, npc.ai)
                     );
 
                     elapsedTime = 0;
@@ -42,7 +43,7 @@ namespace TBAR.NPCs
                     for (int i = 0; i < 13; i++)
                         TimeSkipStates.Add
                         (
-                            new TimeSkipData(npc.Center - npc.visualOffset, npc.velocity, npc.scale, npc.rotation, npc.frame, npc.direction, npc.ai)
+                            new TimeSkipData(npc.Center, npc.velocity, npc.scale, npc.rotation, npc.frame, npc.direction, npc.ai)
                         );
             }
             else
@@ -61,6 +62,7 @@ namespace TBAR.NPCs
             }
         }
 
+        // terrible implementantion but will do for now?
         public override bool? CanBeHitByProjectile(NPC npc, Projectile projectile)
         {
             if (TBAR.TimeSkipManager.IsTimeSkipped)
@@ -76,7 +78,11 @@ namespace TBAR.NPCs
                 if (rect.Intersects(projectile.Hitbox) && npc.immune[projectile.owner] == 0)
                 {
                     npc.immune[projectile.owner] += projectile.penetrate != 1 ? 20 : 0;
-                    if (projectile.penetrate > 0)
+
+                    if (projectile.modProjectile is PunchGhostProjectile stand)
+                        npc.immune[projectile.owner] = stand.AttackSpeed;
+
+                    if (projectile.penetrate > 0 && !(projectile.modProjectile is PunchGhostProjectile))
                         projectile.penetrate--;
 
                     Main.LocalPlayer.ApplyDamageToNPC(npc, projectile.damage, projectile.knockBack, projectile.direction, false);
