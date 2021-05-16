@@ -14,7 +14,6 @@ namespace TBAR.UI
         public void Update(GameTime gameTime)
         {
             TimeSkipLayer.State.Update(gameTime);
-            TimeSkipLayer.State.Visible = TimeSkipManager.Instance.VFX.Animation.Active;
 
             StandAlbumLayer.Update(gameTime);
         }

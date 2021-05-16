@@ -26,10 +26,10 @@ namespace TBAR
                     string name = reader.ReadString();
                     TBARPlayer plr = TBARPlayer.Get(Main.player[playerNumber]);
 
-                    plr.PlayerStand = StandFactory.Instance.Get(name);
+                    plr.PlayerStand = StandLoader.Instance.Get(name);
 
                     if(IsServer)
-                        plr.PlayerStand = StandFactory.Instance.Get(name);
+                        plr.PlayerStand = StandLoader.Instance.Get(name);
 
                     break;
 
@@ -52,11 +52,11 @@ namespace TBAR
                     name = reader.ReadString();
                     plr = TBARPlayer.Get(Main.player[playerNumber]);
 
-                    plr.PlayerStand = StandFactory.Instance.Get(name);
+                    plr.PlayerStand = StandLoader.Instance.Get(name);
 
                     if (IsServer)
                     {
-                        plr.PlayerStand = StandFactory.Instance.Get(name);
+                        plr.PlayerStand = StandLoader.Instance.Get(name);
                         plr.SendStandChangedPacket(playerNumber);
                     }
                     break;

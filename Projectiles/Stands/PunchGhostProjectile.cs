@@ -151,5 +151,7 @@ namespace TBAR.Projectiles.Stands
         public int BaseDPS { get; set; }
 
         public List<HitEntityData> HitNPCs { get; private set; }
+
+        public bool IsIdle => State == "Idle";
     }
 }

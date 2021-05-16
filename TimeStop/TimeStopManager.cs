@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using TBAR.Components;
 using TBAR.Enums;
 using TBAR.NPCs;
 using Terraria;
@@ -7,13 +8,8 @@ using Terraria.ID;
 
 namespace TBAR.TimeStop
 {
-    public class TimeStopManager
+    public class TimeStopManager : GlobalEffectManager<TimeStopInstance>
     {
-        private TimeStopManager()
-        {
-            timeStops = new List<TimeStopInstance>();
-        }
-
         private Entity GetEntity(EntityType type, int index)
         {
             switch(type)
@@ -39,7 +35,7 @@ namespace TBAR.TimeStop
             Entity owner = GetEntity(type, index);
 
             if (!HaveITimeStopped(owner))
-                timeStops.Add(new TimeStopInstance(owner, duration, soundPath));
+                AddEffect(new TimeStopInstance(owner, duration, soundPath));
             else
             {
                 FindAndRemoveInstance(owner);
@@ -48,10 +44,10 @@ namespace TBAR.TimeStop
 
         public void TryStopTime(TimeStopInstance instance)
         {
-            Entity owner = instance.Owner;
+            Entity owner = instance.Owner();
 
             if (!HaveITimeStopped(owner))
-                timeStops.Add(instance);
+                AddEffect(instance);
             else
             {
                 FindAndRemoveInstance(owner);
@@ -60,29 +56,29 @@ namespace TBAR.TimeStop
 
         public void ForceStop(TimeStopInstance instance)
         {
-            timeStops.Add(instance);
+            AddEffect(instance);
         }
 
         private void FindAndRemoveInstance(Entity owner)
         {
-            int myTimeStopIndex = timeStops.FindIndex(x => x.Owner == owner);
+            int myTimeStopIndex = GetIndex(x => x.Owner() == owner);
 
-            int preRemoveCount = timeStops.Count;
+            int preRemoveCount = EffectCount;
 
-            if (timeStops.Count - 1 == 0)
+            if (EffectCount - 1 == 0)
             {
                 HasOrderToRestore = true;
-                TBAR.Instance.PlaySound(timeStops[0].EndSoundEffect);
+                TBAR.Instance.PlaySound(effects[0].EndSoundEffect);
             }
 
-            if (timeStops.Count > 0)
-                timeStops.RemoveAt(myTimeStopIndex);
+            if (EffectCount > 0)
+                RemoveEffectAt(myTimeStopIndex);
         }
 
         public void Update()
         {
             if (Main.gameMenu && Main.netMode == NetmodeID.SinglePlayer)
-                timeStops.Clear();
+                ClearEffects();
 
             if (HasOrderToRestore)
                 RestoreOrder();
@@ -93,16 +89,17 @@ namespace TBAR.TimeStop
                 Main.time--;
             }
 
-            for (int i = timeStops.Count - 1; i >= 0; i--)
+            for (int i = EffectCount - 1; i >= 0; i--)
             {
-                if (--timeStops[i].Duration <= 0)
+                if (--effects[i].Duration <= 0)
                 {
                     if (i == 0)
                     {
                         HasOrderToRestore = true;
-                        TBAR.Instance.PlaySound(timeStops[0].EndSoundEffect);
+                        TBAR.Instance.PlaySound(effects[0].EndSoundEffect);
                     }
-                    timeStops.RemoveAt(i);
+
+                    RemoveEffectAt(i);
                 }
             }
 
@@ -142,34 +139,15 @@ namespace TBAR.TimeStop
             packet.Send(-1, ignore);
         }*/
 
-        private readonly List<TimeStopInstance> timeStops;
+        public bool HaveITimeStopped(Entity e) => GetEffect(x => x.Owner() == e) != null;
 
-        public bool HaveITimeStopped(Entity e) => timeStops.Find(x => x.Owner == e) != null;
-
-        public bool IsTimeStopped => timeStops.Count > 0;
+        public bool IsTimeStopped => EffectCount > 0;
 
         public bool HasOrderToRestore { get; set; }
 
-        public static void Unload()
-        {
-            instance = null;
-        }
-
         public TimeStopInstance FindInstance(Predicate<TimeStopInstance> predicate)
         {
-            return timeStops.FindLast(predicate);
-        }
-
-        private static TimeStopManager instance;
-        public static TimeStopManager Instance
-        {
-            get
-            {
-                if (instance == null)
-                    instance = new TimeStopManager();
-
-                return instance;
-            }
+            return (TimeStopInstance)GetLastEffect(predicate);
         }
     }
 }

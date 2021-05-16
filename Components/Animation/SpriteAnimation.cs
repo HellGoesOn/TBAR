@@ -30,7 +30,7 @@ namespace TBAR.Components
         public void Reset()
         {
             ElapsedTime = 0;
-            CurrentFrame = IsReversed ? FrameCount : 0;
+            CurrentFrame = IsReversed ? FrameCount - 1 : 0;
             Active = true;
         }
 
@@ -106,7 +106,17 @@ namespace TBAR.Components
             }
         }
 
-        public bool IsReversed { get; set; }
+        private bool isReversed;
+        public bool IsReversed 
+        {
+            get => isReversed;
+            set
+            {
+                isReversed = value;
+
+                Reset();
+            }
+        }
 
         public int LoopTimer { get; set; }
 

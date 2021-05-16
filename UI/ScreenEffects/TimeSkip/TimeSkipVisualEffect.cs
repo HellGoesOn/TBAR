@@ -2,19 +2,30 @@
 using TBAR.Components;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.ID;
+using TBAR.TimeSkip;
 
 namespace TBAR.UI.ScreenEffects.TimeSkip
 {
-    public class TimeSkipVFX : UIVisualEffect
+    public class TimeSkipVisualEffect
     {
-        public TimeSkipVFX()
+        /// <summary>
+        /// Creates a new instance and adds it to the queue
+        /// </summary>
+        public static void Start()
+        {
+            if(Main.netMode != NetmodeID.Server)
+                TBAR.TimeSkipManager.VisualEffects.Add(new TimeSkipVisualEffect());
+        }
+
+        public TimeSkipVisualEffect()
         {
             Animation =
                 new SpriteAnimation("Textures/TimeSkipVFX", 22, 30)
-                { Active = false };
+                { Active = true };
         }
 
-        public override void DrawEffect(SpriteBatch spriteBatch)
+        public void DrawEffect(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(
                    Animation.SpriteSheet,
@@ -27,7 +38,7 @@ namespace TBAR.UI.ScreenEffects.TimeSkip
                    1f);
         }
 
-        public override void Update()
+        public void Update()
         {
             if (Animation.Active)
             {

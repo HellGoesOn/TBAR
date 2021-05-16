@@ -7,9 +7,9 @@ using Terraria;
 
 namespace TBAR.Stands
 {
-    public class StandFactory
+    public class StandLoader
     {
-        private StandFactory()
+        private StandLoader()
         {
             Stands = new List<Stand>();
         }
@@ -61,6 +61,11 @@ namespace TBAR.Stands
             if (name == "None")
                 return null;
 
+            Stand attempt = Stands.Find(x => x.StandName == name);
+
+            if (attempt != null)
+                return (Stand)Activator.CreateInstance(attempt.GetType());
+
             foreach (Stand s in Stands)
             {
                 if (s.GetType().Name == name)
@@ -74,13 +79,13 @@ namespace TBAR.Stands
 
         public List<Stand> Stands { get; private set; }
 
-        private static StandFactory _instance;
-        public static StandFactory Instance
+        private static StandLoader _instance;
+        public static StandLoader Instance
         {
             get
             {
                 if (_instance == null)
-                    _instance = new StandFactory();
+                    _instance = new StandLoader();
 
                 return _instance;
             }

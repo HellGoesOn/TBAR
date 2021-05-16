@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using TBAR.Components;
-using TBAR.Enums;
 using TBAR.Extensions;
 using TBAR.Input;
 using TBAR.Players;
@@ -102,8 +101,6 @@ namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
             States.Add(SPStates.Uppercut.ToString(), upperCutState);
 
             SetState(SPStates.Summon.ToString());
-
-            TBAR.Instance.Logger.Debug($"{this} at index {projectile.whoAmI} has {States.Count}");
         }
 
         private void UpperCutState_OnStateUpdate(StandState sender)

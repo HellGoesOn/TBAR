@@ -13,9 +13,13 @@ namespace TBAR.UI.ScreenEffects.TimeSkip
         public override void Draw(SpriteBatch spriteBatch)
         {
             base.Draw(spriteBatch);
-            TimeSkipManager.Instance.VFX.DrawEffect(spriteBatch);
+
+            foreach(TimeSkipVisualEffect vfx in TimeSkipManager.Instance.TimeSkipEffects)
+            {
+                vfx.DrawEffect(spriteBatch);
+            }
         }
 
-        public bool Visible { get; set; }
+        public bool Visible { get; set; } = true;
     }
 }

@@ -11,7 +11,7 @@ namespace TBAR.Players
         public override void UpdateBiomeVisuals()
         {
             bool shockWaveExist = Main.projectile.Count(x => x.active && x.modProjectile is TimeStopVFX) > 0;
-            player.ManageSpecialBiomeVisuals("TBA:FreezeSky", TimeStopManager.Instance.IsTimeStopped && !shockWaveExist);
+            player.ManageSpecialBiomeVisuals("TBA:FreezeSky", TBAR.TimeStopManager.IsTimeStopped && !shockWaveExist);
             player.ManageSpecialBiomeVisuals("TBA:TimeStopInvert", shockWaveExist);
         }
     }

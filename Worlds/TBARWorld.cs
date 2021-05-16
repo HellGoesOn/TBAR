@@ -12,8 +12,8 @@ namespace TBAR.Worlds
         {
             if (Main.netMode == NetmodeID.MultiplayerClient)
             {
-                TimeStopManager.Instance.Update();
-                TimeSkipManager.Instance.Update();
+                TBAR.TimeStopManager.Update();
+                TBAR.TimeSkipManager.UpdateVisuals();
                 UIManager.Instance.StandAlbumLayer?.State?.Card?.Idle?.Update();
             }
         }
@@ -22,8 +22,8 @@ namespace TBAR.Worlds
         {
             if (Main.netMode == NetmodeID.SinglePlayer || Main.dedServ)
             {
-                TimeStopManager.Instance.Update();
-                TimeSkipManager.Instance.Update();
+                TBAR.TimeStopManager.Update();
+                TBAR.TimeSkipManager.UpdateVisuals();
                 UIManager.Instance.StandAlbumLayer?.State?.Card?.Idle?.Update();
             }
         }

@@ -57,7 +57,7 @@ namespace TBAR.Stands.Crusaders
 
         private void StopTime(Player player)
         {
-            bool isTimeStopped = TimeStopManager.Instance.IsTimeStopped;
+            bool isTimeStopped = TBAR.TimeStopManager.IsTimeStopped;
             string path = isTimeStopped ? "" : "Sounds/StarPlatinum/SP_TimeStopSignal";
 
             TimeStopInstance ts = new TimeStopInstance(player, 600, path) { EndSoundEffect = "Sounds/StarPlatinum/SP_TimeRestore" };
@@ -68,7 +68,7 @@ namespace TBAR.Stands.Crusaders
                 TBAR.Instance.PlayVoiceLine("Sounds/StarPlatinum/SP_TimeStopCall");
             }
 
-            TimeStopManager.Instance.TryStopTime(ts);
+            TBAR.TimeStopManager.TryStopTime(ts);
         }
 
         private void Barrage(Player player)

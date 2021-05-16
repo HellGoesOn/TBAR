@@ -1,12 +1,14 @@
-﻿using Terraria;
+﻿using System;
+using TBAR.Components;
+using Terraria;
 
 namespace TBAR.TimeStop
 {
-    public class TimeStopInstance
+    public class TimeStopInstance : IGlobalEffect
     {
-        public TimeStopInstance(Entity owner, int duration, string soundPath = "")
+        public TimeStopInstance(Entity _owner, int duration, string soundPath = "")
         {
-            Owner = owner;
+            owner = _owner;
             Duration = duration;
 
             if (soundPath != "")
@@ -15,13 +17,23 @@ namespace TBAR.TimeStop
 
         public override string ToString()
         {
-            return "{ O: " + Owner + "; D: " + Duration + " }";
+            return "{ O: " + owner + "; D: " + Duration + " }";
+        }
+
+        public void Update()
+        {
+            Duration--;
+        }
+
+        public Entity Owner()
+        {
+            return owner;
         }
 
         public string EndSoundEffect { get; set; }
 
         public int Duration { get; set; }
 
-        public Entity Owner { get; set; }
+        private readonly Entity owner;
     }
 }

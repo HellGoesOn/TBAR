@@ -44,7 +44,7 @@ namespace TBAR.Items.Tools
 
             tBAR.ArrowProgress = tBAR.ArrowProgressMax;
 
-            tBAR.PlayerStand = StandFactory.Instance.GetNewRandom(tBAR);
+            tBAR.PlayerStand = StandLoader.Instance.GetNewRandom(tBAR);
 
             tBAR.ScreenModifiers.Add(new SmoothStepScreenModifier(player.Center, player.Center - new Vector2(0, 64), 0.025f));
             tBAR.ScreenModifiers.Add(new ScreenModifier(player.Center - new Vector2(0, 64)));

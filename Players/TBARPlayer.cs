@@ -44,7 +44,7 @@ namespace TBAR.Players
 
         public override bool CanBeHitByNPC(NPC npc, ref int cooldownSlot)
         {
-            if (TimeStopManager.Instance.IsTimeStopped && !TimeStopManager.Instance.HaveITimeStopped(npc))
+            if (TBAR.TimeStopManager.IsTimeStopped && !TBAR.TimeStopManager.HaveITimeStopped(npc))
                 return false;
 
             if (IsUsingArrow)
@@ -55,9 +55,9 @@ namespace TBAR.Players
 
         public override bool CanBeHitByProjectile(Projectile proj)
         {
-            if (TimeStopManager.Instance.IsTimeStopped
-                && !TimeStopManager.Instance.HaveITimeStopped(proj)
-                && !TimeStopManager.Instance.HaveITimeStopped(Main.player[proj.owner]))
+            if (TBAR.TimeStopManager.IsTimeStopped
+                && !TBAR.TimeStopManager.HaveITimeStopped(proj)
+                && !TBAR.TimeStopManager.HaveITimeStopped(Main.player[proj.owner]))
                 return false;
 
             if (IsUsingArrow)
@@ -68,7 +68,7 @@ namespace TBAR.Players
 
         public override void PostUpdate()
         {
-            if(TimeStopManager.Instance.IsTimeStopped && !TimeStopManager.Instance.HaveITimeStopped(player))
+            if(TBAR.TimeStopManager.IsTimeStopped && !TBAR.TimeStopManager.HaveITimeStopped(player))
             {
                 player.velocity *= 0;
                 player.position = player.oldPosition;

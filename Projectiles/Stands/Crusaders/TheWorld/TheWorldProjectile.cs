@@ -201,9 +201,6 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld
             {
                 SetState(TWStates.Despawn.ToString());
             }
-
-            if (SickBeatTime > 0)
-                SickBeatTime--;
         }
 
         protected override int PunchAnimationIDOffset()
@@ -243,8 +240,6 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld
         }
 
         public int KnifeDamage => (int)(8 + BaseDPS * 0.25f);
-
-        public int SickBeatTime { get; set; }
 
         public Vector2 SlamDunkPosition { get; set; }
 

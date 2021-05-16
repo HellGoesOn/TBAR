@@ -59,14 +59,14 @@ namespace TBAR.Stands.Crusaders
 
             TBARMusic.AddTrackToQueue("Sounds/Music/TWTheme", 1260);
 
-            bool isTimeStopped = TimeStopManager.Instance.IsTimeStopped;
+            bool isTimeStopped = TBAR.TimeStopManager.IsTimeStopped;
             string path = isTimeStopped ? "" : "Sounds/TheWorld/TheWorld_ZaWarudoSFX";
 
             TimeStopInstance ts = new TimeStopInstance(player, 1200, path) { EndSoundEffect = "Sounds/TheWorld/TheWorld_ZaWarudoReleaseSFX" };
 
             Projectile.NewProjectile(player.Center, Vector2.Zero, ModContent.ProjectileType<TimeStopVFX>(), 0, 0, player.whoAmI);
 
-            TimeStopManager.Instance.ForceStop(ts);
+            TBAR.TimeStopManager.ForceStop(ts);
         }
 
         private void Barrage(Player player)
@@ -86,7 +86,7 @@ namespace TBAR.Stands.Crusaders
 
         private void TimeStop(Player player)
         {
-            bool isTimeStopped = TimeStopManager.Instance.IsTimeStopped;
+            bool isTimeStopped = TBAR.TimeStopManager.IsTimeStopped;
             string path = isTimeStopped ? "" : "Sounds/TheWorld/TheWorld_ZaWarudoSFX";
 
             TimeStopInstance ts = new TimeStopInstance(player, 600, path) { EndSoundEffect = "Sounds/TheWorld/TheWorld_ZaWarudoReleaseSFX" };
@@ -99,7 +99,7 @@ namespace TBAR.Stands.Crusaders
             else
                 TBAR.Instance.PlaySound("Sounds/TheWorld/TimeResume");
 
-            TimeStopManager.Instance.TryStopTime(ts);
+            TBAR.TimeStopManager.TryStopTime(ts);
         }
 
         private void OffensiveTimeStop(Player player)

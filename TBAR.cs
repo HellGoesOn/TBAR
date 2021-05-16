@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TBAR.Components;
 using TBAR.Input;
 using TBAR.Stands;
+using TBAR.TimeSkip;
 using TBAR.TimeStop;
 using TBAR.UI;
 using Terraria;
@@ -21,6 +22,8 @@ namespace TBAR
         public TBAR()
         {
             Tracks = new List<TBARMusic>();
+            TimeStopManager = new TimeStopManager();
+            TimeSkipManager = new TimeSkipManager();
             Instance = this;
         }
 
@@ -48,7 +51,7 @@ namespace TBAR
 
             OnEdits.Instance.LoadEdits();
 
-            StandFactory.Instance.Load();
+            StandLoader.Instance.Load();
             TBARInputs.Load(this);
         }
 
@@ -61,13 +64,15 @@ namespace TBAR
         {
             base.Unload();
 
-            StandFactory.Unload();
+            StandLoader.Unload();
             TextureLoader.Unload();
             UIManager.Unload();
-            TimeStopManager.Unload();
 
             TBARInputs.Unload();
             OnEdits.Instance.UnloadEdits();
+
+            TimeStopManager = null;
+            TimeSkipManager = null;
 
             OnEdits.EndLife();
 

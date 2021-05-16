@@ -54,9 +54,9 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld.RoadRoller
 
             if (!triedToAdjustTimeLeft)
             {
-                if (TimeStopManager.Instance.HaveITimeStopped(Main.player[projectile.owner]))
+                if (TBAR.TimeStopManager.HaveITimeStopped(Main.player[projectile.owner]))
                 {
-                    projectile.timeLeft = TimeStopManager.Instance.FindInstance(x => x.Owner == Main.player[projectile.owner]).Duration + 2;
+                    projectile.timeLeft = TBAR.TimeStopManager.FindInstance(x => x.Owner() == Main.player[projectile.owner]).Duration + 2;
                 }
 
                 triedToAdjustTimeLeft = true;

@@ -76,7 +76,7 @@ namespace TBAR
 
         private void Projectile_Update(On.Terraria.Projectile.orig_Update orig, Projectile self, int i)
         {
-            bool ownerStoppedTime = TimeStopManager.Instance.HaveITimeStopped(Main.player[self.owner]);
+            bool ownerStoppedTime = TBAR.TimeStopManager.HaveITimeStopped(Main.player[self.owner]);
 
             if (!TimeStopped || ownerStoppedTime)
                 orig.Invoke(self, i);
@@ -152,8 +152,8 @@ namespace TBAR
             }
         }
 
-        public bool TimeStopStockOwner(Entity e) => TimeStopManager.Instance.HaveITimeStopped(e);
+        public bool TimeStopStockOwner(Entity e) => TBAR.TimeStopManager.HaveITimeStopped(e);
 
-        public bool TimeStopped => TimeStopManager.Instance.IsTimeStopped;
+        public bool TimeStopped => TBAR.TimeStopManager.IsTimeStopped;
     }
 }
