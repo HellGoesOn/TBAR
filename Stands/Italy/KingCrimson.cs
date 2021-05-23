@@ -1,4 +1,5 @@
 ﻿using TBAR.Components;
+using TBAR.Enums;
 using TBAR.Input;
 using TBAR.Projectiles.Stands.Italy.KingCrimson;
 using TBAR.Projectiles.Visual;
@@ -24,7 +25,20 @@ namespace TBAR.Stands.Italy
             StandCombo timeErase = new StandCombo("Court of the Crimson King", ComboInput.Action1, ComboInput.Action2, ComboInput.Action2, ComboInput.Action1);
             timeErase.OnActivate += TimeErase_OnActivate;
 
+            StandCombo cut = new StandCombo("Karate Chop", ComboInput.Action1, ComboInput.Up, ComboInput.Down);
+            cut.OnActivate += Cut_OnActivate;
+
             AddGlobalCombos(timeErase);
+
+            AddNormalCombos(cut);
+        }
+
+        private void Cut_OnActivate(Player player)
+        {
+            if(ActiveStandProjectile is KingCrimsonProjectile kc)
+            {
+                kc.SetState(KCStates.Slice.ToString());
+            }
         }
 
         private void TimeErase_OnActivate(Player player)
@@ -41,5 +55,7 @@ namespace TBAR.Stands.Italy
             if (sender.CurrentFrame == sender.FrameCount / 3)
                 TBAR.Instance.PlaySound("Sounds/StandAbilityEffects/BigTimeSkip");
         }
+
+        public override DamageType StandDamageType => DamageType.Melee;
     }
 }

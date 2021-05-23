@@ -3,8 +3,10 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using TBAR.Components;
 using TBAR.Input;
+using TBAR.NPCs;
 using TBAR.Players;
 using TBAR.Stands;
+using TBAR.TBARBuffs;
 using Terraria;
 
 namespace TBAR.Projectiles.Stands.Italy.KingCrimson
@@ -21,6 +23,8 @@ namespace TBAR.Projectiles.Stands.Italy.KingCrimson
 
         public override void InitializeStates(Projectile projectile)
         {
+            AttackSpeed = 30;
+
             string path = "Projectiles/Stands/Italy/KingCrimson/";
             SpriteAnimation spawn = new SpriteAnimation(path + "KCSpawn", 7, 20);
             SpriteAnimation despawn = new SpriteAnimation(path + "KCSpawn", 7, 20)
@@ -40,6 +44,8 @@ namespace TBAR.Projectiles.Stands.Italy.KingCrimson
 
             SpriteAnimation idle = new SpriteAnimation(path + "KCIdle", 5, 5, true);
 
+            SpriteAnimation cut = new SpriteAnimation(path + "KCYeet", 13, 12);
+
             StandState spawnState = new StandState(KCStates.Spawn.ToString(), spawn);
             spawnState.OnStateUpdate += SpawnState_OnStateUpdate;
             spawnState.OnStateEnd += GoIdle;
@@ -58,9 +64,21 @@ namespace TBAR.Projectiles.Stands.Italy.KingCrimson
             punchState.OnStateUpdate += UpdatePunch;
             punchState.OnStateEnd += EndPunch;
 
-            AddStates(spawnState, idleState, despawnState, punchState);
+            StandState cutState = new StandState(KCStates.Slice.ToString(), cut);
+            cutState.OnStateBegin += CutState_OnStateBegin;
+            cutState.OnStateUpdate += UpdatePunch;
+            cutState.OnStateEnd += EndPunch;
+
+            AddStates(spawnState, idleState, despawnState, punchState, cutState);
             
             SetState(KCStates.Spawn.ToString());
+        }
+
+        private void CutState_OnStateBegin(StandState sender)
+        {
+            NonTimedAttack = true;
+            projectile.damage = CutDamage;
+            Owner.direction = MousePosition.X < Owner.Center.X ? -1 : 1;
         }
 
         private void SpawnState_OnStateUpdate(StandState sender)
@@ -136,8 +154,27 @@ namespace TBAR.Projectiles.Stands.Italy.KingCrimson
 
         protected override int GetPunchDamage()
         {
-            return (int)(12 + BaseDPS * 1.7f);
+            return (int)(12 + BaseDPS * 1.2f);
         }
+
+        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        {
+            base.ModifyHitNPC(target, ref damage, ref knockback, ref crit, ref hitDirection);
+
+            if (State == KCStates.Slice.ToString())
+                TBARBuff.AddToNpcIf<Laceration>(target, 6 * Global.TPS, x => x.Owner == projectile, projectile, BuffAddStyle.Replace);
+            else
+            {
+                Laceration buff = (Laceration)TBARBuff.ExtendForNpcIf<Laceration>(target, 2 * Global.TPS, x => x.Owner == projectile);
+
+                if (buff != null)
+                    buff.Initialize();
+            }
+        }
+
+        protected int CutDamage => (int)(30 + BaseDPS * 2);
+
+        public int LacerationDamage => (int)(15 + BaseDPS * 0.75);
 
         public override int GetBarrageDamage() => (int)(12 + BaseDPS * 1.2f);
 
@@ -149,6 +186,7 @@ namespace TBAR.Projectiles.Stands.Italy.KingCrimson
         Spawn,
         Idle,
         Despawn,
-        Punch
+        Punch,
+        Slice
     }
 }

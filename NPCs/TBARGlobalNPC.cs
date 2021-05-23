@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using TBAR.Components;
 using TBAR.TimeSkip;
 using Terraria;
 using Terraria.ModLoader;
@@ -11,6 +12,7 @@ namespace TBAR.NPCs
     {
         public override void SetDefaults(NPC npc)
         {
+            CustomBuffs = new List<TBARBuff>();
             TimeSkipStates = new List<TimeSkipData>();
         }
 
@@ -23,6 +25,11 @@ namespace TBAR.NPCs
 
         public override bool PreAI(NPC npc)
         {
+            foreach (TBARBuff buff in CustomBuffs)
+                buff.UpdateNPC(npc);
+
+            CustomBuffs.RemoveAll(x => x.Duration <= 0);
+
             PreTimeSkipAI(npc);
 
             return base.PreAI(npc);
@@ -43,6 +50,8 @@ namespace TBAR.NPCs
             get => accumulatedDamage;
             set => accumulatedDamage = (int)MathHelper.Clamp(value, 0, int.MaxValue); 
         }
+
+        public List<TBARBuff> CustomBuffs { get; private set; }
 
         public override bool InstancePerEntity => true;
     }

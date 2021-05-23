@@ -1,4 +1,5 @@
-﻿using TBAR.NPCs;
+﻿using System;
+using TBAR.NPCs;
 using TBAR.TimeStop;
 using Terraria;
 

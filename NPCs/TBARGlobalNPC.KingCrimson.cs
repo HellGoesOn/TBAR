@@ -75,20 +75,19 @@ namespace TBAR.NPCs
 
                 Rectangle rect = new Rectangle(x, y, npc.Hitbox.Width, npc.Hitbox.Height);
 
-                if (rect.Intersects(projectile.Hitbox) && npc.immune[projectile.owner] == 0)
+                if (rect.Intersects(projectile.Hitbox))
                 {
                     npc.immune[projectile.owner] += projectile.penetrate != 1 ? 20 : 0;
 
                     if (projectile.modProjectile is PunchGhostProjectile stand)
                         npc.immune[projectile.owner] = stand.AttackSpeed;
-
+                    
                     if (projectile.penetrate > 0 && !(projectile.modProjectile is PunchGhostProjectile))
                         projectile.penetrate--;
 
                     Main.LocalPlayer.ApplyDamageToNPC(npc, projectile.damage, projectile.knockBack, projectile.direction, false);
+                    
                 }
-
-                return false;
             }
 
             return base.CanBeHitByProjectile(npc, projectile);
