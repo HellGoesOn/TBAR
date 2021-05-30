@@ -57,12 +57,12 @@ namespace TBAR.Stands.Crusaders
                 ScreenModifier.AddModifiersToPlayer(player, holdPos, smoothStep, holdPos2);
             }
 
-            TBARMusic.AddTrackToQueue("Sounds/Music/TWTheme", 1260);
+            TBARMusic.AddTrackToQueue("Sounds/Music/TWTheme", Global.SecondsToTicks(21));
 
             bool isTimeStopped = TBAR.TimeStopManager.IsTimeStopped;
             string path = isTimeStopped ? "" : "Sounds/TheWorld/TheWorld_ZaWarudoSFX";
 
-            TimeStopInstance ts = new TimeStopInstance(player, 1200, path) { EndSoundEffect = "Sounds/TheWorld/TheWorld_ZaWarudoReleaseSFX" };
+            TimeStopInstance ts = new TimeStopInstance(player, Global.SecondsToTicks(20), path) { EndSoundEffect = "Sounds/TheWorld/TheWorld_ZaWarudoReleaseSFX" };
 
             Projectile.NewProjectile(player.Center, Vector2.Zero, ModContent.ProjectileType<TimeStopVFX>(), 0, 0, player.whoAmI);
 
@@ -89,7 +89,7 @@ namespace TBAR.Stands.Crusaders
             bool isTimeStopped = TBAR.TimeStopManager.IsTimeStopped;
             string path = isTimeStopped ? "" : "Sounds/TheWorld/TheWorld_ZaWarudoSFX";
 
-            TimeStopInstance ts = new TimeStopInstance(player, 600, path) { EndSoundEffect = "Sounds/TheWorld/TheWorld_ZaWarudoReleaseSFX" };
+            TimeStopInstance ts = new TimeStopInstance(player, Global.SecondsToTicks(10), path) { EndSoundEffect = "Sounds/TheWorld/TheWorld_ZaWarudoReleaseSFX" };
 
             if (!isTimeStopped)
             {
@@ -154,7 +154,7 @@ namespace TBAR.Stands.Crusaders
             return new SpriteAnimation("Projectiles/Stands/Crusaders/TheWorld/TheWorldIdle", 8, 10, true);
         }
 
-        public override string GetDamageScalingText => "30 + 120% of DPS";
+        public override string GetDamageScalingText => "30 + 120% DPS";
 
         public override string GetEffectiveRangeText => "10m";
 

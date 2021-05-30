@@ -50,6 +50,9 @@ namespace TBAR.Players
             if (IsUsingArrow)
                 return false;
 
+            if (TBAR.TimeSkipManager.IsTimeSkipped && TBAR.TimeSkipManager.GetEffect(x => x.Owner() == npc) == null)
+                return false;
+
             return base.CanBeHitByNPC(npc, ref cooldownSlot);
         }
 
@@ -61,6 +64,9 @@ namespace TBAR.Players
                 return false;
 
             if (IsUsingArrow)
+                return false;
+
+            if (TBAR.TimeSkipManager.IsTimeSkipped && TBAR.TimeSkipManager.GetEffect(x => x.Owner() == proj) == null)
                 return false;
 
             return base.CanBeHitByProjectile(proj);

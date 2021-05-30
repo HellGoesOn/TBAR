@@ -20,7 +20,7 @@ namespace TBAR.NPCs
 
         public override void PostDraw(NPC npc, SpriteBatch spriteBatch, Color drawColor)
         {
-            PostKingDraw(npc, spriteBatch, drawColor);
+            PostKingDraw(npc, spriteBatch);
         }
 
         public override bool PreAI(NPC npc)

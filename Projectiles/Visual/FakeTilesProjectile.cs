@@ -44,7 +44,7 @@ namespace TBAR.Projectiles.Visual
             {
                 GotTiles = true;
 
-                int range = 2;
+                int range = TBARConfig.tileGrabbyRange;
 
                 int startPosX = (int)Main.screenPosition.X / 16 - range;
                 int startPosY = (int)Main.screenPosition.Y / 16 - range;

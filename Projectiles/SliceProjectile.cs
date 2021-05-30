@@ -84,7 +84,8 @@ namespace TBAR.Projectiles
                     if (i < 3)
                     {
                         Main.dust[dust].scale = 1.2f;
-                        Main.dust[dust].velocity = oldPos.DirectTo(olderPos, 5).RotatedByRandom(1.2f);
+                        float angleOffset = Main.rand.NextBool() ? -MathHelper.PiOver2 : MathHelper.PiOver2;
+                        Main.dust[dust].velocity = oldPos.DirectTo(olderPos, 5).RotatedBy(angleOffset);
                     }
                     else
                     {

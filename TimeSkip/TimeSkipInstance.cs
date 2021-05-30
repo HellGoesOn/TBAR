@@ -30,7 +30,16 @@ namespace TBAR.TimeSkip
             Duration--;
 
             if (Duration == 22)
-                TimeSkipVisual.Start();
+            {
+                TimeSkipVisual vs = TimeSkipVisual.Start();
+                vs.Animation.AnimationPlay += Animation_AnimationPlay;
+            }
+        }
+
+        private void Animation_AnimationPlay(SpriteAnimation sender)
+        {
+            if (sender.CurrentFrame == sender.FrameCount / 3)
+                TBAR.Instance.PlaySound("Sounds/StandAbilityEffects/TimeSkip");
         }
 
         public int Duration { get; set; }

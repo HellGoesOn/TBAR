@@ -62,10 +62,10 @@ namespace TBAR.NPCs
             }
         }
 
-        // terrible implementantion but will do for now?
+        // TO-DO: reimplement
         public override bool? CanBeHitByProjectile(NPC npc, Projectile projectile)
         {
-            if (TBAR.TimeSkipManager.IsTimeSkipped)
+            /*if (TBAR.TimeSkipManager.IsTimeSkipped)
             {
                 int halfWidth = (int)(npc.Hitbox.Width * 0.5f);
                 int halfHeight = (int)(npc.Hitbox.Height * 0.5f);
@@ -88,7 +88,7 @@ namespace TBAR.NPCs
                     Main.LocalPlayer.ApplyDamageToNPC(npc, projectile.damage, projectile.knockBack, projectile.direction, false);
                     
                 }
-            }
+            }*/
 
             return base.CanBeHitByProjectile(npc, projectile);
         }
@@ -119,7 +119,7 @@ namespace TBAR.NPCs
             return base.PreDraw(npc, spriteBatch, drawColor);
         }
 
-        public void PostKingDraw(NPC npc, SpriteBatch spriteBatch, Color drawColor)
+        public void PostKingDraw(NPC npc, SpriteBatch spriteBatch)
         {
             if (TBAR.TimeSkipManager.IsTimeSkipped)
             {

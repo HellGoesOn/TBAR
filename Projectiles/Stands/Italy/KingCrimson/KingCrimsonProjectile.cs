@@ -6,8 +6,10 @@ using TBAR.Input;
 using TBAR.NPCs;
 using TBAR.Players;
 using TBAR.Stands;
+using TBAR.Stands.GoldenWind.KingCrimson;
 using TBAR.TBARBuffs;
 using Terraria;
+using Terraria.ModLoader;
 
 namespace TBAR.Projectiles.Stands.Italy.KingCrimson
 {
@@ -46,6 +48,10 @@ namespace TBAR.Projectiles.Stands.Italy.KingCrimson
 
             SpriteAnimation cut = new SpriteAnimation(path + "KCYeet", 13, 12);
 
+            SpriteAnimation donut = new SpriteAnimation(path + "KCDonutCommit", 6, 10);
+            SpriteAnimation donutUndo = new SpriteAnimation(path + "KCDonutUndo", 12, 12);
+            SpriteAnimation donutMiss = new SpriteAnimation(path + "KCDonutMiss", 7, 12);
+
             StandState spawnState = new StandState(KCStates.Spawn.ToString(), spawn);
             spawnState.OnStateUpdate += SpawnState_OnStateUpdate;
             spawnState.OnStateEnd += GoIdle;
@@ -69,9 +75,66 @@ namespace TBAR.Projectiles.Stands.Italy.KingCrimson
             cutState.OnStateUpdate += UpdatePunch;
             cutState.OnStateEnd += EndPunch;
 
-            AddStates(spawnState, idleState, despawnState, punchState, cutState);
+            StandState donutState = new StandState(donut, donutUndo, donutMiss) { Key = KCStates.Donut.ToString()};
+            donutState.OnStateUpdate += DonutState_OnStateUpdate;
+            donutState.OnStateEnd += DonutState_OnStateEnd;
+            donutState.OnStateBegin += DonutState_OnStateBegin;
+
+            AddStates(spawnState, idleState, despawnState, punchState, cutState, donutState);
             
             SetState(KCStates.Spawn.ToString());
+        }
+
+        private void DonutState_OnStateBegin(StandState sender)
+        {
+            projectile.damage = 0;
+            HasMissedDonut = true;
+        }
+
+        private void DonutState_OnStateEnd(StandState sender)
+        {
+            if (sender.CurrentAnimationID == 0)
+            {
+                if (!HasMissedDonut)
+                {
+                    sender.CurrentAnimation.Reset();
+                    sender.CurrentAnimationID = 1;
+                    SetState(KCStates.Donut.ToString());
+                    return;
+                }
+                else if (HasMissedDonut)
+                {
+                    sender.CurrentAnimation.Reset();
+                    sender.CurrentAnimationID = 2;
+                    SetState(KCStates.Donut.ToString());
+                    return;
+                }
+            }
+
+            MyDonutPunch = null;
+
+            if (sender.CurrentAnimationID != 0)
+            {
+                sender.CurrentAnimationID = 0;
+                GoIdle(sender);
+            }
+        }
+
+        private void DonutState_OnStateUpdate(StandState sender)
+        {
+            projectile.Center = Vector2.Lerp(projectile.Center, MousePosition, 0.25f);
+            Owner.direction = (Owner.Center + PunchDirection).X < Owner.Center.X ? -1 : 1;
+            SpriteFX = Owner.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+
+            if (sender.CurrentAnimationID == 0 && sender.CurrentAnimation.CurrentFrame == 3 && MyDonutPunch == null)
+            {
+                int proj = Projectile.NewProjectile(projectile.Center, Vector2.Zero, ModContent.ProjectileType<DonutPunch>(), DonutImpactDamage, 0, Owner.whoAmI, projectile.whoAmI, -1);
+                MyDonutPunch = Main.projectile[proj].modProjectile as DonutPunch;
+                MyDonutPunch.UnpullDamage = DonutUnpullDamage;
+            }
+
+            if (MyDonutPunch != null && !MyDonutPunch.projectile.active)
+                MyDonutPunch = null;
         }
 
         private void CutState_OnStateBegin(StandState sender)
@@ -99,6 +162,7 @@ namespace TBAR.Projectiles.Stands.Italy.KingCrimson
 
         private void Idle(StandState sender)
         {
+            HasMissedDonut = false;
             NonTimedAttack = false;
             HitNPCs.RemoveAll(x => !x.IsTimed);
             SpriteFX = Owner.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
@@ -179,6 +243,13 @@ namespace TBAR.Projectiles.Stands.Italy.KingCrimson
         public override int GetBarrageDamage() => (int)(12 + BaseDPS * 1.2f);
 
         public override bool CanPunch => State == KCStates.Idle.ToString();
+
+        public bool HasMissedDonut { get; set; }
+
+        public int DonutImpactDamage => 25 + (int)(BaseDPS * 1.2);
+        public int DonutUnpullDamage => 25 + (int)(BaseDPS * 7.0);
+
+        public DonutPunch MyDonutPunch { get; set; }
     }
 
     public enum KCStates
@@ -187,6 +258,7 @@ namespace TBAR.Projectiles.Stands.Italy.KingCrimson
         Idle,
         Despawn,
         Punch,
-        Slice
+        Slice,
+        Donut
     }
 }

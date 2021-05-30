@@ -60,7 +60,7 @@ namespace TBAR.Stands.Crusaders
             bool isTimeStopped = TBAR.TimeStopManager.IsTimeStopped;
             string path = isTimeStopped ? "" : "Sounds/StarPlatinum/SP_TimeStopSignal";
 
-            TimeStopInstance ts = new TimeStopInstance(player, 600, path) { EndSoundEffect = "Sounds/StarPlatinum/SP_TimeRestore" };
+            TimeStopInstance ts = new TimeStopInstance(player, Global.SecondsToTicks(10), path) { EndSoundEffect = "Sounds/StarPlatinum/SP_TimeRestore" };
 
             if (!isTimeStopped)
             {
@@ -128,7 +128,7 @@ namespace TBAR.Stands.Crusaders
             plr.OnRightClick -= Plr_OnRightClick;
         }
 
-        public override string GetDamageScalingText => "12 + 170% of DPS";
+        public override string GetDamageScalingText => "12 + 170% DPS";
 
         public override string GetEffectiveRangeText => "2m";
 

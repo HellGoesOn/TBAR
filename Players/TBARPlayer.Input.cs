@@ -10,8 +10,6 @@ namespace TBAR.Players
 {
     public partial class TBARPlayer : ModPlayer
     {
-        private const int COMBO_TIME = 60;
-
         public override void SetControls()
         {
             if (InputBlockers.Count > 0)
@@ -68,7 +66,7 @@ namespace TBAR.Players
 
         private void OnInput(ComboInput input)
         {
-            ComboTime = COMBO_TIME;
+            ComboTime = TBARConfig.inputDelay;
 
             CurrentComboInputs.Add(input);
 

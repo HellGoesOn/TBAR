@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.Linq;
+using TBAR.Enums;
 using TBAR.Extensions;
 using TBAR.Input;
 using TBAR.Stands;
@@ -60,8 +61,13 @@ namespace TBAR.Projectiles.Stands
 
             projectile.Center = projectile.Center.RetardedMethodName(Owner.Center, Range * 64f);
 
-            if(BaseDPS == -1)
-                BaseDPS = Owner.HeldItem.GetDamageData(Owner).DPS;
+            if (BaseDPS == -1)
+            {
+                if (Owner.HeldItem.GetDamageType() == DamageType.Melee)
+                    BaseDPS = Owner.HeldItem.GetDamageData(Owner).DPS;
+                else
+                    BaseDPS = 5;
+            }
 
             ElapsedTime++;
 

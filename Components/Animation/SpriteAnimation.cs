@@ -1,20 +1,25 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.ModLoader;
 
 namespace TBAR.Components
 {
-    public class SpriteAnimation
+    public class SpriteAnimation : ICloneable
     {
         public event AnimationEventHandler AnimationPlay;
 
         public event AnimationEventHandler OnAnimationEnd;
 
+        private readonly string pathForClone;
+
         public SpriteAnimation(string sheetPath, int frameCount, float fps = 5f, bool looping = false, int loopTime = -1)
         {
             if(!Main.dedServ) // if we attempted to load a texture on a server we'd get a crash
                 SpriteSheet = ModContent.GetTexture("TBAR/" + sheetPath);
+
+            pathForClone = sheetPath;
 
             FramesPerSecond = fps;
             FrameCount = frameCount;
@@ -43,10 +48,14 @@ namespace TBAR.Components
 
             if (LoopTime != -1)
             {
-                LoopTimer += 1;
-
-                if (LoopTimer >= LoopTime - 1)
+                if (LoopTimer > LoopTime - 1)
+                {
                     Looping = false;
+                    ElapsedTime = TimePerFrame + 0.016f;
+                    CurrentFrame = FrameCount - 1;
+                }
+
+                LoopTimer += 1;
             }
 
             if (ElapsedTime > TimePerFrame)
@@ -104,6 +113,11 @@ namespace TBAR.Components
                     Active = false;
                 }
             }
+        }
+
+        public object Clone()
+        {
+            return new SpriteAnimation(pathForClone, FrameCount, FramesPerSecond, Looping, LoopTime);
         }
 
         private bool isReversed;

@@ -1,13 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using TBAR.Extensions;
 using TBAR.Structs;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
-using System.Linq;
-using System.IO;
-using TBAR.Extensions;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using TBAR.TimeStop;
 
 namespace TBAR.Projectiles.Stands.Crusaders.TheWorld.RoadRoller
 {
@@ -82,8 +82,50 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld.RoadRoller
 
             if (projectile.timeLeft == 2)
             {
+                GarbageExplosionPlaceholderMethod();
                 projectile.ChangeSize(300);
                 HitEntities.Clear();
+            }
+        }
+
+        private void GarbageExplosionPlaceholderMethod()
+        {
+            // Play explosion sound
+            Main.PlaySound(SoundID.Item15, projectile.position);
+            // Smoke Dust spawn
+            for (int i = 0; i < 50; i++)
+            {
+                int dustIndex = Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y), projectile.width, projectile.height, DustID.Smoke, 0f, 0f, 100, default, 2f);
+                Main.dust[dustIndex].velocity *= 1.4f;
+            }
+            // Fire Dust spawn
+            for (int i = 0; i < 80; i++)
+            {
+                int dustIndex = Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y), projectile.width, projectile.height, DustID.Fire, 0f, 0f, 100, default, 3f);
+                Main.dust[dustIndex].noGravity = true;
+                Main.dust[dustIndex].velocity *= 5f;
+                dustIndex = Dust.NewDust(new Vector2(projectile.position.X, projectile.position.Y), projectile.width, projectile.height, DustID.Fire, 0f, 0f, 100, default, 2f);
+                Main.dust[dustIndex].velocity *= 3f;
+            }
+            // Large Smoke Gore spawn
+            for (int g = 0; g < 2; g++)
+            {
+                int goreIndex = Gore.NewGore(new Vector2(projectile.position.X + (float)(projectile.width / 2) - 24f, projectile.position.Y + (float)(projectile.height / 2) - 24f), default, Main.rand.Next(61, 64), 1f);
+                Main.gore[goreIndex].scale = 1.5f;
+                Main.gore[goreIndex].velocity.X = Main.gore[goreIndex].velocity.X + 1.5f;
+                Main.gore[goreIndex].velocity.Y = Main.gore[goreIndex].velocity.Y + 1.5f;
+                goreIndex = Gore.NewGore(new Vector2(projectile.position.X + (float)(projectile.width / 2) - 24f, projectile.position.Y + (float)(projectile.height / 2) - 24f), default, Main.rand.Next(61, 64), 1f);
+                Main.gore[goreIndex].scale = 1.5f;
+                Main.gore[goreIndex].velocity.X = Main.gore[goreIndex].velocity.X - 1.5f;
+                Main.gore[goreIndex].velocity.Y = Main.gore[goreIndex].velocity.Y + 1.5f;
+                goreIndex = Gore.NewGore(new Vector2(projectile.position.X + (float)(projectile.width / 2) - 24f, projectile.position.Y + (float)(projectile.height / 2) - 24f), default, Main.rand.Next(61, 64), 1f);
+                Main.gore[goreIndex].scale = 1.5f;
+                Main.gore[goreIndex].velocity.X = Main.gore[goreIndex].velocity.X + 1.5f;
+                Main.gore[goreIndex].velocity.Y = Main.gore[goreIndex].velocity.Y - 1.5f;
+                goreIndex = Gore.NewGore(new Vector2(projectile.position.X + (float)(projectile.width / 2) - 24f, projectile.position.Y + (float)(projectile.height / 2) - 24f), default, Main.rand.Next(61, 64), 1f);
+                Main.gore[goreIndex].scale = 1.5f;
+                Main.gore[goreIndex].velocity.X = Main.gore[goreIndex].velocity.X - 1.5f;
+                Main.gore[goreIndex].velocity.Y = Main.gore[goreIndex].velocity.Y - 1.5f;
             }
         }
 
