@@ -28,7 +28,7 @@ namespace TBAR.Projectiles.Stands.Italy.Aerosmith
 
             Speed = 4f;
 
-            Opacity = 0f;
+            Opacity = -2f;
 
             IsEngineOn = true;
 
@@ -36,7 +36,7 @@ namespace TBAR.Projectiles.Stands.Italy.Aerosmith
             SpriteAnimation spawn = new SpriteAnimation(path + "Idle", 18, 12);
             SpriteAnimation idle = new SpriteAnimation(path + "Idle", 18, 12, true);
             SpriteAnimation returnAnimation = new SpriteAnimation(path + "Idle", 18, 12, true);
-            SpriteAnimation despawn = new SpriteAnimation(path + "Idle", 18, 12);
+            SpriteAnimation despawn = new SpriteAnimation(path + "Idle", 18, 24);
             SpriteAnimation barrage = new SpriteAnimation(path + "Idle", 18, 12, true, 12);
             // Always has been *cocks gun*
 
@@ -152,8 +152,12 @@ namespace TBAR.Projectiles.Stands.Italy.Aerosmith
             Angle = (Owner.Center - projectile.Center).SafeNormalize(-Vector2.UnitY).ToRotation();
 
             IsEngineOn = true;
+			
+			Speed = 16f;
 
             projectile.velocity = new Vector2(Speed, 0).RotatedBy(Angle);
+			
+            SpriteFX = projectile.velocity.X > 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
         }
 
         private void DespawnState_OnStateUpdate(StandState sender)
@@ -169,6 +173,10 @@ namespace TBAR.Projectiles.Stands.Italy.Aerosmith
 
         private void SpawnState_OnStateUpdate(StandState sender)
         {
+			float angle = (MousePosition - projectile.Center).SafeNormalize(-Vector2.UnitY).ToRotation();
+
+            Angle = Utils.AngleLerp(Angle, angle, 0.07f);
+			
             FlightVector = new Vector2(1, 0).RotatedBy(Angle);
 
             projectile.velocity = FlightVector * Speed + new Vector2(0, YSpeed);
@@ -181,6 +189,7 @@ namespace TBAR.Projectiles.Stands.Italy.Aerosmith
                 int dustIndex = Dust.NewDust(new Vector2(projectile.Center.X, projectile.Center.Y) + (projectile.velocity * 4.5f), 0, 0, DustID.Smoke, 0f, 0f, 100, default, 2f);
                 Main.dust[dustIndex].velocity = -(projectile.velocity * 0.5f).RotatedByRandom(.45f);
             }
+            SpriteFX = projectile.velocity.X > 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
         }
 
         private void DespawnState_OnStateEnd(StandState sender)
