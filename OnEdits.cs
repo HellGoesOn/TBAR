@@ -22,49 +22,40 @@ namespace TBAR
 
         public void LoadEdits()
         {
-            On.Terraria.Main.DrawTiles += Main_DrawTiles;
-            On.Terraria.Main.DrawBlack += Main_DrawBlack;
-
-            On.Terraria.Main.DrawWalls += Main_DrawWalls;
-
-            On.Terraria.NPC.VanillaAI += NPC_VanillaAI;
-
-            On.Terraria.NPC.UpdateNPC += NPC_UpdateNPC;
-
-            On.Terraria.NPC.VanillaHitEffect += NPC_VanillaHitEffect;
-
-            On.Terraria.Dust.UpdateDust += Dust_UpdateDust;
-
             On.Terraria.Dust.NewDust += Dust_NewDust;
-
+            On.Terraria.Dust.UpdateDust += Dust_UpdateDust;
             On.Terraria.Gore.Update += Gore_Update;
+
+            On.Terraria.Liquid.UpdateLiquid += Liquid_UpdateLiquid;
 
             On.Terraria.Projectile.Update += Projectile_Update;
 
-            On.Terraria.Liquid.UpdateLiquid += Liquid_UpdateLiquid;
+            On.Terraria.Main.DrawBlack += Main_DrawBlack;
+            On.Terraria.Main.DrawWalls += Main_DrawWalls;
+            On.Terraria.Main.DrawTiles += Main_DrawTiles;
+
+            On.Terraria.NPC.VanillaHitEffect += NPC_VanillaHitEffect;
+            On.Terraria.NPC.UpdateNPC += NPC_UpdateNPC;
+            On.Terraria.NPC.VanillaAI += NPC_VanillaAI;
         }
 
         public void UnloadEdits()
         {
-            On.Terraria.Main.DrawTiles -= Main_DrawTiles;
-            On.Terraria.Main.DrawBlack -= Main_DrawBlack;
-            On.Terraria.Main.DrawWalls -= Main_DrawWalls;
-
-            On.Terraria.NPC.VanillaAI -= NPC_VanillaAI;
-
-            On.Terraria.NPC.UpdateNPC -= NPC_UpdateNPC;
-
-            On.Terraria.NPC.VanillaHitEffect -= NPC_VanillaHitEffect;
-
-            On.Terraria.Dust.UpdateDust -= Dust_UpdateDust;
-
             On.Terraria.Dust.NewDust -= Dust_NewDust;
-
+            On.Terraria.Dust.UpdateDust -= Dust_UpdateDust;
             On.Terraria.Gore.Update -= Gore_Update;
+
+            On.Terraria.Liquid.UpdateLiquid -= Liquid_UpdateLiquid;
 
             On.Terraria.Projectile.Update -= Projectile_Update;
 
-            On.Terraria.Liquid.UpdateLiquid -= Liquid_UpdateLiquid;
+            On.Terraria.Main.DrawBlack -= Main_DrawBlack;
+            On.Terraria.Main.DrawWalls -= Main_DrawWalls;
+            On.Terraria.Main.DrawTiles -= Main_DrawTiles;
+
+            On.Terraria.NPC.VanillaHitEffect -= NPC_VanillaHitEffect;
+            On.Terraria.NPC.UpdateNPC -= NPC_UpdateNPC;
+            On.Terraria.NPC.VanillaAI -= NPC_VanillaAI;
         }
 
         public static void EndLife() => _instance = null;

@@ -1,4 +1,5 @@
 displayName = Terrarian's Bizarre Adventure
 author = HellGoesOn, Consume, Duncedaft, MiloJopus, Phobostar
 homepage = https://forums.terraria.org/index.php?threads/terrarian-bizarre-adventure-jojo-mod-for-terraria.87004/
-version = 0.0.5.1
+version = 0.0.5.2
+sortBefore = CalamityMod
