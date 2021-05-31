@@ -57,5 +57,19 @@ namespace TBAR.Items.Tools
 
             return true;
         }
+
+        public override void AddRecipes()
+        {
+            ModRecipe recipe = new ModRecipe(mod);
+
+            recipe.AddIngredient(ItemID.Feather, 5);
+            recipe.AddIngredient(ItemID.Wood, 12);
+            recipe.AddIngredient(ItemID.MeteoriteBar, 10);
+
+            recipe.AddTile(TileID.Anvils);
+            recipe.SetResult(this);
+
+            recipe.AddRecipe();
+        }
     }
 }
