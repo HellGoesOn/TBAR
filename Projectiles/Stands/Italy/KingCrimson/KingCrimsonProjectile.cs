@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using TBAR.Components;
+using TBAR.Extensions;
 using TBAR.Input;
 using TBAR.NPCs;
 using TBAR.Players;
@@ -80,9 +81,36 @@ namespace TBAR.Projectiles.Stands.Italy.KingCrimson
             donutState.OnStateEnd += DonutState_OnStateEnd;
             donutState.OnStateBegin += DonutState_OnStateBegin;
 
-            AddStates(spawnState, idleState, despawnState, punchState, cutState, donutState);
+            StandState barrageState = new StandState(path + "KCRush", 4, 15, true, 180)
+            {
+                Key = KCStates.Barrage.ToString()
+            };
+
+            barrageState.OnStateBegin += BarrageState_OnStateBegin;
+
+            barrageState.OnStateUpdate += delegate
+            {
+                if (Barrage != null)
+                    SpriteFX = Barrage.Center.X < projectile.Center.X ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+
+                projectile.Center = Vector2.Lerp(projectile.Center, Owner.Center + PunchDirection, 0.35f);
+            };
+
+            barrageState.OnStateEnd += delegate
+            {
+                PunchDirection = Vector2.Zero;
+                Barrage = null;
+                SetState(KCStates.Idle.ToString());
+            };
+
+            AddStates(spawnState, idleState, despawnState, punchState, cutState, donutState, barrageState);
             
             SetState(KCStates.Spawn.ToString());
+        }
+
+        private void BarrageState_OnStateBegin(StandState sender)
+        {
+            PunchDirection = Owner.Center.DirectTo(MousePosition, Owner.width + 16 * Range);
         }
 
         private void DonutState_OnStateBegin(StandState sender)
@@ -259,6 +287,7 @@ namespace TBAR.Projectiles.Stands.Italy.KingCrimson
         Despawn,
         Punch,
         Slice,
-        Donut
+        Donut,
+        Barrage
     }
 }

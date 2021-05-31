@@ -1,9 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using TBAR.Components;
 using TBAR.Enums;
+using TBAR.Extensions;
 using TBAR.Input;
 using TBAR.Players;
 using TBAR.Players.Visuals;
+using TBAR.Projectiles.Stands;
 using TBAR.Projectiles.Stands.Italy.KingCrimson;
 using TBAR.Projectiles.Visual;
 using TBAR.TimeSkip;
@@ -40,9 +42,27 @@ namespace TBAR.Stands.Italy
             offensiveSkip.OnActivate += OffensiveTimeSkip;
             offensiveSkip.Description = "'Briefly cuts a rift in time, allowing you to relocate yourself instantly'.\nAfter activation, right click to teleport to the target location.";
 
+            StandCombo barrage = new StandCombo("Barrage", ComboInput.Action2, ComboInput.Action1, ComboInput.Action2);
+            barrage.OnActivate += Barrage;
+
             AddGlobalCombos(timeErase, offensiveSkip);
 
-            AddNormalCombos(cut, donut);
+            AddNormalCombos(cut, donut, barrage);
+        }
+
+        private void Barrage(Player player)
+        {
+            KingCrimsonProjectile kc = ActiveStandProjectile as KingCrimsonProjectile;
+
+            if (kc?.State == "Idle")
+            {
+                kc?.SetState(KCStates.Barrage.ToString());
+
+                string path = "Projectiles/Stands/Italy/KingCrimson/";
+                Projectile projectile = kc.projectile;
+                int i = PunchBarrage.CreateBarrage(path + "KCFistFront", projectile, projectile.Center.DirectTo(ActiveStandProjectile.MousePosition, 24f), kc.GetBarrageDamage(), path + "KCFistBack");
+                kc.Barrage = Main.projectile[i];
+            }
         }
 
         private void Donut_OnActivate(Player player)

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using TBAR.Components;
 using TBAR.Enums;
 using TBAR.Extensions;
@@ -83,7 +84,26 @@ namespace TBAR.Projectiles.Stands.Italy.Aerosmith
                 case ImmediateInput.Action1:
                     IsEngineOn = !IsEngineOn;
                     break;
+
+                case ImmediateInput.RightClick:
+                    ShootBomb();
+                    break;
             }
+        }
+
+        private void ShootBomb()
+        {
+            Vector2 position = projectile.Center + new Vector2(0, 6);
+            Vector2 velocity = new Vector2(9, 0).RotatedBy(Angle).RotatedByRandom(.12f);
+            int type = ModContent.ProjectileType<AerosmithBomb>();
+            int damage = 1;
+
+            Main.PlaySound(SoundID.Item1, projectile.position);
+
+            int proj = Projectile.NewProjectile(position, velocity, type, damage, 0, Owner.whoAmI);
+
+            AerosmithBomb bomb = Main.projectile[proj].modProjectile as AerosmithBomb;
+            bomb.ExplosionDamage = BombDamage;
         }
 
         private void BarrageState_OnStateUpdate(StandState sender)
@@ -243,6 +263,8 @@ namespace TBAR.Projectiles.Stands.Italy.Aerosmith
         }
 
         public int BulletDamage => 8 + (int)(BaseDPS * 1.2);
+
+        public int BombDamage => 225 + (int)(BaseDPS * 8.5);
 
         public override void PostDraw(SpriteBatch spriteBatch, Color lightColor)
         {
