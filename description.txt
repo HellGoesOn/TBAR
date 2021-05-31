@@ -1,1 +1,22 @@
-Terrarian's Bizarre Adventure was so un-cool i decided to rewrite it kekw
+Terrarian Bizarre Adventure is a mod that aims to recreate most of JoJo's Bizarre Adventure stands & abilities.
+
+Current content includes:
+
+Stand Arrow
+Doppio's Outfit
+
+
+Current Stands:
+Star Platinum
+The World
+King Crimson
+Aerosmith
+
+
+Keep in mind, everything is a subject to change and not everything is implemented yet. This is a very raw beta version of the mod, which is indicated by its 0.0.1 build version.
+I still hope you'll enjoy what little this mod has to offer.
+Please enjoy.
+We do :)
+
+For any questions regarding the mod, join our discord server!
+https://discord.gg/6kMaBYj25j
