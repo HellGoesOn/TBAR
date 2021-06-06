@@ -70,7 +70,7 @@ namespace TBAR
         {
             bool ownerStoppedTime = TBAR.TimeStopManager.HaveITimeStopped(Main.player[self.owner]);
 
-            if (!TimeStopped || ownerStoppedTime)
+            if (!TimeStopped || ownerStoppedTime || TBAR.TimeStopManager.IsMyTeamImmune(Main.player[self.owner]))
                 orig.Invoke(self, i);
         }
 

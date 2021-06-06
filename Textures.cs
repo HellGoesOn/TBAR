@@ -5,7 +5,7 @@ namespace TBAR
 {
     public static class Textures
     {
-        [Loadable("TBAR/Textures/ComboButtons")]
+        [Loadable("TBAR/Textures/KeyboardInput")]
         public static Texture2D KeyboardInput { get; internal set; }
 
         [Loadable("TBAR/Textures/EmptyPixel")]

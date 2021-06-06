@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using TBAR.Input;
+using Terraria;
 using Terraria.GameContent.UI.Elements;
 using Terraria.UI;
 
@@ -19,18 +20,41 @@ namespace TBAR.UI.Elements
             Text.HAlign = 0.5f;
             Text.TextColor = Color.Yellow;
 
+            switch(input)
+            {
+                case ComboInput.Action1:
+                    string s = TBARInputs.ComboButton1.GetAssignedKeys()[0].Replace("Oem", "");
+                    Text.SetText(s);
+                    break;
+                case ComboInput.Action2:
+                    s = TBARInputs.ComboButton2.GetAssignedKeys()[0].Replace("Oem", "");
+                    Text.SetText(s);
+                    break;
+                case ComboInput.Action3:
+                    s = TBARInputs.ComboButton3.GetAssignedKeys()[0].Replace("Oem", "");
+                    Text.SetText(s);
+                    break;
+                case ComboInput.Up:
+                    Text.SetText(Main.cUp);
+                    break;
+                case ComboInput.Down:
+                    Text.SetText(Main.cDown);
+                    break;
+            }
+
             this.Append(Text);
 
-            Offset = (int)input;
+            //Offset = (int)input;
         }
 
         protected override void DrawSelf(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Textures.KeyboardInput, GetDimensions().Position(), new Rectangle(0, 50 * Offset, 48, 48), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
+            // new Rectangle(0, 50 * Offset, 48, 48)
+            spriteBatch.Draw(Textures.KeyboardInput, GetDimensions().Position(), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
         }
 
         public UIText Text { get; } = new UIText("");
 
-        public int Offset { get; }
+        //public int Offset { get; }
     }
 }

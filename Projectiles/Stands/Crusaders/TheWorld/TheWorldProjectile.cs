@@ -118,6 +118,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld
 
         private void SlamDunkState_OnStateUpdate(StandState sender)
         {
+            Owner.noFallDmg = true;
             if (MyRoller != null && MyRoller.modProjectile is RoadRollerProjectile roller && !roller.HasHitSomething)
             {
                 projectile.Center = MyRoller.Center + new Vector2(60, -30);
@@ -135,6 +136,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld
 
         private void FlyUpState_OnStateUpdate(StandState sender)
         {
+            Owner.noFallDmg = true;
             projectile.Center -= new Vector2(0, 16);
             Owner.velocity = Vector2.Zero;
             Owner.Center = projectile.Center + new Vector2(0, 32);

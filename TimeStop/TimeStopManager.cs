@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using TBAR.Components;
 using TBAR.Enums;
 using TBAR.NPCs;
 using Terraria;
 using Terraria.ID;
+using Terraria.Enums;
 
 namespace TBAR.TimeStop
 {
@@ -138,6 +140,14 @@ namespace TBAR.TimeStop
 
             packet.Send(-1, ignore);
         }*/
+
+        public bool IsMyTeamImmune(Player player)
+        {
+            if (effects.Count(x => x.Owner() is Player plr && plr.team == player.team && plr.team != (int)Team.None) > 0)
+                return true;
+
+            return false;
+        }
 
         public bool HaveITimeStopped(Entity e) => GetEffect(x => x.Owner() == e) != null;
 

@@ -25,7 +25,8 @@ namespace TBAR.Players
 
             if(TBARInputs.OpenStandAlbum.JustPressed)
             {
-                UIManager.Instance.StandAlbumLayer.ToggleVisibility();
+                if(IsStandUser)
+                    UIManager.Instance.StandAlbumLayer.ToggleVisibility();
             }
 
             if(IsStandUser)

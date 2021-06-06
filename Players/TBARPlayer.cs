@@ -74,7 +74,7 @@ namespace TBAR.Players
 
         public override void PostUpdate()
         {
-            if(TBAR.TimeStopManager.IsTimeStopped && !TBAR.TimeStopManager.HaveITimeStopped(player))
+            if(TBAR.TimeStopManager.IsTimeStopped && !TBAR.TimeStopManager.HaveITimeStopped(player) && !TBAR.TimeStopManager.IsMyTeamImmune(player))
             {
                 player.velocity *= 0;
                 player.position = player.oldPosition;
