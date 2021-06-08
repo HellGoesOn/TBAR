@@ -24,7 +24,7 @@ namespace TBAR.Stands.Crusaders
 
         public override void InitializeCombos()
         {
-            StandCombo tsCombo = new StandCombo("Time Stop", ComboInput.Action1, ComboInput.Action2, ComboInput.Action1);
+            StandCombo tsCombo = new StandCombo("Time Stop", ComboInput.Action1, ComboInput.Action2, ComboInput.Action2, ComboInput.Action3);
             tsCombo.OnActivate += TimeStop;
 
             StandCombo offensiveTimeStop = new StandCombo("Offensive Time Stop", ComboInput.Up, ComboInput.Action1, ComboInput.Up, ComboInput.Action2);
