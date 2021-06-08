@@ -16,9 +16,9 @@ using Terraria.ModLoader;
 
 namespace TBAR.Stands.Crusaders
 {
-    public class TheWorld : SingleEntityStand
+    public class TheWorld : SingleEntityStand<TheWorldProjectile>
     {
-        public TheWorld() : base(new TheWorldProjectile(), "The World")
+        public TheWorld() : base("The World")
         {
         }
 
@@ -46,7 +46,7 @@ namespace TBAR.Stands.Crusaders
 
         private void SlamDunk_OnActivate(Player player)
         {
-            if (ActiveStandProjectile != null && ActiveStandProjectile is TheWorldProjectile tw)
+            if (ActiveInstance != null && ActiveInstance is TheWorldProjectile tw)
             {
                 tw.SetState("FlyUp");
 
@@ -71,7 +71,7 @@ namespace TBAR.Stands.Crusaders
 
         private void Barrage(Player player)
         {
-            TheWorldProjectile tw = ActiveStandProjectile as TheWorldProjectile;
+            TheWorldProjectile tw = ActiveInstance;
 
             if (tw?.State == "Idle")
             {
@@ -79,7 +79,7 @@ namespace TBAR.Stands.Crusaders
 
                 string path = "Projectiles/Stands/Crusaders/TheWorld/";
                 Projectile projectile = tw.projectile;
-                int i = PunchBarrage.CreateBarrage(path + "TWRush", projectile, projectile.Center.DirectTo(ActiveStandProjectile.MousePosition, 24f), tw.GetBarrageDamage(), path + "TWRushBack");
+                int i = PunchBarrage.CreateBarrage(path + "TWRush", projectile, projectile.Center.DirectTo(ActiveInstance.MousePosition, 24f), tw.GetBarrageDamage(), path + "TWRushBack");
                 tw.Barrage = Main.projectile[i];
             }
         }
@@ -141,7 +141,7 @@ namespace TBAR.Stands.Crusaders
                 sender.Teleport(Main.MouseWorld, 1);
             }
 
-            if(ActiveStandProjectile is TheWorldProjectile world)
+            if(ActiveInstance is TheWorldProjectile world)
             {
                 world.SetState("Idle");
             }

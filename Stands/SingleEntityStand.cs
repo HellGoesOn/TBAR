@@ -12,23 +12,24 @@ namespace TBAR.Stands
     /// Class used as a base for stands that are represented by a singular entity
     /// Examples: Star Platinum, The Emperor, Aerosmith
     /// </summary>
-    public abstract class SingleEntityStand : Stand
+    public abstract class SingleEntityStand<T> : Stand
+        where T : StandProjectile
     {
-        public SingleEntityStand(StandProjectile attachedStand, string name) : base(name)
+        public SingleEntityStand(string name) : base(name)
         {
-            AttachedStandProjectile = attachedStand;
+            AttachedStandProjectile = (T)Activator.CreateInstance(typeof(T));
         }
 
         public override void TryActivate(Player player)
         {
             int standIndex = Projectile.NewProjectile(player.Center, Vector2.Zero, TBAR.Instance.ProjectileType(AttachedStandProjectile.GetType().Name), 0, 1f, player.whoAmI);
-            ActiveStandProjectile = (StandProjectile)Main.projectile[standIndex].modProjectile;
+            ActiveInstance = (T)Main.projectile[standIndex].modProjectile;
             IsActive = true;
         }
 
         public override void Update()
         {
-            if (HasActiveStand && !ActiveStandProjectile.projectile.active)
+            if (HasActiveStand && !ActiveInstance.projectile.active)
                 KillStand();
         }
 
@@ -51,22 +52,22 @@ namespace TBAR.Stands
 
         public override void HandleImmediateInputs(Player player, ImmediateInput input)
         {
-            ActiveStandProjectile?.HandleImmediateInputs(input);
+            ActiveInstance?.HandleImmediateInputs(input);
         }
 
         public override void KillStand()
         {
             IsActive = false;
 
-            ActiveStandProjectile?.projectile.Kill();
+            ActiveInstance?.projectile.Kill();
 
-            ActiveStandProjectile = null;
+            ActiveInstance = null;
         }
 
-        public bool HasActiveStand => ActiveStandProjectile != null;
+        public bool HasActiveStand => ActiveInstance != null;
 
-        public StandProjectile ActiveStandProjectile { get; set; }
+        public T ActiveInstance { get; set; }
 
-        public StandProjectile AttachedStandProjectile { get; set; }
+        public T AttachedStandProjectile { get; set; }
     }
 }

@@ -5,9 +5,9 @@ using TBAR.Projectiles.Stands.Italy.Aerosmith;
 
 namespace TBAR.Stands.Italy
 {
-    public class Aerosmith : SingleEntityStand
+    public class Aerosmith : SingleEntityStand<AerosmithProjectile>
     {
-        public Aerosmith() : base(new AerosmithProjectile(), "Aerosmith")
+        public Aerosmith() : base("Aerosmith")
         {
         }
 

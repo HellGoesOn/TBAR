@@ -14,9 +14,9 @@ using Terraria;
 
 namespace TBAR.Stands.Italy
 {
-    public class KingCrimson : SingleEntityStand
+    public class KingCrimson : SingleEntityStand<KingCrimsonProjectile>
     {
-        public KingCrimson() : base(new KingCrimsonProjectile(), "King Crimson")
+        public KingCrimson() : base("King Crimson")
         {
         }
 
@@ -52,7 +52,7 @@ namespace TBAR.Stands.Italy
 
         private void Barrage(Player player)
         {
-            KingCrimsonProjectile kc = ActiveStandProjectile as KingCrimsonProjectile;
+            KingCrimsonProjectile kc = ActiveInstance;
 
             if (kc?.State == "Idle")
             {
@@ -60,14 +60,14 @@ namespace TBAR.Stands.Italy
 
                 string path = "Projectiles/Stands/Italy/KingCrimson/";
                 Projectile projectile = kc.projectile;
-                int i = PunchBarrage.CreateBarrage(path + "KCFistFront", projectile, projectile.Center.DirectTo(ActiveStandProjectile.MousePosition, 24f), kc.GetBarrageDamage(), path + "KCFistBack");
+                int i = PunchBarrage.CreateBarrage(path + "KCFistFront", projectile, projectile.Center.DirectTo(ActiveInstance.MousePosition, 24f), kc.GetBarrageDamage(), path + "KCFistBack");
                 kc.Barrage = Main.projectile[i];
             }
         }
 
         private void Donut_OnActivate(Player player)
         {
-            if (ActiveStandProjectile is KingCrimsonProjectile kc)
+            if (ActiveInstance is KingCrimsonProjectile kc)
             {
                 kc.SetState(KCStates.Donut.ToString());
             }
@@ -75,7 +75,7 @@ namespace TBAR.Stands.Italy
 
         private void Cut_OnActivate(Player player)
         {
-            if(ActiveStandProjectile is KingCrimsonProjectile kc)
+            if(ActiveInstance is KingCrimsonProjectile kc)
             {
                 kc.SetState(KCStates.Slice.ToString());
             }

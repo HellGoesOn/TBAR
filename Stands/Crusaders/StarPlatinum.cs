@@ -14,9 +14,9 @@ using Terraria.ModLoader;
 
 namespace TBAR.Stands.Crusaders
 {
-    public class StarPlatinum : SingleEntityStand
+    public class StarPlatinum : SingleEntityStand<StarPlatinumProjectile>
     {
-        public StarPlatinum() : base(new StarPlatinumProjectile(), "Star Platinum")
+        public StarPlatinum() : base("Star Platinum")
         {
         }
 
@@ -42,8 +42,7 @@ namespace TBAR.Stands.Crusaders
 
         private void UpperCut_OnActivate(Player player)
         {
-            StarPlatinumProjectile sp = ActiveStandProjectile as StarPlatinumProjectile;
-
+            StarPlatinumProjectile sp = ActiveInstance;
             if (sp?.State == "Idle")
             {
                 sp?.SetState(SPStates.Uppercut.ToString());
@@ -73,7 +72,7 @@ namespace TBAR.Stands.Crusaders
 
         private void Barrage(Player player)
         {
-            StarPlatinumProjectile sp = ActiveStandProjectile as StarPlatinumProjectile;
+            StarPlatinumProjectile sp = ActiveInstance;
 
             if (sp?.State == "Idle")
             {
@@ -81,7 +80,7 @@ namespace TBAR.Stands.Crusaders
 
                 string path = "Projectiles/Stands/Crusaders/StarPlatinum/";
                 Projectile projectile = sp.projectile;
-                int i = PunchBarrage.CreateBarrage(path + "StarFist", projectile, projectile.Center.DirectTo(ActiveStandProjectile.MousePosition, 24f), sp.GetBarrageDamage(), path + "StarFistBack");
+                int i = PunchBarrage.CreateBarrage(path + "StarFist", projectile, projectile.Center.DirectTo(ActiveInstance.MousePosition, 24f), sp.GetBarrageDamage(), path + "StarFistBack");
                 sp.Barrage = Main.projectile[i];
             }
         }

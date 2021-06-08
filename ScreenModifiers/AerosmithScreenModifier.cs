@@ -21,9 +21,9 @@ namespace TBAR.ScreenModifiers
         {
             TBARPlayer tPlayer = TBARPlayer.Get(player);
 
-            if(tPlayer.PlayerStand is Aerosmith aero && aero.ActiveStandProjectile != null)
+            if(tPlayer.PlayerStand is Aerosmith aero && aero.ActiveInstance != null)
             {
-                AerosmithProjectile proj = aero.ActiveStandProjectile as AerosmithProjectile;
+                AerosmithProjectile proj = aero.ActiveInstance;
 
                 //Active = !aero.IsPatroling;
 
