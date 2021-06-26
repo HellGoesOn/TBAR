@@ -37,13 +37,14 @@ namespace TBAR.Projectiles.Stands.Italy.Aerosmith
             SpriteAnimation idle = new SpriteAnimation(path + "Idle", 18, 12, true);
             SpriteAnimation returnAnimation = new SpriteAnimation(path + "Idle", 18, 12, true);
             SpriteAnimation despawn = new SpriteAnimation(path + "Idle", 18, 24);
-            SpriteAnimation barrage = new SpriteAnimation(path + "Idle", 18, 12, true, 12);
+            SpriteAnimation barrage = new SpriteAnimation(path + "Idle", 18, 12, true);
             // Always has been *cocks gun*
 
             StandState spawnState = new StandState(ASStates.Spawn.ToString(), spawn);
             spawnState.OnStateBegin += SpawnState_OnStateBegin;
             spawnState.OnStateUpdate += SpawnState_OnStateUpdate;
             spawnState.OnStateEnd += SpawnState_OnStateEnd;
+            spawnState.Duration = 60;
 
             StandState idleState = new StandState(ASStates.Idle.ToString(), idle);
             idleState.OnStateUpdate += IdleState_OnStateUpdate;
@@ -53,10 +54,13 @@ namespace TBAR.Projectiles.Stands.Italy.Aerosmith
             despawnState.OnStateEnd += DespawnState_OnStateEnd;
             despawnState.OnStateBegin += DespawnState_OnStateBegin;
 
+            despawnState.Duration = 60;
+
             StandState barrageState = new StandState(ASStates.Barrage.ToString(), barrage);
             barrageState.OnStateUpdate += IdleState_OnStateUpdate;
             barrageState.OnStateUpdate += BarrageState_OnStateUpdate;
             barrageState.OnStateEnd += BarrageState_OnStateEnd;
+            barrageState.Duration = 12;
 
             StandState returnState = new StandState(ASStates.Return.ToString(), returnAnimation);
             returnState.OnStateUpdate += ReturnState_OnStateUpdate;
@@ -108,8 +112,9 @@ namespace TBAR.Projectiles.Stands.Italy.Aerosmith
 
         private void BarrageState_OnStateUpdate(StandState sender)
         {
-            if (CurrentState.CurrentAnimation.LoopTimer % 4 == 0)
+            if (CurrentState.Duration % 4 == 0)
             {
+                Main.NewText(CurrentState.Duration);
                 Vector2 position = projectile.Center;
                 Vector2 velocity = new Vector2(16, 0).RotatedBy(Angle);
                 int type = ModContent.ProjectileType<AerosmithBullet>();

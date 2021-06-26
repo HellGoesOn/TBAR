@@ -44,10 +44,12 @@ namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
             summon.OnStateBegin += OnSummon; 
             summon.OnStateUpdate += Summon;
             summon.OnStateEnd += delegate { SetState(SPStates.Idle.ToString()); };
+            summon.Duration = 40;
 
             StandState despawn = new StandState(path + "SPDespawn", 6, 12);
             despawn.OnStateUpdate += Despawn;
             despawn.OnStateEnd += OnDespawnEnd;
+            despawn.Duration = 40;
 
             StandState idle = new StandState(path + "SPIdle", 14, 15, true);
             idle.OnStateUpdate += Idle;
@@ -58,6 +60,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
             upperCutState.OnStateBegin += UpperCutState_OnStateBegin;
             upperCutState.OnStateUpdate += UpperCutState_OnStateUpdate;
             upperCutState.OnStateEnd += UpperCutState_OnStateEnd;
+            upperCutState.Duration = 80;
 
             SpriteAnimation punchMidLeft = new SpriteAnimation(path + "SPPunch_Middle_LeftHand", 3, 10);
             SpriteAnimation punchMidRight = new SpriteAnimation(path + "SPPunch_Middle_RightHand", 3, 10);
@@ -74,9 +77,11 @@ namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
             punchState.OnStateBegin += BeginPunch;
             punchState.OnStateUpdate += UpdatePunch;
             punchState.OnStateEnd += EndPunch;
+            punchState.Duration = AttackSpeed;
 
-            StandState barrageState = new StandState(path + "SPRush_Middle", 4, 15, true, 180);
+            StandState barrageState = new StandState(path + "SPRush_Middle", 4, 15, true);
             barrageState.OnStateBegin += BarrageState_OnStateBegin;
+            barrageState.Duration = 180;
 
             barrageState.OnStateUpdate += delegate
             {

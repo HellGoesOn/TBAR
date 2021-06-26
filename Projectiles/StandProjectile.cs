@@ -62,7 +62,7 @@ namespace TBAR.Projectiles.Stands
             {
                 CurrentState.Update();
                 
-                if (!CurrentState.CurrentAnimation.Active)
+                if (!CurrentState.Active)
                 {
                     CurrentState.EndState();
                 }

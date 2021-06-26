@@ -56,13 +56,14 @@ namespace TBAR.Projectiles.Stands.Italy.KingCrimson
             StandState spawnState = new StandState(KCStates.Spawn.ToString(), spawn);
             spawnState.OnStateUpdate += SpawnState_OnStateUpdate;
             spawnState.OnStateEnd += GoIdle;
+            spawnState.Duration = 20;
 
             StandState idleState = new StandState(KCStates.Idle.ToString(), idle);
             idleState.OnStateUpdate += Idle;
 
             StandState despawnState = new StandState(KCStates.Despawn.ToString(), despawn);
             despawnState.OnStateEnd += delegate { projectile.Kill(); };
-
+            despawnState.Duration = 20;
             StandState punchState = new StandState
                 (punchMidLeft, punchMidRight, punchDownLeft, punchDownRight, punchUpRight, punchUpLeft)
             { Key = KCStates.Punch.ToString() };
@@ -70,18 +71,21 @@ namespace TBAR.Projectiles.Stands.Italy.KingCrimson
             punchState.OnStateBegin += BeginPunch;
             punchState.OnStateUpdate += UpdatePunch;
             punchState.OnStateEnd += EndPunch;
+            punchState.Duration = 20;
 
             StandState cutState = new StandState(KCStates.Slice.ToString(), cut);
             cutState.OnStateBegin += CutState_OnStateBegin;
             cutState.OnStateUpdate += UpdatePunch;
             cutState.OnStateEnd += EndPunch;
+            cutState.Duration = 60;
 
             StandState donutState = new StandState(donut, donutUndo, donutMiss) { Key = KCStates.Donut.ToString()};
             donutState.OnStateUpdate += DonutState_OnStateUpdate;
             donutState.OnStateEnd += DonutState_OnStateEnd;
             donutState.OnStateBegin += DonutState_OnStateBegin;
+            donutState.Duration = 120;
 
-            StandState barrageState = new StandState(path + "KCRush", 4, 15, true, 180)
+            StandState barrageState = new StandState(path + "KCRush", 4, 15, true)
             {
                 Key = KCStates.Barrage.ToString()
             };
@@ -102,6 +106,8 @@ namespace TBAR.Projectiles.Stands.Italy.KingCrimson
                 Barrage = null;
                 SetState(KCStates.Idle.ToString());
             };
+
+            barrageState.Duration = 180;
 
             AddStates(spawnState, idleState, despawnState, punchState, cutState, donutState, barrageState);
             
@@ -168,6 +174,8 @@ namespace TBAR.Projectiles.Stands.Italy.KingCrimson
         private void CutState_OnStateBegin(StandState sender)
         {
             NonTimedAttack = true;
+            PunchStartPoint = Owner.Center;
+            PunchDirection = PunchStartPoint.DirectTo(MousePosition, Owner.width + 16 * Range);
             projectile.damage = CutDamage;
             Owner.direction = MousePosition.X < Owner.Center.X ? -1 : 1;
         }

@@ -19,15 +19,15 @@ namespace TBAR.Stands
 
         public StandState(params SpriteAnimation[] animations) : this()
         {
-            foreach(SpriteAnimation sa in animations)
+            foreach (SpriteAnimation sa in animations)
             {
                 AssignedAnimations.Add(sa);
             }
         }
-        
+
         public StandState(string key, params SpriteAnimation[] animations) : this()
         {
-            foreach(SpriteAnimation sa in animations)
+            foreach (SpriteAnimation sa in animations)
             {
                 AssignedAnimations.Add(sa);
             }
@@ -35,24 +35,31 @@ namespace TBAR.Stands
             Key = key;
         }
 
-        public StandState(string sheetPath, int frameCount, float fps = 5f, bool looping = false, int loopTime = -1) : this()
+        public StandState(string sheetPath, int frameCount, float fps = 5f, bool looping = false) : this()
         {
-            AssignedAnimations.Add(new SpriteAnimation(sheetPath, frameCount, fps, looping, loopTime));
+            AssignedAnimations.Add(new SpriteAnimation(sheetPath, frameCount, fps, looping));
         }
 
-        public StandState(string key, string sheetPath, int frameCount, float fps = 5f, bool looping = false, int loopTime = -1) : this()
+        public StandState(string key, string sheetPath, int frameCount, float fps = 5f, bool looping = false) : this()
         {
-            AssignedAnimations.Add(new SpriteAnimation(sheetPath, frameCount, fps, looping, loopTime));
+            AssignedAnimations.Add(new SpriteAnimation(sheetPath, frameCount, fps, looping));
             Key = key;
         }
 
         public void BeginState()
         {
+            duration = _maxDuration;
             OnStateBegin?.Invoke(sender: this);
         }
 
         public void Update()
         {
+            /*if (!Active && !hasDuration)
+                return;*/
+
+            if(HasDuration)
+                duration--;
+
             OnStateUpdate?.Invoke(sender: this);
             CurrentAnimation.Update();
             CurrentAnimation.UpdateEvent();
@@ -73,5 +80,20 @@ namespace TBAR.Stands
         public List<SpriteAnimation> AssignedAnimations { get; }
 
         public string Key { get; set; }
+
+        private int duration;
+        private int _maxDuration;
+        public int Duration
+        {
+            get => duration;
+            set
+            {
+                _maxDuration = value;
+            }
+        }
+
+        public bool Active => duration > 0 || !HasDuration;
+
+        public bool HasDuration => _maxDuration > 0;
     }
 }

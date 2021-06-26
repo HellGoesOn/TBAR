@@ -14,7 +14,7 @@ namespace TBAR.Components
 
         private readonly string pathForClone;
 
-        public SpriteAnimation(string sheetPath, int frameCount, float fps = 5f, bool looping = false, int loopTime = -1)
+        public SpriteAnimation(string sheetPath, int frameCount, float fps = 5f, bool looping = false)
         {
             if(!Main.dedServ) // if we attempted to load a texture on a server we'd get a crash
                 SpriteSheet = ModContent.GetTexture("TBAR/" + sheetPath);
@@ -24,7 +24,6 @@ namespace TBAR.Components
             FramesPerSecond = fps;
             FrameCount = frameCount;
             Looping = looping;
-            LoopTime = loopTime;
         }
 
         public void UpdateEvent()
@@ -46,17 +45,6 @@ namespace TBAR.Components
 
             ElapsedTime += 0.016f; // magic number
 
-            if (LoopTime != -1)
-            {
-                if (LoopTimer > LoopTime - 1)
-                {
-                    Looping = false;
-                    ElapsedTime = TimePerFrame + 0.016f;
-                    CurrentFrame = FrameCount - 1;
-                }
-
-                LoopTimer += 1;
-            }
 
             if (ElapsedTime > TimePerFrame)
             {
@@ -71,53 +59,39 @@ namespace TBAR.Components
 
         public void DefaultBehavior()
         {
-            CurrentFrame++;
-
-            if (CurrentFrame >= FrameCount)
+            if(CurrentFrame < FrameCount - 1)
+                CurrentFrame++;
+            else
             {
-                CurrentFrame = 0;
-
                 if (!Looping)
                 {
                     OnAnimationEnd?.Invoke(this);
-
-                    if (LoopTime != -1)
-                    {
-                        LoopTimer = 0;
-                        Looping = true;
-                    }
-
-                    Active = false;
+                    return;
                 }
+
+                CurrentFrame = 0;
             }
         }
 
         public void ReversedBehavior()
         {
-            CurrentFrame--;
-
-            if (CurrentFrame <= 0)
+            if(CurrentFrame > 1)
+                CurrentFrame--;
+            else
             {
-                CurrentFrame = FrameCount;
-
                 if (!Looping)
                 {
                     OnAnimationEnd?.Invoke(this);
-
-                    if (LoopTime != -1)
-                    {
-                        LoopTimer = 0;
-                        Looping = true;
-                    }
-
-                    Active = false;
+                    return;
                 }
+
+                CurrentFrame = FrameCount;
             }
         }
 
         public object Clone()
         {
-            return new SpriteAnimation(pathForClone, FrameCount, FramesPerSecond, Looping, LoopTime);
+            return new SpriteAnimation(pathForClone, FrameCount, FramesPerSecond, Looping);
         }
 
         private bool isReversed;
@@ -131,8 +105,6 @@ namespace TBAR.Components
                 Reset();
             }
         }
-
-        public int LoopTimer { get; set; }
 
         public int LoopTime { get; }
 

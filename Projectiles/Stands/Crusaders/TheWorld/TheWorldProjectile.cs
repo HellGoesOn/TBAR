@@ -28,8 +28,8 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld
             SpriteAnimation summon = new SpriteAnimation(path + "TheWorldSpawn", 7, 15);
             SpriteAnimation despawn = new SpriteAnimation(path + "TheWorldSpawn", 7, 15) { IsReversed = true };
             SpriteAnimation idle = new SpriteAnimation(path + "TheWorldIdle", 8, 10, true);
-            SpriteAnimation flyUp = new SpriteAnimation(path + "TheWorldIdle", 8, 10, true, 90);
-            SpriteAnimation slamDunk = new SpriteAnimation(path + "TheWorldSlamDunk", 1, 5, true, 90);
+            SpriteAnimation flyUp = new SpriteAnimation(path + "TheWorldIdle", 8, 10, true);
+            SpriteAnimation slamDunk = new SpriteAnimation(path + "TheWorldSlamDunk", 1, 5, true);
             SpriteAnimation throwAnimation = new SpriteAnimation(path + "TheWorldKnifeThrow", 14, 15);
 
             SpriteAnimation punchMidLeft = new SpriteAnimation(path + "TheWorldPunchMiddle", 7, 15);
@@ -45,12 +45,14 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld
             summonState.OnStateBegin += delegate { TBAR.Instance.PlayVoiceLine("Sounds/TheWorld/Call"); };
             summonState.OnStateEnd += GoIdle;
             summonState.OnStateUpdate += SummonState_OnStateUpdate;
+            summonState.Duration = 40; 
 
             StandState idleState = new StandState(TWStates.Idle.ToString(), idle);
             idleState.OnStateUpdate += Idle;
 
             StandState despawnState = new StandState(TWStates.Despawn.ToString(), despawn);
             despawnState.OnStateEnd += delegate { projectile.Kill(); };
+            despawnState.Duration = 20;
 
             StandState punchState = new StandState
                 (punchMidLeft, punchMidRight, punchDownLeft, punchDownRight, punchUpRight, punchUpLeft)
@@ -59,24 +61,29 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld
             punchState.OnStateBegin += BeginPunch;
             punchState.OnStateUpdate += UpdatePunch;
             punchState.OnStateEnd += EndPunch;
+            punchState.Duration = AttackSpeed;
 
             StandState flyUpState = new StandState("FlyUp", flyUp);
             flyUpState.OnStateUpdate += FlyUpState_OnStateUpdate;
             flyUpState.OnStateBegin += FlyUpState_OnStateBegin;
             flyUpState.OnStateEnd += delegate { SetState("SlamDunk"); };
+            flyUpState.Duration = 90;
 
             StandState slamDunkState = new StandState("SlamDunk", slamDunk);
             slamDunkState.OnStateEnd += SlamDunkState_OnStateEnd;
             slamDunkState.OnStateBegin += SlamDunkState_OnStateBegin;
             slamDunkState.OnStateUpdate += SlamDunkState_OnStateUpdate;
+            slamDunkState.Duration = 90;
 
             StandState knifeThrowState = new StandState(throwAnimation) { Key = TWStates.KnifeThrow.ToString() };
             knifeThrowState.OnStateEnd += GoIdle;
             knifeThrowState.OnStateEnd += delegate { knifeThrowState.OnStateUpdate += ThrowingKnives; };
-            knifeThrowState.OnStateUpdate += ThrowingKnives; 
+            knifeThrowState.OnStateUpdate += ThrowingKnives;
+            knifeThrowState.Duration = 60;
 
-            StandState barrageState = new StandState(TWStates.Barrage.ToString(), path + "TheWorldRushMiddle", 4, 15, true, 180);
+            StandState barrageState = new StandState(TWStates.Barrage.ToString(), path + "TheWorldRushMiddle", 4, 15, true);
             barrageState.OnStateBegin += BarrageState_OnStateBegin;
+            barrageState.Duration = 180;
 
             barrageState.OnStateUpdate += delegate
             {

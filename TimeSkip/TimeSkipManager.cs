@@ -18,7 +18,7 @@ namespace TBAR.TimeSkip
                 ts.Update();
             }
 
-            VisualEffects.RemoveAll(x => !x.Animation.Active);
+            VisualEffects.RemoveAll(x => x.Animation.CurrentFrame == x.Animation.FrameCount - 1);
         }
 
         public bool IsTimeSkipped => EffectCount > 0;
