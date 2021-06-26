@@ -40,11 +40,9 @@ namespace TBAR.Stands
 
             Stand resultStand = GetRandom();
 
-            if (stand == null || StandCount <= 1)
-                return resultStand;
-
-            while (stand.GetType() == resultStand.GetType() || !stand.CanAcquire(player))
-                resultStand = GetRandom();
+            bool bruhMoment = stand != null && stand.GetType() == resultStand.GetType();
+            if(bruhMoment || !resultStand.CanAcquire(player))
+               return GetNewRandom(player);
 
             return resultStand;
         }

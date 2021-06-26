@@ -28,7 +28,7 @@ namespace TBAR.UI
         {
             base.Update(gameTime);
 
-            Visible = TBARPlayer.Get().PlayerStand.IsActive;
+            Visible = TBARPlayer.Get().IsStandUser && TBARPlayer.Get().PlayerStand.IsActive;
 
             if (Visible)
             {

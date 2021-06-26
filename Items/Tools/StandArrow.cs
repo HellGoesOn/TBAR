@@ -38,7 +38,7 @@ namespace TBAR.Items.Tools
         {
             TBARPlayer tBAR = TBARPlayer.Get(player);
 
-            InputBlocker.BlockInputs(player, CUTSCENE_DURATION);
+            InputBlocker.BlockInputs(player, item.useAnimation);
 
             player.mount.Dismount(player);
 

@@ -11,7 +11,7 @@ namespace TBAR.Items.Tools
         public override void SetStaticDefaults()
         {
             DisplayName.SetDefault("Bizarre Eraser");
-            Tooltip.SetDefault("Removes current stand");
+            Tooltip.SetDefault("Removes current stand\nDebug tool");
         }
 
         public override void SetDefaults()

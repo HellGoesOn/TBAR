@@ -3,6 +3,7 @@ using System;
 using TBAR.Enums;
 using TBAR.Extensions;
 using Terraria;
+using Terraria.ID;
 
 namespace TBAR.Structs
 {
@@ -57,7 +58,7 @@ namespace TBAR.Structs
                     break;
             }
 
-            if (item.notAmmo)
+            if (item.notAmmo || item.createTile >= TileID.Dirt)
                 damage = 0;
 
             Damage = damage;

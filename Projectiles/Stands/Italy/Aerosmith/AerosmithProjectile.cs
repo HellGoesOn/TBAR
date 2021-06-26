@@ -44,7 +44,7 @@ namespace TBAR.Projectiles.Stands.Italy.Aerosmith
             spawnState.OnStateBegin += SpawnState_OnStateBegin;
             spawnState.OnStateUpdate += SpawnState_OnStateUpdate;
             spawnState.OnStateEnd += SpawnState_OnStateEnd;
-            spawnState.Duration = 60;
+            spawnState.Duration = 90;
 
             StandState idleState = new StandState(ASStates.Idle.ToString(), idle);
             idleState.OnStateUpdate += IdleState_OnStateUpdate;
@@ -54,7 +54,7 @@ namespace TBAR.Projectiles.Stands.Italy.Aerosmith
             despawnState.OnStateEnd += DespawnState_OnStateEnd;
             despawnState.OnStateBegin += DespawnState_OnStateBegin;
 
-            despawnState.Duration = 60;
+            despawnState.Duration = 90;
 
             StandState barrageState = new StandState(ASStates.Barrage.ToString(), barrage);
             barrageState.OnStateUpdate += IdleState_OnStateUpdate;
