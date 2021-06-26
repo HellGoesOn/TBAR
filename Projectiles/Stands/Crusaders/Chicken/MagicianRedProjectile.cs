@@ -40,12 +40,14 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
             summonState.OnStateBegin += SummonState_OnStateBegin;
             summonState.OnStateEnd += GoIdle;
             summonState.OnStateUpdate += SummonState_OnStateUpdate;
+            summonState.Duration = 60;
 
             StandState idleState = new StandState(MRStates.Idle.ToString(), idle);
             idleState.OnStateUpdate += Idle;
 
             StandState despawnState = new StandState(MRStates.Despawn.ToString(), despawn);
             despawnState.OnStateEnd += delegate { projectile.Kill(); };
+            despawnState.Duration = 60;
 
             StandState punchState = new StandState
                 (punchMidLeft, punchMidRight, punchDownLeft, punchDownRight, punchUpRight, punchUpLeft)
@@ -54,6 +56,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
             punchState.OnStateBegin += BeginPunch;
             punchState.OnStateUpdate += UpdatePunch;
             punchState.OnStateEnd += EndPunch;
+            punchState.Duration = AttackSpeed;
 
             AddStates(summonState, idleState, despawnState, punchState);
 

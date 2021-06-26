@@ -52,7 +52,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld
 
             StandState despawnState = new StandState(TWStates.Despawn.ToString(), despawn);
             despawnState.OnStateEnd += delegate { projectile.Kill(); };
-            despawnState.Duration = 20;
+            despawnState.Duration = 30;
 
             StandState punchState = new StandState
                 (punchMidLeft, punchMidRight, punchDownLeft, punchDownRight, punchUpRight, punchUpLeft)
