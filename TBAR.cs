@@ -18,6 +18,11 @@ namespace TBAR
 {
     public partial class TBAR : Mod
 	{
+#if DEBUG
+        internal static bool DebugBuild = true;
+#else
+    internal static bool DebugBuild = false;
+#endif
         public static TBAR Instance { get; private set; }
 
         public TBAR()
@@ -84,6 +89,7 @@ namespace TBAR
         {
             layers.Add(UIManager.Instance.TimeSkipLayer);
             layers.Insert(0, UIManager.Instance.StandAlbumLayer);
+            layers.Insert(0, UIManager.Instance.ResourceLayer);
         }
 
         public void PlayVoiceLine(string SoundPath)

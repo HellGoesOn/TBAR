@@ -144,7 +144,6 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld.RoadRoller
                         {
                             ExplodeScaling += 0.5f;
                             p.GetGlobal().HitRoadRollerInLifeTime = true;
-                            Main.NewText($"Current Scaling: {ExplodeScaling}");
                             continue;
                         }
                         else
@@ -155,13 +154,11 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld.RoadRoller
                     {
                         ExplodeScaling += 0.2f;
                         p.GetGlobal().HitRoadRollerInLifeTime = true;
-                        Main.NewText($"Current Scaling: {ExplodeScaling}");
                         continue;
                     }
 
                     ExplodeScaling += 0.05f;
                     p.GetGlobal().HitRoadRollerInLifeTime = true;
-                    Main.NewText($"Current Scaling: {ExplodeScaling}");
                 }
             }
         }

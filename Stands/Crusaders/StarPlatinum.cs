@@ -43,7 +43,7 @@ namespace TBAR.Stands.Crusaders
         private void UpperCut_OnActivate(Player player)
         {
             StarPlatinumProjectile sp = ActiveInstance;
-            if (sp?.State == "Idle")
+            if (sp?.State == "Idle" || sp?.State == "Punch")
             {
                 sp?.SetState(SPStates.Uppercut.ToString());
             }

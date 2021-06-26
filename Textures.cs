@@ -26,6 +26,15 @@ namespace TBAR
         [Loadable("TBAR/Items/Tools/StandArrow")]
         public static Texture2D StandArrow { get; internal set; }
 
+        [Loadable("TBAR/Textures/Runner")]
+        public static Texture2D Runner { get; internal set; }
+        
+        [Loadable("TBAR/Textures/RunnerBounds")]
+        public static Texture2D RunnerBounds { get; internal set; }
+
+        [Loadable("TBAR/Textures/Tooth")]
+        public static Texture2D Tooth { get; internal set; }
+
         public static string EmptinessPath => "TBAR/Textures/EmptyPixel";
     }
 }

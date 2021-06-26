@@ -57,11 +57,12 @@ namespace TBAR.Structs
                     break;
             }
 
+            if (item.notAmmo)
+                damage = 0;
+
             Damage = damage;
 
             DPS = (int)(damage * (60 / useAnimation));
-
-            Main.NewText($"{Damage},{DPS}");
         }
     }
 }

@@ -10,7 +10,7 @@ namespace TBAR.UI.Elements
 {
     public class UIDamageStat : UIElement
     {
-        public UIDamageStat(DamageType type, bool hasText = true)
+        public UIDamageStat(DamageType type, bool hasHoverText = true, bool hasText = true)
         {
             DamageType = type;
 
@@ -25,6 +25,8 @@ namespace TBAR.UI.Elements
 
                 this.Append(DamageScaleText);
             }
+
+            HasHoverText = hasHoverText;
         }
 
         protected override void DrawSelf(SpriteBatch spriteBatch)
@@ -37,7 +39,7 @@ namespace TBAR.UI.Elements
 
             spriteBatch.Draw(Textures.DamageTypeIcon, base.GetDimensions().Position(), new Rectangle(0, 34 * (int)DamageType, 32, 34), color, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
 
-            if (IsMouseHovering)
+            if (IsMouseHovering && HasHoverText)
             {
                 string text = $"This Stand benefits from {DamageType} weaponary.\nDPS is equal to your weapon's estimated DPS.";
                 Vector2 mpos = this.Parent.GetDimensions().Position() + new Vector2(16, 8 + this.Parent.Height.Pixels);
@@ -45,6 +47,8 @@ namespace TBAR.UI.Elements
                 Utils.DrawBorderString(spriteBatch, text, mpos, Color.White);
             }
         }
+
+        public bool HasHoverText { get; set; }
 
         public UIText DamageScaleText { get; set; }
 

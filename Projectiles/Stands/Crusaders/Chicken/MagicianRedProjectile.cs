@@ -11,11 +11,11 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
 {
     public class MagicianRedProjectile : PunchGhostProjectile
     {
+        private int flameCounter;
+
         public MagicianRedProjectile() : base("Magician's Red")
         {
         }
-
-        protected override string PunchState => MRStates.Punch.ToString();
 
         public override void InitializeStates(Projectile projectile)
         {
@@ -26,6 +26,15 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
             SpriteAnimation summon = new SpriteAnimation(path + "Spawn", 23, 18);
             SpriteAnimation despawn = new SpriteAnimation(path + "Spawn", 23, 18) { IsReversed = true };
             SpriteAnimation idle = new SpriteAnimation(path + "Idle", 7, 10, true);
+
+            SpriteAnimation punchMidLeft = new SpriteAnimation(path + "FlameThrow1", 6, 15);
+            SpriteAnimation punchMidRight = new SpriteAnimation(path + "FlameThrow2", 8, 15);
+
+            SpriteAnimation punchUpLeft = new SpriteAnimation(path + "FlameUpThrow1", 4, 15);
+            SpriteAnimation punchUpRight = new SpriteAnimation(path + "FlameUpThrow2", 4, 15);
+
+            SpriteAnimation punchDownLeft = new SpriteAnimation(path + "DownThrow1", 4, 15);
+            SpriteAnimation punchDownRight = new SpriteAnimation(path + "FlameDownThrow2", 4, 15);
 
             StandState summonState = new StandState(MRStates.Spawn.ToString(), summon);
             summonState.OnStateBegin += SummonState_OnStateBegin;
@@ -38,8 +47,15 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
             StandState despawnState = new StandState(MRStates.Despawn.ToString(), despawn);
             despawnState.OnStateEnd += delegate { projectile.Kill(); };
 
+            StandState punchState = new StandState
+                (punchMidLeft, punchMidRight, punchDownLeft, punchDownRight, punchUpRight, punchUpLeft)
+            { Key = MRStates.Punch.ToString() };
 
-            AddStates(summonState, idleState, despawnState);
+            punchState.OnStateBegin += BeginPunch;
+            punchState.OnStateUpdate += UpdatePunch;
+            punchState.OnStateEnd += EndPunch;
+
+            AddStates(summonState, idleState, despawnState, punchState);
 
             SetState(MRStates.Spawn.ToString());
         }
@@ -96,7 +112,21 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
             projectile.Center = Vector2.Lerp(projectile.Center, Owner.Center + new Vector2(-30 * Owner.direction, -32), 0.12f);
         }
 
-        private int flameCounter;
+        protected override int PunchAnimationIDOffset()
+        {
+            int offset = 0;
+
+            if (MousePosition.Y > Owner.Center.Y + 120)
+                offset = 2;
+
+            if (MousePosition.Y < Owner.Center.Y - 120)
+                offset = 4;
+
+            return Main.rand.Next(0, 2) + offset;
+        }
+
+
+        protected override string PunchState => MRStates.Punch.ToString();
     }
 
     public enum MRStates

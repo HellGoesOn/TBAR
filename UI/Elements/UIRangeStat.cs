@@ -10,7 +10,7 @@ namespace TBAR.UI.Elements
 {
     public class UIRangeStat : UIElement
     {
-        public UIRangeStat(bool hasText = true)
+        public UIRangeStat(bool hasHoverText = true, bool hasText = true)
         {
             this.Width.Set(32, 0);
             this.Height.Set(32, 0);
@@ -23,6 +23,8 @@ namespace TBAR.UI.Elements
 
                 this.Append(RangeText);
             }
+
+            HasHoverText = hasHoverText;
         }
 
         protected override void DrawSelf(SpriteBatch spriteBatch)
@@ -33,7 +35,7 @@ namespace TBAR.UI.Elements
 
             spriteBatch.Draw(Textures.RangeIcon, base.GetDimensions().Position(), null, Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f);
 
-            if (IsMouseHovering)
+            if (IsMouseHovering && HasHoverText)
             {
                 string text = "Stand's effective range";
                 Vector2 mpos = this.Parent.GetDimensions().Position() + new Vector2(16, 8 + this.Parent.Height.Pixels);
@@ -41,6 +43,9 @@ namespace TBAR.UI.Elements
                 Utils.DrawBorderString(spriteBatch, text, mpos, Color.White);
             }
         }
+
+
+        public bool HasHoverText { get; set; }
 
         public UIText RangeText { get; set; }
     }

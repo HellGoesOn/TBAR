@@ -1,4 +1,5 @@
 ﻿using TBAR.Components;
+using TBAR.Players;
 using TBAR.Projectiles.Stands.Crusaders.Chicken;
 
 namespace TBAR.Stands.Crusaders
@@ -16,6 +17,11 @@ namespace TBAR.Stands.Crusaders
 
         public override void InitializeCombos()
         {
+        }
+
+        public override bool CanAcquire(TBARPlayer player)
+        {
+            return TBAR.DebugBuild;
         }
     }
 }

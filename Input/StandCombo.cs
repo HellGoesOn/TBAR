@@ -7,6 +7,8 @@ using Terraria.ID;
 using TBAR.Helpers;
 using Microsoft.Xna.Framework;
 using TBAR.Players.Visuals;
+using TBAR.Players;
+using TBAR.UI.Elements;
 
 namespace TBAR.Input
 {
@@ -49,6 +51,9 @@ namespace TBAR.Input
             OnActivate?.Invoke(player);
 
             SendPacket(player, ComboName, player.whoAmI);
+
+            if (!Main.dedServ)
+                ComboTimeRunner.AchievedCombo = true;
 
             return true;
         }

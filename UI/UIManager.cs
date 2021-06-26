@@ -9,6 +9,7 @@ namespace TBAR.UI
         {
             TimeSkipLayer = new TimeSkipLayer();
             StandAlbumLayer = new StandAlbumLayer();
+            ResourceLayer = new ResourceLayer();
         }
 
         public void Update(GameTime gameTime)
@@ -16,11 +17,15 @@ namespace TBAR.UI
             TimeSkipLayer.State.Update(gameTime);
 
             StandAlbumLayer.Update(gameTime);
+
+            ResourceLayer.Update(gameTime);
         }
 
         public TimeSkipLayer TimeSkipLayer { get; set; }
 
         public StandAlbumLayer StandAlbumLayer { get; set; }
+
+        public ResourceLayer ResourceLayer { get; set; }
 
         public static void Unload()
         {

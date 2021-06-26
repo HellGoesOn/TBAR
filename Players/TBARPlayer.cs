@@ -12,8 +12,16 @@ namespace TBAR.Players
 {
     public partial class TBARPlayer : ModPlayer
     {
+        /// <summary>
+        /// Easier access to TBARPlayer
+        /// </summary>
+        /// <returns>TBARPlayer instance for specified</returns>
         public static TBARPlayer Get(Player player) => player.GetModPlayer<TBARPlayer>();
 
+        /// <summary>
+        /// Easier access to TBARPlayer
+        /// </summary>
+        /// <returns>TBARPlayer instance for local player</returns>
         public static TBARPlayer Get() => Get(Main.LocalPlayer);
 
         public override void Initialize()
@@ -74,20 +82,20 @@ namespace TBAR.Players
 
         public override void PostUpdate()
         {
-            if(TBAR.TimeStopManager.IsTimeStopped && !TBAR.TimeStopManager.HaveITimeStopped(player) && !TBAR.TimeStopManager.IsMyTeamImmune(player))
+            if (TBAR.TimeStopManager.IsTimeStopped && !TBAR.TimeStopManager.HaveITimeStopped(player) && !TBAR.TimeStopManager.IsMyTeamImmune(player))
             {
                 player.velocity *= 0;
                 player.position = player.oldPosition;
             }
 
-            if(IsStandUser)
+            if (IsStandUser)
             {
-                if(ComboTimeExpired)
+                if (ComboTimeExpired)
                 {
                     PlayerStand.HandleInputs(player, CurrentComboInputs);
 
                     CurrentComboInputs.Clear();
-                }    
+                }
             }
 
 
@@ -99,7 +107,7 @@ namespace TBAR.Players
 
         public override void UpdateDead()
         {
-            if(IsStandUser)
+            if (IsStandUser)
             {
                 PlayerStand.KillStand();
             }

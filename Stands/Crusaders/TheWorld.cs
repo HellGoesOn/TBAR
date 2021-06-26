@@ -73,7 +73,7 @@ namespace TBAR.Stands.Crusaders
         {
             TheWorldProjectile tw = ActiveInstance;
 
-            if (tw?.State == "Idle")
+            if (tw?.State == "Idle" || tw?.State == "Punch" || tw?.State == TWStates.KnifeThrow.ToString())
             {
                 tw?.SetState(TWStates.Barrage.ToString());
 

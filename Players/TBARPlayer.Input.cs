@@ -18,9 +18,10 @@ namespace TBAR.Players
 
         public override void ProcessTriggers(TriggersSet triggersSet)
         {
-            if (TBARInputs.SummonStand.JustPressed && IsStandUser && !PlayerStand.IsActive)
+            if (TBARInputs.SummonStand.JustPressed && IsStandUser)
             {
-                PlayerStand.TryActivate(player);
+                if(!PlayerStand.IsActive)
+                    PlayerStand.TryActivate(player);
             }
 
             if(TBARInputs.OpenStandAlbum.JustPressed)

@@ -59,7 +59,7 @@ namespace TBAR.Projectiles.Stands
         {
             base.PostAI();
 
-            projectile.Center = projectile.Center.RetardedMethodName(Owner.Center, Range * 64f);
+            projectile.Center = projectile.Center.ClampLength(Owner.Center, Range * 64f);
 
             if (BaseDPS == -1)
             {
