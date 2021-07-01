@@ -6,6 +6,7 @@ using TBAR.Input;
 using TBAR.Stands;
 using Terraria;
 using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace TBAR.Projectiles.Stands.Crusaders.Chicken
 {
@@ -21,33 +22,35 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
         {
             Range = 2f;
 
+            AttackSpeed = 25;
+
             string path = "Projectiles/Stands/Crusaders/Chicken/";
 
             SpriteAnimation summon = new SpriteAnimation(path + "Spawn", 23, 18);
             SpriteAnimation despawn = new SpriteAnimation(path + "Spawn", 23, 18) { IsReversed = true };
-            SpriteAnimation idle = new SpriteAnimation(path + "Idle", 7, 10, true);
+            SpriteAnimation idle = new SpriteAnimation(path + "Idle", 7, 5, true);
 
-            SpriteAnimation punchMidLeft = new SpriteAnimation(path + "FlameThrow1", 6, 15);
-            SpriteAnimation punchMidRight = new SpriteAnimation(path + "FlameThrow2", 8, 15);
+            SpriteAnimation punchMidLeft = new SpriteAnimation(path + "FlameThrow1", 6, 12);
+            SpriteAnimation punchMidRight = new SpriteAnimation(path + "FlameThrow2", 8, 12);
 
-            SpriteAnimation punchUpLeft = new SpriteAnimation(path + "FlameUpThrow1", 4, 15);
-            SpriteAnimation punchUpRight = new SpriteAnimation(path + "FlameUpThrow2", 4, 15);
+            SpriteAnimation punchUpLeft = new SpriteAnimation(path + "FlameUpThrow1", 4, 12);
+            SpriteAnimation punchUpRight = new SpriteAnimation(path + "FlameUpThrow2", 4, 12);
 
-            SpriteAnimation punchDownLeft = new SpriteAnimation(path + "DownThrow1", 4, 15);
-            SpriteAnimation punchDownRight = new SpriteAnimation(path + "FlameDownThrow2", 4, 15);
+            SpriteAnimation punchDownLeft = new SpriteAnimation(path + "DownThrow1", 4, 12);
+            SpriteAnimation punchDownRight = new SpriteAnimation(path + "FlameDownThrow2", 4, 12);
 
             StandState summonState = new StandState(MRStates.Spawn.ToString(), summon);
             summonState.OnStateBegin += SummonState_OnStateBegin;
             summonState.OnStateEnd += GoIdle;
             summonState.OnStateUpdate += SummonState_OnStateUpdate;
-            summonState.Duration = 60;
+            summonState.Duration = 70;
 
             StandState idleState = new StandState(MRStates.Idle.ToString(), idle);
             idleState.OnStateUpdate += Idle;
 
             StandState despawnState = new StandState(MRStates.Despawn.ToString(), despawn);
             despawnState.OnStateEnd += delegate { projectile.Kill(); };
-            despawnState.Duration = 60;
+            despawnState.Duration = 80;
 
             StandState punchState = new StandState
                 (punchMidLeft, punchMidRight, punchDownLeft, punchDownRight, punchUpRight, punchUpLeft)
@@ -56,11 +59,18 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
             punchState.OnStateBegin += BeginPunch;
             punchState.OnStateUpdate += UpdatePunch;
             punchState.OnStateEnd += EndPunch;
+            punchState.OnStateEnd += PunchState_OnStateEnd;
             punchState.Duration = AttackSpeed;
 
             AddStates(summonState, idleState, despawnState, punchState);
 
             SetState(MRStates.Spawn.ToString());
+        }
+
+        private void PunchState_OnStateEnd(StandState sender)
+        {
+            Main.PlaySound(SoundID.Item45);
+            Projectile.NewProjectile(projectile.Center - projectile.Center.ToMouse(24f), Owner.Center.ToMouse(12f), ModContent.ProjectileType<Fireball>(), FireballDamage, 0f, projectile.owner);
         }
 
         private void SummonState_OnStateBegin(StandState sender)
@@ -128,8 +138,11 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
             return Main.rand.Next(0, 2) + offset;
         }
 
+        private int FireballDamage => 12 + (int)(BaseDPS * 0.75f);
 
         protected override string PunchState => MRStates.Punch.ToString();
+
+        protected override int GetPunchDamage() => 12 + (int)(BaseDPS * 1.4f);
     }
 
     public enum MRStates

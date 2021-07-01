@@ -46,8 +46,8 @@ namespace TBAR.Items.Tools
 
             tBAR.PlayerStand = StandLoader.Instance.GetNewRandom(tBAR);
 
-            tBAR.ScreenModifiers.Add(new SmoothStepScreenModifier(player.Center, player.Center - new Vector2(0, 64), 0.025f));
-            tBAR.ScreenModifiers.Add(new ScreenModifier(player.Center - new Vector2(0, 64)));
+            tBAR.ScreenModifiers.Add(new SmoothStepScreenModifier(player.Center, player.Center - new Vector2(0, 64), 0.025f, item.useAnimation));
+            tBAR.ScreenModifiers.Add(new ScreenModifier(player.Center - new Vector2(0, 64), item.useAnimation));
 
             tBAR.UsePosition = player.Center + new Vector2(0, player.height * 0.5f);
 

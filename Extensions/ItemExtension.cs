@@ -11,7 +11,7 @@ namespace TBAR.Extensions
             if (item.melee)
                 return DamageType.Melee;
             if (item.magic)
-                return DamageType.Melee;
+                return DamageType.Magic;
             if (item.ranged)
                 return DamageType.Ranged;
             if (item.summon)

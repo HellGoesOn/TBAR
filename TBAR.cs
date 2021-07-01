@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.Linq;
 using TBAR.Components;
+using TBAR.Helpers;
 using TBAR.Input;
 using TBAR.Stands;
 using TBAR.TimeSkip;
@@ -54,6 +55,8 @@ namespace TBAR
                 AddEquipTexture(null, EquipType.Head, "DiavoloHead", "TBAR/Items/Vanity/VinegarDisguise/DiavoloHead_Head");
                 AddEquipTexture(null, EquipType.Body, "DiavoloBody", "TBAR/Items/Vanity/VinegarDisguise/DiavoloChest_Body", "TBAR/Items/Vanity/VinegarDisguise/DiavoloChest_Arms");
             }
+
+            SteamHelper.Initialize();
 
             OnEdits.Instance.LoadEdits();
 

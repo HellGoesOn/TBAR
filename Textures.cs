@@ -35,6 +35,9 @@ namespace TBAR
         [Loadable("TBAR/Textures/Tooth")]
         public static Texture2D Tooth { get; internal set; }
 
+        [Loadable("TBAR/Textures/Space")]
+        public static Texture2D FancySky { get; internal set; }
+
         public static string EmptinessPath => "TBAR/Textures/EmptyPixel";
     }
 }

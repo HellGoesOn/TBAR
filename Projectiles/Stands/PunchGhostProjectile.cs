@@ -5,6 +5,7 @@ using System.Linq;
 using TBAR.Enums;
 using TBAR.Extensions;
 using TBAR.Input;
+using TBAR.Players;
 using TBAR.Stands;
 using TBAR.Structs;
 using Terraria;
@@ -63,7 +64,7 @@ namespace TBAR.Projectiles.Stands
 
             if (BaseDPS == -1)
             {
-                if (Owner.HeldItem.GetDamageType() == DamageType.Melee)
+                if (Owner.HeldItem.GetDamageType() == TBARPlayer.Get(Owner).PlayerStand.StandDamageType)
                     BaseDPS = Owner.HeldItem.GetDamageData(Owner).DPS;
                 else
                     BaseDPS = 5;

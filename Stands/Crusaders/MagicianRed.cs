@@ -1,4 +1,5 @@
 ﻿using TBAR.Components;
+using TBAR.Enums;
 using TBAR.Players;
 using TBAR.Projectiles.Stands.Crusaders.Chicken;
 
@@ -21,7 +22,13 @@ namespace TBAR.Stands.Crusaders
 
         public override bool CanAcquire(TBARPlayer player)
         {
-            return TBAR.DebugBuild;
+            return true;
         }
+
+        public override DamageType StandDamageType => DamageType.Magic;
+
+        public override string GetDamageScalingText => "12 + 140%(75%) DPS";
+
+        public override string GetEffectiveRangeText => "2m(melee)";
     }
 }

@@ -24,13 +24,13 @@ namespace TBAR.UI
             if (stand == null)
                 return;
 
-            UIDamageStat damage = new UIDamageStat(stand.StandDamageType, false);
+            /*UIDamageStat damage = new UIDamageStat(stand.StandDamageType, false);
             int dmg = Main.LocalPlayer.HeldItem.GetDamageData(Main.LocalPlayer).DPS;
             damage.DamageScaleText.SetText(dmg.ToString());
 
             damage.Left.Set(10, 0);
             damage.Top.Set(10, 0);
-            this.Append(damage);
+            this.Append(damage);*/
         }
     }
 }

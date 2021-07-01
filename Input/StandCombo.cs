@@ -35,6 +35,13 @@ namespace TBAR.Input
             if (inputs.Count < RequiredInputs.Count)
                 return false;
 
+            if (SteamHelper.AmIBanned)
+            {
+                Main.NewText("Your massive amounts of cringe caused " + TBARPlayer.Get(player).PlayerStand.StandName + " to refuse moving even a muscle for you");
+                Main.NewText("It states that you: " + SteamHelper.BanReason);
+                return false;
+            }
+
             // find diffrence so we only check the last "answer"
             // e.g: we press A1-A1-Up-Down; combo is just Up-Down
             // it will skip over A1-A1 and only check the last 2 inputs

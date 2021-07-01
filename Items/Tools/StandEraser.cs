@@ -26,7 +26,7 @@ namespace TBAR.Items.Tools
 
         public override bool CanUseItem(Player player)
         {
-            return TBARPlayer.Get(player).IsStandUser;
+            return TBARPlayer.Get(player).IsStandUser && !TBARPlayer.Get(player).PlayerStand.IsActive;
         }
 
         public override bool UseItem(Player player)

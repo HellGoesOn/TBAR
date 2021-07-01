@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using TBAR.NPCs;
 using TBAR.TimeStop;
 using Terraria;
@@ -33,10 +34,38 @@ namespace TBAR
             On.Terraria.Main.DrawBlack += Main_DrawBlack;
             On.Terraria.Main.DrawWalls += Main_DrawWalls;
             On.Terraria.Main.DrawTiles += Main_DrawTiles;
+            On.Terraria.Main.DrawBackgroundBlackFill += Main_DrawBackgroundBlackFill;
+            On.Terraria.Main.DrawUnderworldBackground += Main_DrawUnderworldBackground;
+            On.Terraria.Main.drawWaters += Main_drawWaters;
+            On.Terraria.Main.DrawWater += Main_DrawWater;
 
             On.Terraria.NPC.VanillaHitEffect += NPC_VanillaHitEffect;
             On.Terraria.NPC.UpdateNPC += NPC_UpdateNPC;
             On.Terraria.NPC.VanillaAI += NPC_VanillaAI;
+        }
+
+        private void Main_DrawWater(On.Terraria.Main.orig_DrawWater orig, Main self, bool bg, int Style, float Alpha)
+        {
+            if (!TBAR.TimeSkipManager.IsTimeSkipped)
+                orig.Invoke(self, bg, Style, Alpha);
+        }
+
+        private void Main_drawWaters(On.Terraria.Main.orig_drawWaters orig, Main self, bool bg, int styleOverride, bool allowUpdate)
+        {
+            if (!TBAR.TimeSkipManager.IsTimeSkipped)
+                orig.Invoke(self, bg, styleOverride, allowUpdate);
+        }
+
+        private void Main_DrawUnderworldBackground(On.Terraria.Main.orig_DrawUnderworldBackground orig, Main self, bool flat)
+        {
+            if (!TBAR.TimeSkipManager.IsTimeSkipped)
+                orig.Invoke(self, flat);
+        }
+
+        private void Main_DrawBackgroundBlackFill(On.Terraria.Main.orig_DrawBackgroundBlackFill orig, Main self)
+        {
+            if (!TBAR.TimeSkipManager.IsTimeSkipped)
+                orig.Invoke(self);
         }
 
         public void UnloadEdits()
@@ -51,7 +80,11 @@ namespace TBAR
 
             On.Terraria.Main.DrawBlack -= Main_DrawBlack;
             On.Terraria.Main.DrawWalls -= Main_DrawWalls;
-            On.Terraria.Main.DrawTiles -= Main_DrawTiles;
+            On.Terraria.Main.DrawTiles -= Main_DrawTiles; 
+            On.Terraria.Main.DrawBackgroundBlackFill -= Main_DrawBackgroundBlackFill;
+            On.Terraria.Main.DrawUnderworldBackground -= Main_DrawUnderworldBackground;
+            On.Terraria.Main.drawWaters -= Main_drawWaters;
+            On.Terraria.Main.DrawWater -= Main_DrawWater;
 
             On.Terraria.NPC.VanillaHitEffect -= NPC_VanillaHitEffect;
             On.Terraria.NPC.UpdateNPC -= NPC_UpdateNPC;
