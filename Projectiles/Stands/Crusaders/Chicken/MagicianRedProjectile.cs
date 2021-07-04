@@ -69,6 +69,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
             falconState.OnStateUpdate += UpdatePunch;
             falconState.OnStateUpdate += FalconState_OnStateUpdate;
             falconState.OnStateEnd += EndPunch;
+            falconState.OnStateEnd += FalconState_OnStateEnd;
             falconState.Duration = 100;
 
             AddStates(summonState, idleState, despawnState, punchState, falconState);
@@ -76,11 +77,18 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
             SetState(MRStates.Spawn.ToString());
         }
 
+        private void FalconState_OnStateEnd(StandState sender)
+        {
+        }
+
         private void FalconState_OnStateUpdate(StandState sender)
         {
             if (sender.Duration == 30)
+            {
+                Main.PlaySound(SoundID.Item45);
+                Projectile.NewProjectile(projectile.Center - projectile.Center.ToMouse(24f), Owner.Center.ToMouse(2f), ModContent.ProjectileType<Falcon>(), FireballDamage, 0f, projectile.owner);
                 Main.PlaySound(SoundID.Item74);
-
+            }
             if (sender.Duration <= 30 && sender.Duration > 15)
                 projectile.damage = FalconDamage;
             else if (sender.Duration <= 15)

@@ -128,6 +128,6 @@ namespace TBAR.Components
 
         public Rectangle FrameRect => new Rectangle(0, (int)(FrameSize.Y * CurrentFrame), (int)FrameSize.X, (int)FrameSize.Y);
 
-        public Vector2 DrawOrigin => new Vector2((int)(FrameSize.X * 0.5f), (int)(FrameSize.Y * 0.5f));
+        public Vector2 DrawOrigin => new Vector2(FrameSize.X * 0.5f, FrameSize.Y * 0.5f);
     }
 }
