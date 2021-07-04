@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using TBAR.Components;
 using TBAR.Enums;
 using TBAR.Extensions;
@@ -145,8 +144,11 @@ namespace TBAR.Projectiles.Stands.Italy.Aerosmith
 
         private void DespawnState_OnStateBegin(StandState sender)
         {
-            TBARPlayer.Get(Owner).ScreenModifiers.RemoveAll(x => x is AerosmithScreenModifier || x is PlayerChaseScreenModifier);
-            TBARPlayer.Get(Owner).ScreenModifiers.Add(new PlayerChaseScreenModifier(projectile.Center, Owner.Center, 0.2f));
+            if (Main.myPlayer == Owner.whoAmI)
+            {
+                TBARPlayer.Get(Owner).ScreenModifiers.RemoveAll(x => x is AerosmithScreenModifier || x is PlayerChaseScreenModifier);
+                TBARPlayer.Get(Owner).ScreenModifiers.Add(new PlayerChaseScreenModifier(projectile.Center, Owner.Center, 0.2f));
+            }
         }
 
         private void ReturnState_OnStateUpdate(StandState sender)
@@ -204,7 +206,8 @@ namespace TBAR.Projectiles.Stands.Italy.Aerosmith
 
         private void SpawnState_OnStateEnd(StandState sender)
         {
-            TBARPlayer.Get(Owner).ScreenModifiers.Add(new AerosmithScreenModifier(Owner.Center));
+            if (Main.myPlayer == Owner.whoAmI)
+                TBARPlayer.Get(Owner).ScreenModifiers.Add(new AerosmithScreenModifier(Owner.Center));
             SetState(ASStates.Idle.ToString());
         }
 

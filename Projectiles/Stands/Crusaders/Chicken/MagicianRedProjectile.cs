@@ -39,6 +39,8 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
             SpriteAnimation punchDownLeft = new SpriteAnimation(path + "DownThrow1", 4, 12);
             SpriteAnimation punchDownRight = new SpriteAnimation(path + "FlameDownThrow2", 4, 12);
 
+            SpriteAnimation falconPunch = new SpriteAnimation(path + "ChargePUNCHFULL", 27, 18);
+
             StandState summonState = new StandState(MRStates.Spawn.ToString(), summon);
             summonState.OnStateBegin += SummonState_OnStateBegin;
             summonState.OnStateEnd += GoIdle;
@@ -62,9 +64,50 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
             punchState.OnStateEnd += PunchState_OnStateEnd;
             punchState.Duration = AttackSpeed;
 
-            AddStates(summonState, idleState, despawnState, punchState);
+            StandState falconState = new StandState(MRStates.FalconPunch.ToString(), falconPunch);
+            falconState.OnStateBegin += FalconState_OnStateBegin;
+            falconState.OnStateUpdate += UpdatePunch;
+            falconState.OnStateUpdate += FalconState_OnStateUpdate;
+            falconState.OnStateEnd += EndPunch;
+            falconState.Duration = 100;
+
+            AddStates(summonState, idleState, despawnState, punchState, falconState);
 
             SetState(MRStates.Spawn.ToString());
+        }
+
+        private void FalconState_OnStateUpdate(StandState sender)
+        {
+            if (sender.Duration == 30)
+                Main.PlaySound(SoundID.Item74);
+
+            if (sender.Duration <= 30 && sender.Duration > 15)
+                projectile.damage = FalconDamage;
+            else if (sender.Duration <= 15)
+                projectile.damage = 0;
+        }
+
+        private void MagicianRedProjectile_OnHit(PunchGhostProjectile attacker, Entity victim)
+        {
+            Vector2 dir = new Vector2(Owner.direction * 7.8f, 0);
+            for (int i = 0; i < 5; i++)
+            {
+                Vector2 off = new Vector2(Owner.direction * 8, 0);
+                Projectile.NewProjectile(projectile.Center + off, (dir).RotatedByRandom(0.5), ModContent.ProjectileType<FireballFart>(), 0, 0, projectile.owner);
+            }
+        }
+
+        private void FalconState_OnStateBegin(StandState sender)
+        {
+            NonTimedAttack = true;
+
+            OnHit += MagicianRedProjectile_OnHit;
+
+            PunchStartPoint = Owner.Center;
+
+            Owner.direction = MousePosition.X < Owner.Center.X ? -1 : 1;
+
+            PunchDirection = PunchStartPoint.DirectTo(MousePosition, Owner.width + 16 * Range);
         }
 
         private void PunchState_OnStateEnd(StandState sender)
@@ -105,6 +148,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
 
         private void Idle(StandState sender)
         {
+            ClearOnHitEffects();
             NonTimedAttack = false;
             HitNPCs.RemoveAll(x => !x.IsTimed);
             SpriteFX = Owner.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
@@ -138,11 +182,15 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
             return Main.rand.Next(0, 2) + offset;
         }
 
+        private int FalconDamage => 100 + (int)(BaseDPS * 10f);
+
         private int FireballDamage => 12 + (int)(BaseDPS * 0.75f);
 
         protected override string PunchState => MRStates.Punch.ToString();
 
         protected override int GetPunchDamage() => 12 + (int)(BaseDPS * 1.4f);
+
+        public override bool CanPunch => IsIdle;
     }
 
     public enum MRStates
@@ -150,6 +198,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
         Spawn,
         Idle,
         Despawn,
-        Punch
+        Punch,
+        FalconPunch
     }
 }

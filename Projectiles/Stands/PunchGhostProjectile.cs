@@ -145,18 +145,40 @@ namespace TBAR.Projectiles.Stands
 
         public virtual bool CanPunch => true;
 
+        /// <summary>
+        /// Max range of the stand
+        /// </summary>
         public float Range { get; set; } = 2.0f;
 
+        /// <summary>
+        /// can be used for funky stuff with barrages
+        /// </summary>
         public Projectile Barrage { get; set; }
 
-        public uint ElapsedTime { get; set; }
+        /// <summary>
+        /// Do not touch
+        /// </summary>
+        public uint ElapsedTime { get; private set; }
 
+        /// <summary>
+        /// Ticks of immunity Stand inflicts on hit
+        /// </summary>
         public int AttackSpeed { get; set; } = 20;
 
+        /// <summary>
+        /// Set to true to make attack only hit once regardless of its duration <para/>
+        /// Uses: Magician's Red Falcon Punch, KC's pizza cut attack, etc
+        /// </summary>
         public bool NonTimedAttack { get; set; }
 
+        /// <summary>
+        /// Primary use is storing scaleable damage of the stand
+        /// </summary>
         public int BaseDPS { get; set; }
 
+        /// <summary>
+        /// Shouldn't touch unless you know what you are doing
+        /// </summary>
         public List<HitEntityData> HitNPCs { get; private set; }
 
         public bool IsIdle => State == "Idle";

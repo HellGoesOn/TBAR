@@ -25,6 +25,6 @@ namespace TBAR.Players
             }
         }
 
-        public List<ScreenModifier> ScreenModifiers { get; } = new List<ScreenModifier>();
+        public List<ScreenModifier> ScreenModifiers { get; private set; }
     }
 }

@@ -53,7 +53,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
                 Main.dust[dust].noGravity = true;
             }*/
 
-            if(!reverse)
+            if (!reverse)
             {
                 if((fade += 0.025f) > 1f)
                         reverse = true;
@@ -67,7 +67,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
 
         public override void Kill(int timeLeft)
         {
-            //DrawHelper.CircleDust(projectile.Center, Vector2.Zero, DustID.Fire, 4, 4);
+            DrawHelper.CircleDust(projectile.Center - projectile.velocity, projectile.velocity, DustID.Fire, 1, 8);
             for (int i = 0; i < 4; i++)
             {
                 Vector2 off = new Vector2(Main.rand.Next(projectile.width + 1), Main.rand.Next(projectile.height + 1));

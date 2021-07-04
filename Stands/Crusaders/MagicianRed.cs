@@ -1,5 +1,6 @@
 ﻿using TBAR.Components;
 using TBAR.Enums;
+using TBAR.Input;
 using TBAR.Players;
 using TBAR.Projectiles.Stands.Crusaders.Chicken;
 
@@ -18,6 +19,16 @@ namespace TBAR.Stands.Crusaders
 
         public override void InitializeCombos()
         {
+            StandCombo falconPunch = new StandCombo("Fist of Flaming Fury", ComboInput.Action1, ComboInput.Action1, ComboInput.Action2);
+
+            falconPunch.OnActivate += FalconPunch_OnActivate;
+
+            AddNormalCombos(falconPunch);
+        }
+
+        private void FalconPunch_OnActivate(Terraria.Player player)
+        {
+            ActiveInstance?.SetState(MRStates.FalconPunch.ToString());
         }
 
         public override bool CanAcquire(TBARPlayer player)

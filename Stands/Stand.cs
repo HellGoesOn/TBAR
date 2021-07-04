@@ -22,6 +22,9 @@ namespace TBAR.Stands
 
         public abstract void TryActivate(Player player);
 
+        /// <summary>
+        /// Use to initialize & add combos via AddNormalCombos & AddGlobalCombos
+        /// </summary>
         public abstract void InitializeCombos();
 
         public abstract void HandleInputs(Player player, List<ComboInput> receivedInputs);
@@ -75,12 +78,21 @@ namespace TBAR.Stands
             }
         }
 
+        /// <summary>
+        /// Adds combos that can be used any time.
+        /// Normal combos take priority over Global
+        /// </summary>
+        /// <param name="combos"></param>
         public void AddGlobalCombos(params StandCombo[] combos)
         {
             foreach (StandCombo s in combos)
                 GlobalCombos.Add(s);
         }
 
+        /// <summary>
+        /// Adds combos that can only be used when stand is active
+        /// </summary>
+        /// <param name="combos"></param>
         public void AddNormalCombos(params StandCombo[] combos)
         {
             foreach (StandCombo s in combos)

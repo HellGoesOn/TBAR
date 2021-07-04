@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Reflection;
 using TBAR.Input;
+using TBAR.ScreenModifiers;
 using TBAR.Stands;
-using TBAR.TimeStop;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
@@ -29,6 +29,7 @@ namespace TBAR.Players
             BeamVisuals = new List<Visuals.BeamVisual>();
             InputBlockers = new List<InputBlocker>();
             CurrentComboInputs = new List<ComboInput>(10);
+            ScreenModifiers = new List<ScreenModifier>();
         }
 
         public override void OnEnterWorld(Player player)
