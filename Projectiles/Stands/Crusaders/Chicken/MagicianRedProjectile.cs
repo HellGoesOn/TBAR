@@ -86,7 +86,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
             if (sender.Duration == 30)
             {
                 Main.PlaySound(SoundID.Item45);
-                Projectile.NewProjectile(projectile.Center - projectile.Center.ToMouse(24f), Owner.Center.ToMouse(2f), ModContent.ProjectileType<Falcon>(), FireballDamage, 0f, projectile.owner);
+                Projectile.NewProjectile(projectile.Center - projectile.Center.ToMouse(24f), Owner.Center.ToMouse(2f), ModContent.ProjectileType<Falcon>(), BirdDamage, 0f, projectile.owner);
                 Main.PlaySound(SoundID.Item74);
             }
             if (sender.Duration <= 30 && sender.Duration > 15)
@@ -189,6 +189,8 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
 
             return Main.rand.Next(0, 2) + offset;
         }
+
+        private int BirdDamage => 50 + (int)(BaseDPS * 1.35f);
 
         private int FalconDamage => 100 + (int)(BaseDPS * 10f);
 

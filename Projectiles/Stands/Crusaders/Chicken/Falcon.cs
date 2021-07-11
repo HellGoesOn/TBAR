@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using TBAR.Components;
-using TBAR.Helpers;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -19,7 +18,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
             projectile.tileCollide = false;
             fade = 0.8f;
 
-            anim = new SpriteAnimation("Projectiles/Stands/Crusaders/Chicken/Falcon", 9, 15);
+            anim = new SpriteAnimation("Projectiles/Stands/Crusaders/Chicken/Falcon", 9, 12);
         }
 
         public override void AI()
@@ -89,6 +88,13 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
+            target.immune[projectile.owner] = 10;
+            
+            if(!target.boss)
+            {
+                target.velocity = projectile.velocity * 1.5f;
+            }
+
             target.AddBuff(BuffID.OnFire, 180);
         }
 
