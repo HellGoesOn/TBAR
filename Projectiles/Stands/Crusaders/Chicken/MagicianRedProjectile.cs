@@ -41,6 +41,8 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
 
             SpriteAnimation falconPunch = new SpriteAnimation(path + "ChargePUNCHFULL", 27, 18);
 
+            SpriteAnimation cursed = new SpriteAnimation(path + "IntoFlamethrower", 14, 15);
+
             StandState summonState = new StandState(MRStates.Spawn.ToString(), summon);
             summonState.OnStateBegin += SummonState_OnStateBegin;
             summonState.OnStateEnd += GoIdle;
@@ -72,9 +74,30 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
             falconState.OnStateEnd += FalconState_OnStateEnd;
             falconState.Duration = 100;
 
-            AddStates(summonState, idleState, despawnState, punchState, falconState);
+            StandState cursedState = new StandState(MRStates.Cursed.ToString(), cursed);
+            cursedState.OnStateEnd += CursedState_OnStateBegin;
+            cursedState.OnStateEnd += GoIdle;
+            cursedState.Duration = 30;
+
+            StandState desrucState = new StandState(MRStates.Desruc.ToString(), cursed);
+            desrucState.OnStateEnd += DesrucState_OnStateBegin;
+            desrucState.OnStateEnd += GoIdle;
+            desrucState.Duration = 30;
+
+            AddStates(summonState, idleState, despawnState, punchState, falconState, cursedState, desrucState);
 
             SetState(MRStates.Spawn.ToString());
+        }
+
+        private void DesrucState_OnStateBegin(StandState sender)
+        {
+            Projectile.NewProjectile(Owner.Bottom + new Vector2(40, -60), new Vector2(1, 0), ModContent.ProjectileType<FirePillar>(), FirepillarDamage, 5.75f, Owner.whoAmI, 4, 1);
+            Projectile.NewProjectile(Owner.Bottom + new Vector2(-40, -60), new Vector2(-1, 0), ModContent.ProjectileType<FirePillar>(), FirepillarDamage, 5.75f, Owner.whoAmI, 4, -1);
+        }
+
+        private void CursedState_OnStateBegin(StandState sender)
+        {
+            Projectile.NewProjectile(Owner.Bottom + new Vector2(40 * Owner.direction, -60), new Vector2(Owner.direction, 0), ModContent.ProjectileType<FirePillar>(), FirepillarDamage, 5.75f, Owner.whoAmI, 9, Owner.direction);
         }
 
         private void FalconState_OnStateEnd(StandState sender)
@@ -196,6 +219,8 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
 
         private int FireballDamage => 12 + (int)(BaseDPS * 0.75f);
 
+        private int FirepillarDamage => 20 + (int)(BaseDPS * 2.25f);
+
         protected override string PunchState => MRStates.Punch.ToString();
 
         protected override int GetPunchDamage() => 12 + (int)(BaseDPS * 1.4f);
@@ -209,6 +234,8 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
         Idle,
         Despawn,
         Punch,
-        FalconPunch
+        FalconPunch,
+        Cursed,
+        Desruc
     }
 }

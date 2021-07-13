@@ -26,13 +26,17 @@ namespace TBAR.Stands.Crusaders
 
             falconPunch.OnActivate += FalconPunch_OnActivate;
 
-            StandCombo zxcursed = new StandCombo("Fireraze", ComboInput.Action1, ComboInput.Action2, ComboInput.Action3);
-            zxcursed.Description = "Releases Pillars of Flames in the direction you are facing";
+            StandCombo zxcursed = new StandCombo("Fireraze", ComboInput.Action1, ComboInput.Action2, ComboInput.Action3)
+            {
+                Description = "Releases Pillars of Flames in the direction you are facing"
+            };
 
             zxcursed.OnActivate += Zxcursed_OnActivate;
 
-            StandCombo desrucxz = new StandCombo("Firequake", ComboInput.Action1, ComboInput.Action2, ComboInput.Action1);
-            desrucxz.Description = "Releases Pillars of Flames in both directions";
+            StandCombo desrucxz = new StandCombo("Firequake", ComboInput.Action1, ComboInput.Action2, ComboInput.Action1)
+            {
+                Description = "Releases Pillars of Flames in both directions"
+            };
 
             desrucxz.OnActivate += Desrucxz_OnActivate;
 
@@ -41,13 +45,12 @@ namespace TBAR.Stands.Crusaders
 
         private void Desrucxz_OnActivate(Player player)
         {
-            Projectile.NewProjectile(player.Bottom + new Vector2(40, -60), new Vector2(1, 0), ModContent.ProjectileType<FirePillar>(), 60, 5.75f, player.whoAmI, 4, 1);
-            Projectile.NewProjectile(player.Bottom + new Vector2(-40, -60), new Vector2(-1, 0), ModContent.ProjectileType<FirePillar>(), 60, 5.75f, player.whoAmI, 4, -1);
+            ActiveInstance?.SetState(MRStates.Desruc.ToString());
         }
 
         private void Zxcursed_OnActivate(Player player)
         {
-            Projectile.NewProjectile(player.Bottom + new Vector2(40 * player.direction, -60), new Vector2(player.direction, 0), ModContent.ProjectileType<FirePillar>(), 60, 5.75f, player.whoAmI, 9, player.direction);
+            ActiveInstance?.SetState(MRStates.Cursed.ToString());
         }
 
         private void FalconPunch_OnActivate(Player player)
