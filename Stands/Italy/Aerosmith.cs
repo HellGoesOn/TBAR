@@ -23,6 +23,8 @@ namespace TBAR.Stands.Italy
 
         public override string GetDamageScalingText => "8 + 120% DPS";
 
+        public override string GetEffectiveRangeText => "200m";
+
         public override DamageType StandDamageType => DamageType.Ranged;
     }
 }

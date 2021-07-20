@@ -270,14 +270,21 @@ namespace TBAR.Projectiles.Stands.Italy.Aerosmith
                     BaseDPS = 5;
             }
 
-            if (TBARInputs.SummonStand.JustPressed && State == ASStates.Idle.ToString() && Main.myPlayer == projectile.owner)
+            if (TBARInputs.SummonStand.JustPressed && Idle && Main.myPlayer == projectile.owner)
             {
                 if (Vector2.Distance(Owner.Center, projectile.Center) <= Global.TILE_SIZE * 10)
                     SetState(ASStates.Despawn.ToString());
                 else
                     SetState(ASStates.Return.ToString());
             }
+
+            if (Owner.controlUseItem && Owner.whoAmI == Main.myPlayer && Idle)
+            {
+                SetState(ASStates.Barrage.ToString());
+            }
         }
+
+        private bool Idle => State == ASStates.Idle.ToString();
 
         public int BulletDamage => 8 + (int)(BaseDPS * 1.2);
 

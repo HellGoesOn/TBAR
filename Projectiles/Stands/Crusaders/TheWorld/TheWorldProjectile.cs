@@ -32,14 +32,14 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld
             SpriteAnimation slamDunk = new SpriteAnimation(path + "TheWorldSlamDunk", 1, 5, true);
             SpriteAnimation throwAnimation = new SpriteAnimation(path + "TheWorldKnifeThrow", 14, 15);
 
-            SpriteAnimation punchMidLeft = new SpriteAnimation(path + "TheWorldPunchMiddle", 7, 15);
-            SpriteAnimation punchMidRight = new SpriteAnimation(path + "TheWorldPunchMiddleAlt", 8, 15);
+            SpriteAnimation punchMidLeft = new SpriteAnimation(path + "TheWorldPunchMiddle", 7, 20);
+            SpriteAnimation punchMidRight = new SpriteAnimation(path + "TheWorldPunchMiddleAlt", 8, 20);
 
-            SpriteAnimation punchUpLeft = new SpriteAnimation(path + "TheWorldPunchUp", 8, 15);
-            SpriteAnimation punchUpRight = new SpriteAnimation(path + "TheWorldPunchUpAlt", 8, 15);
+            SpriteAnimation punchUpLeft = new SpriteAnimation(path + "TheWorldPunchUp", 8, 20);
+            SpriteAnimation punchUpRight = new SpriteAnimation(path + "TheWorldPunchUpAlt", 8, 20);
 
-            SpriteAnimation punchDownLeft = new SpriteAnimation(path + "TheWorldPunchDown", 7, 15);
-            SpriteAnimation punchDownRight = new SpriteAnimation(path + "TheWorldPunchDownAlt", 8, 15);
+            SpriteAnimation punchDownLeft = new SpriteAnimation(path + "TheWorldPunchDown", 7, 20);
+            SpriteAnimation punchDownRight = new SpriteAnimation(path + "TheWorldPunchDownAlt", 8, 20);
 
             StandState summonState = new StandState(TWStates.Summon.ToString(), summon);
             summonState.OnStateBegin += delegate { TBAR.Instance.PlayVoiceLine("Sounds/TheWorld/Call"); };
@@ -76,6 +76,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld
             slamDunkState.Duration = 90;
 
             StandState knifeThrowState = new StandState(throwAnimation) { Key = TWStates.KnifeThrow.ToString() };
+            knifeThrowState.OnStateBegin += KnifeThrowState_OnStateBegin;
             knifeThrowState.OnStateEnd += GoIdle;
             knifeThrowState.OnStateEnd += delegate { knifeThrowState.OnStateUpdate += ThrowingKnives; };
             knifeThrowState.OnStateUpdate += ThrowingKnives;
@@ -103,6 +104,11 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld
             AddStates(summonState, despawnState, idleState, punchState, knifeThrowState, flyUpState, slamDunkState, barrageState);
 
             SetState(TWStates.Summon.ToString());
+        }
+
+        private void KnifeThrowState_OnStateBegin(StandState sender)
+        {
+            projectile.damage = 0;
         }
 
         private void FlyUpState_OnStateBegin(StandState sender)
@@ -153,9 +159,6 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld
         {
             switch (input)
             {
-                case ImmediateInput.Action1:
-                case ImmediateInput.Action2:
-                case ImmediateInput.Action3:
                 case ImmediateInput.LeftClick:
                     if (CanPunch)
                         SetState(PunchState);
@@ -258,7 +261,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld
 
         public override int GetBarrageDamage() => (int)(20 + BaseDPS * 0.8f);
 
-        public override bool CanPunch => State == TWStates.Idle.ToString() || State == TWStates.KnifeThrow.ToString();
+        public override bool CanPunch => State == TWStates.Idle.ToString();
     }
 
     public enum TWStates

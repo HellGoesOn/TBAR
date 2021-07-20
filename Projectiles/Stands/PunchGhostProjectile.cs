@@ -73,6 +73,9 @@ namespace TBAR.Projectiles.Stands
             ElapsedTime++;
 
             HitNPCs.RemoveAll(x => x.IsTimed && (x.TimeOfHit + AttackSpeed) < ElapsedTime);
+
+            if (CanPunch && Owner.controlUseItem && Owner.whoAmI == Main.myPlayer)
+                SetState(PunchState);
         }
 
         protected abstract string PunchState { get; }
@@ -108,11 +111,7 @@ namespace TBAR.Projectiles.Stands
         {
             switch(input)
             {
-                case ImmediateInput.Action1:
-                case ImmediateInput.Action2:
-                case ImmediateInput.Action3:
                 case ImmediateInput.LeftClick:
-                case ImmediateInput.RightClick:
                     if(CanPunch)
                         SetState(PunchState);
                     break;

@@ -32,7 +32,7 @@ namespace TBAR
 
         [Label("Combo Activation Delay")]
         [DefaultValue(60)]
-        [Range(10, int.MaxValue)]
+        [Range(15, int.MaxValue)]
         [Tooltip("Time (in ticks) that it takes for combo to activate after the last input has been made")]
         public int comboInputDelay;
 
