@@ -27,10 +27,16 @@ namespace TBAR.Items.Tools
             item.useAnimation = item.useTime = CUTSCENE_DURATION;
             item.rare = ItemRarityID.Quest;
             item.noUseGraphic = true;
+            item.melee = true;
         }
 
         public override bool CanUseItem(Player player)
         {
+            if (TBARConfig.internalSimpleArrowUse)
+                item.useAnimation = item.useTime = 10;
+            else
+                item.useAnimation = item.useTime = CUTSCENE_DURATION;
+
             return true; //!TBARPlayer.Get(player).IsStandUser;
         }
 
@@ -38,20 +44,23 @@ namespace TBAR.Items.Tools
         {
             TBARPlayer tBAR = TBARPlayer.Get(player);
 
-            InputBlocker.BlockInputs(player, item.useAnimation);
-
-            player.mount.Dismount(player);
-
-            tBAR.ArrowProgress = tBAR.ArrowProgressMax;
-
             tBAR.PlayerStand = StandLoader.Instance.GetNewRandom(tBAR);
 
-            tBAR.ScreenModifiers.Add(new SmoothStepScreenModifier(player.Center, player.Center - new Vector2(0, 64), 0.025f, item.useAnimation));
-            tBAR.ScreenModifiers.Add(new ScreenModifier(player.Center - new Vector2(0, 64), item.useAnimation));
+            if (!TBARConfig.internalSimpleArrowUse)
+            {
+                InputBlocker.BlockInputs(player, item.useAnimation);
 
-            tBAR.UsePosition = player.Center + new Vector2(0, player.height * 0.5f);
+                player.mount.Dismount(player);
 
-            player.velocity = Vector2.Zero;
+                tBAR.ArrowProgress = tBAR.ArrowProgressMax;
+
+                tBAR.ScreenModifiers.Add(new SmoothStepScreenModifier(player.Center, player.Center - new Vector2(0, 64), 0.025f, item.useAnimation));
+                tBAR.ScreenModifiers.Add(new ScreenModifier(player.Center - new Vector2(0, 64), item.useAnimation));
+
+                tBAR.UsePosition = player.Center + new Vector2(0, player.height * 0.5f);
+
+                player.velocity = Vector2.Zero;
+            }
 
             Main.NewText("You've acquired a stand: " + tBAR.PlayerStand.StandName);
 

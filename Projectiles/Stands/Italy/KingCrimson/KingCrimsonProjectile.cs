@@ -79,12 +79,15 @@ namespace TBAR.Projectiles.Stands.Italy.KingCrimson
             cutState.OnStateEnd += EndPunch;
             cutState.Duration = 60;
 
-            StandState donutState = new StandState(donut, donutUndo, donutMiss) { Key = KCStates.Donut.ToString()};
+            StandState donutState = new StandState(donut) { Key = KCStates.Donut.ToString()};
             donutState.OnStateUpdate += DonutState_OnStateUpdate;
             donutState.OnStateEnd += DonutState_OnStateEnd;
             donutState.OnStateBegin += DonutState_OnStateBegin;
-            donutState.Duration = 120;
+            donutState.Duration = 40;
 
+            StandState donutEndState = new StandState(donutUndo, donutMiss) { Key = KCStates.DonutEnd.ToString() };
+            donutEndState.Duration = 60;
+            donutEndState.OnStateEnd += GoIdle;
             StandState barrageState = new StandState(path + "KCRush", 4, 15, true)
             {
                 Key = KCStates.Barrage.ToString()
@@ -109,7 +112,7 @@ namespace TBAR.Projectiles.Stands.Italy.KingCrimson
 
             barrageState.Duration = 180;
 
-            AddStates(spawnState, idleState, despawnState, punchState, cutState, donutState, barrageState);
+            AddStates(spawnState, idleState, despawnState, punchState, cutState, donutState, donutEndState, barrageState);
             
             SetState(KCStates.Spawn.ToString());
         }
@@ -131,16 +134,14 @@ namespace TBAR.Projectiles.Stands.Italy.KingCrimson
             {
                 if (!HasMissedDonut)
                 {
-                    sender.CurrentAnimation.Reset();
-                    sender.CurrentAnimationID = 1;
-                    SetState(KCStates.Donut.ToString());
+                    States[KCStates.DonutEnd.ToString()].CurrentAnimationID = 0;
+                    SetState(KCStates.DonutEnd.ToString());
                     return;
                 }
                 else if (HasMissedDonut)
                 {
-                    sender.CurrentAnimation.Reset();
-                    sender.CurrentAnimationID = 2;
-                    SetState(KCStates.Donut.ToString());
+                    States[KCStates.DonutEnd.ToString()].CurrentAnimationID = 1;
+                    SetState(KCStates.DonutEnd.ToString());
                     return;
                 }
             }
@@ -157,7 +158,7 @@ namespace TBAR.Projectiles.Stands.Italy.KingCrimson
         private void DonutState_OnStateUpdate(StandState sender)
         {
             projectile.Center = Vector2.Lerp(projectile.Center, MousePosition, 0.25f);
-            Owner.direction = (Owner.Center + PunchDirection).X < Owner.Center.X ? -1 : 1;
+            Owner.direction = projectile.Center.X < Owner.Center.X ? -1 : 1;
             SpriteFX = Owner.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
             if (sender.CurrentAnimationID == 0 && sender.CurrentAnimation.CurrentFrame == 3 && MyDonutPunch == null)
@@ -296,6 +297,7 @@ namespace TBAR.Projectiles.Stands.Italy.KingCrimson
         Punch,
         Slice,
         Donut,
+        DonutEnd,
         Barrage
     }
 }
