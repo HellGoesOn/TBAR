@@ -6,6 +6,7 @@ using Terraria.ModLoader;
 using TBAR.NPCs;
 using TBAR.Players;
 using TBAR.Projectiles.Stands.Italy.KingCrimson;
+using TBAR.Extensions;
 
 namespace TBAR.Stands.GoldenWind.KingCrimson
 {
@@ -13,6 +14,7 @@ namespace TBAR.Stands.GoldenWind.KingCrimson
     {
         public override void SetDefaults()
         {
+            projectile.ToggleModifierDependency();
             projectile.width = 100;
             projectile.height = 100;
 
@@ -149,7 +151,10 @@ namespace TBAR.Stands.GoldenWind.KingCrimson
                 return;
 
             if (kc.HasMissedDonut)
+            {
+                TBARPlayer.Get(Main.player[projectile.owner]).AddStylePoints(1000);
                 projectile.timeLeft = 41;
+            }
 
             kc.HasMissedDonut = false;
         }

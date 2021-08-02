@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using TBAR.Extensions;
+using TBAR.Players;
 using TBAR.Structs;
 using Terraria;
 using Terraria.ID;
@@ -36,6 +37,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld.RoadRoller
 
         public override void SetDefaults()
         {
+            projectile.ToggleModifierDependency();
             projectile.timeLeft = 600;
             ExplodeScaling = 0f;
             projectile.width = 134;
@@ -196,6 +198,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld.RoadRoller
 
         private void HitTarget(Entity target)
         {
+            TBARPlayer.Get(Main.player[projectile.owner]).AddStylePoints(500);
             HasHitSomething = true;
             projectile.penetrate++;
             Target = target;

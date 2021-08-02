@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using System.IO;
 using TBAR.Extensions;
+using TBAR.Players;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -22,8 +23,14 @@ namespace TBAR.Projectiles.Stands
             return proj;
         }
 
+        public override void OnHitPvp(Player target, int damage, bool crit)
+        {
+            TBARPlayer.Get(Main.player[projectile.owner]).AddStylePoints(5);
+        }
+
         public override void SetDefaults()
         {
+            projectile.ToggleModifierDependency();
             projectile.width = projectile.height = 60;
             projectile.penetrate = -1;
             projectile.timeLeft = 190;
@@ -87,6 +94,7 @@ namespace TBAR.Projectiles.Stands
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
+            TBARPlayer.Get(Main.player[projectile.owner]).AddStylePoints(5);
             target.immune[projectile.owner] = 6;
         }
 

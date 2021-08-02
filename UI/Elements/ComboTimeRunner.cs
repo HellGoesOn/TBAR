@@ -7,13 +7,9 @@ using Terraria.UI;
 
 namespace TBAR.UI.Elements
 {
-    public class ComboTimeRunner : UIElement
+    public class ComboTimeRunner : UIDraggableElement
     {
         private float fade;
-
-        private bool isDragging;
-
-        private Vector2 dragOffset;
 
         public ComboTimeRunner()
         {
@@ -26,8 +22,7 @@ namespace TBAR.UI.Elements
             if (TBARConfig.runnerType != RunnerType.Static || !LongBool)
                 return;
 
-            isDragging = true;
-            dragOffset = new Vector2(evt.MousePosition.X - Left.Pixels, evt.MousePosition.Y - Top.Pixels);
+            base.MouseDown(evt);
         }
 
         public override void MouseUp(UIMouseEvent evt)
@@ -35,13 +30,7 @@ namespace TBAR.UI.Elements
             if (TBARConfig.runnerType != RunnerType.Static || !LongBool)
                 return;
 
-            var end = evt.MousePosition;
-
-            isDragging = false;
-
-            Left.Set(end.X - dragOffset.X, 0);
-            Top.Set(end.Y - dragOffset.Y, 0);
-            Recalculate();
+            base.MouseDown(evt);
         }
 
         public override void Update(GameTime gameTime)
@@ -54,15 +43,8 @@ namespace TBAR.UI.Elements
                 }
             }
 
-            if (isDragging)
-            {
-                if (!Main.mouseLeft)
-                    isDragging = false;
-
-                Top.Set(Main.mouseY - dragOffset.Y, 0f);
-                Left.Set(Main.mouseX - dragOffset.X, 0f);
-                Recalculate();
-            }
+            if (LongBool)
+                Main.isMouseLeftConsumedByUI = true;
 
             if (!Visible)
             {
@@ -79,10 +61,7 @@ namespace TBAR.UI.Elements
                 fade = 2.5f;
 
 
-            Left.Pixels = Utils.Clamp(Left.Pixels, 0, Main.screenWidth - Width.Pixels);
-            Top.Pixels = Utils.Clamp(Top.Pixels, 0, Main.screenHeight - Height.Pixels);
-
-            Recalculate();
+            base.Update(gameTime);
 
         }
 
@@ -146,6 +125,6 @@ namespace TBAR.UI.Elements
 
         public static bool AchievedCombo { get; set; }
 
-        public bool LongBool => UIManager.Instance.StandAlbumLayer.State.Visible;
+        public bool LongBool => UIManager.Instance.StandAlbumLayer.State.Visible || TBAR.IsAdjustingUI;
     }
 }

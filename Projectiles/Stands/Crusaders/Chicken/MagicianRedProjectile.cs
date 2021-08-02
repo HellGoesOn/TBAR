@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using TBAR.Components;
 using TBAR.Extensions;
 using TBAR.Input;
+using TBAR.Players;
 using TBAR.Stands;
 using Terraria;
 using Terraria.ID;
@@ -41,7 +42,8 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
 
             SpriteAnimation falconPunch = new SpriteAnimation(path + "ChargePUNCHFULL", 27, 18);
 
-            SpriteAnimation cursed = new SpriteAnimation(path + "IntoFlamethrower", 14, 15);
+            SpriteAnimation cursed = new SpriteAnimation(path + "SummonPillars2", 16, 18);
+            SpriteAnimation desruc = new SpriteAnimation(path + "SummonPillars", 7, 15);
 
             StandState summonState = new StandState(MRStates.Spawn.ToString(), summon);
             summonState.OnStateBegin += SummonState_OnStateBegin;
@@ -77,16 +79,22 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
             StandState cursedState = new StandState(MRStates.Cursed.ToString(), cursed);
             cursedState.OnStateEnd += CursedState_OnStateBegin;
             cursedState.OnStateEnd += GoIdle;
-            cursedState.Duration = 30;
+            cursedState.OnStateUpdate += CursedState_OnStateUpdate;
+            cursedState.Duration = 51;
 
-            StandState desrucState = new StandState(MRStates.Desruc.ToString(), cursed);
+            StandState desrucState = new StandState(MRStates.Desruc.ToString(), desruc);
             desrucState.OnStateEnd += DesrucState_OnStateBegin;
             desrucState.OnStateEnd += GoIdle;
-            desrucState.Duration = 30;
+            desrucState.Duration = 24;
 
             AddStates(summonState, idleState, despawnState, punchState, falconState, cursedState, desrucState);
 
             SetState(MRStates.Spawn.ToString());
+        }
+
+        private void CursedState_OnStateUpdate(StandState sender)
+        {
+            Owner.heldProj = projectile.whoAmI;
         }
 
         private void DesrucState_OnStateBegin(StandState sender)
@@ -97,7 +105,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
 
         private void CursedState_OnStateBegin(StandState sender)
         {
-            Projectile.NewProjectile(Owner.Bottom + new Vector2(40 * Owner.direction, -60), new Vector2(Owner.direction, 0), ModContent.ProjectileType<FirePillar>(), FirepillarDamage, 5.75f, Owner.whoAmI, 9, Owner.direction);
+            Projectile.NewProjectile(Owner.Bottom + new Vector2(40 * Owner.direction, -60), new Vector2(Owner.direction, 0), ModContent.ProjectileType<FirePillar>(), FirepillarDamage, 5.75f, Owner.whoAmI, 15, Owner.direction);
         }
 
         private void FalconState_OnStateEnd(StandState sender)
@@ -120,6 +128,8 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
 
         private void MagicianRedProjectile_OnHit(PunchGhostProjectile attacker, Entity victim)
         {
+
+            TBARPlayer.Get(Owner).AddStylePoints(500);
             Vector2 dir = new Vector2(Owner.direction * 7.8f, 0);
             for (int i = 0; i < 5; i++)
             {

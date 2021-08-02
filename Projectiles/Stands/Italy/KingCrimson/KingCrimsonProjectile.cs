@@ -26,7 +26,7 @@ namespace TBAR.Projectiles.Stands.Italy.KingCrimson
 
         public override void InitializeStates(Projectile projectile)
         {
-            AttackSpeed = 30;
+            AttackSpeed = 18;
 
             string path = "Projectiles/Stands/Italy/KingCrimson/";
             SpriteAnimation spawn = new SpriteAnimation(path + "KCSpawn", 7, 20);
@@ -174,11 +174,17 @@ namespace TBAR.Projectiles.Stands.Italy.KingCrimson
 
         private void CutState_OnStateBegin(StandState sender)
         {
+            OnHit += KingCrimsonProjectile_OnHit;
             NonTimedAttack = true;
             PunchStartPoint = Owner.Center;
             PunchDirection = PunchStartPoint.DirectTo(MousePosition, Owner.width + 16 * Range);
             projectile.damage = CutDamage;
             Owner.direction = MousePosition.X < Owner.Center.X ? -1 : 1;
+        }
+
+        private void KingCrimsonProjectile_OnHit(PunchGhostProjectile attacker, Entity victim)
+        {
+            TBARPlayer.Get(Owner).AddStylePoints(1000);
         }
 
         private void SpawnState_OnStateUpdate(StandState sender)
@@ -199,6 +205,7 @@ namespace TBAR.Projectiles.Stands.Italy.KingCrimson
 
         private void Idle(StandState sender)
         {
+            ClearOnHitEffects();
             HasMissedDonut = false;
             NonTimedAttack = false;
             HitNPCs.RemoveAll(x => !x.IsTimed);

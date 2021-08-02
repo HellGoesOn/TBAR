@@ -37,6 +37,8 @@ namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
             AuraColor = new Color(1f, 0f, 1f);
             Opacity = 0f;
 
+            AttackSpeed = 12;
+
             string path = "Projectiles/Stands/Crusaders/StarPlatinum/";
 
             StandState summon = new StandState(path + "SPSummon", 10, 15);
@@ -77,7 +79,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
             punchState.OnStateBegin += BeginPunch;
             punchState.OnStateUpdate += UpdatePunch;
             punchState.OnStateEnd += EndPunch;
-            punchState.Duration = AttackSpeed;
+            punchState.Duration = AttackSpeed + 3;
 
             StandState barrageState = new StandState(path + "SPRush_Middle", 4, 15, true);
             barrageState.OnStateBegin += BarrageState_OnStateBegin;
@@ -121,8 +123,14 @@ namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
 
         private void UpperCutState_OnStateBegin(StandState sender)
         {
+            OnHit += StarPlatinumProjectile_OnHit;
             NonTimedAttack = true;
             projectile.damage = GetUppercutDamage();
+        }
+
+        private void StarPlatinumProjectile_OnHit(PunchGhostProjectile attacker, Entity victim)
+        {
+            TBARPlayer.Get(Owner).AddStylePoints(1000);
         }
 
         private void BarrageState_OnStateBegin(StandState sender)
@@ -198,6 +206,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
 
         private void Idle(StandState sender)
         {
+            ClearOnHitEffects();
             NonTimedAttack = false;
             HitNPCs.RemoveAll(x => !x.IsTimed);
             SpriteFX = Owner.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;

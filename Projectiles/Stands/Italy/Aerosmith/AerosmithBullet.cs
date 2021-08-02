@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using TBAR.Players;
+using TBAR.Extensions;
 
 namespace TBAR.Projectiles.Stands.Italy.Aerosmith
 {
@@ -11,6 +12,7 @@ namespace TBAR.Projectiles.Stands.Italy.Aerosmith
     {
         public override void SetDefaults()
         {
+            projectile.ToggleModifierDependency();
             aiType = ProjectileID.Bullet;
 
             projectile.width = 4;

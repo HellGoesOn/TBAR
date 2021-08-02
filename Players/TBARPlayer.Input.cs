@@ -18,6 +18,9 @@ namespace TBAR.Players
 
         public override void ProcessTriggers(TriggersSet triggersSet)
         {
+            if (TBARInputs.UIAdjustmentMode.JustPressed)
+                TBAR.IsAdjustingUI = !TBAR.IsAdjustingUI;
+
             if (TBARInputs.SummonStand.JustPressed && IsStandUser)
             {
                 if(!PlayerStand.IsActive)

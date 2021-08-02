@@ -114,5 +114,24 @@ namespace TBAR
         public bool VoiceLinesEnabled { get; set; } = true;
 
         public bool DisableTileDraw => TimeSkipManager.EffectCount > 0;
+
+        public static bool IsAdjustingUI { get; set; }
+
+        public static float DamageModifier
+        {
+            get
+            {
+                if (!Main.hardMode)
+                    return 0.5f;
+
+                if (NPC.downedPlantBoss)
+                    return 1f;
+
+                if (NPC.downedMoonlord)
+                    return 1.4f;
+
+                return 0.8f;
+            }
+        }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using TBAR.Components;
+using TBAR.Extensions;
+using TBAR.Players;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -11,6 +13,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
     {
         public override void SetDefaults()
         {
+            projectile.ToggleModifierDependency();
             projectile.magic = true;
             projectile.width = projectile.height = 158;
             projectile.timeLeft = 500;
@@ -89,8 +92,10 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
             target.immune[projectile.owner] = 10;
-            
-            if(!target.boss)
+
+            TBARPlayer.Get(Main.player[projectile.owner]).AddStylePoints(20);
+
+            if (!target.boss)
             {
                 target.velocity = projectile.velocity * 1.5f;
             }

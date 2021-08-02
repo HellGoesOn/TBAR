@@ -38,6 +38,9 @@ namespace TBAR
         [Loadable("TBAR/Textures/Space")]
         public static Texture2D FancySky { get; internal set; }
 
+        [Loadable("TBAR/Textures/Ranks")]
+        public static Texture2D StyleRanks { get; internal set; }
+
         public static string EmptinessPath => "TBAR/Textures/EmptyPixel";
     }
 }

@@ -23,6 +23,8 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld
         {
             Range = 5f;
 
+            AttackSpeed = 15;
+
             string path = "Projectiles/Stands/Crusaders/TheWorld/";
 
             SpriteAnimation summon = new SpriteAnimation(path + "TheWorldSpawn", 7, 15);
@@ -61,7 +63,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld
             punchState.OnStateBegin += BeginPunch;
             punchState.OnStateUpdate += UpdatePunch;
             punchState.OnStateEnd += EndPunch;
-            punchState.Duration = AttackSpeed;
+            punchState.Duration = AttackSpeed + 5;
 
             StandState flyUpState = new StandState("FlyUp", flyUp);
             flyUpState.OnStateUpdate += FlyUpState_OnStateUpdate;

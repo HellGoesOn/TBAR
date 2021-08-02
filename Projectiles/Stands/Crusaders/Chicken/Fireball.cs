@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using TBAR.Extensions;
 using TBAR.Helpers;
+using TBAR.Players;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -11,6 +13,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
     {
         public override void SetDefaults()
         {
+            projectile.ToggleModifierDependency();
             projectile.magic = true;
             projectile.width = projectile.height = 2;
             projectile.timeLeft = 20;
@@ -77,6 +80,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
+            TBARPlayer.Get(Main.player[projectile.owner]).AddStylePoints(5);
             target.AddBuff(BuffID.OnFire, 180);
         }
 

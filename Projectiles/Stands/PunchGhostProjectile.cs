@@ -23,6 +23,8 @@ namespace TBAR.Projectiles.Stands
 
         public override void SafeSetDefaults()
         {
+            projectile.ToggleModifierDependency();
+
             projectile.damage = 0;
             projectile.width = 60;
             projectile.height = 60;
@@ -34,6 +36,9 @@ namespace TBAR.Projectiles.Stands
 
         public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
+            TBARPlayer.Get(Owner).AddStylePoints(10);
+            TBARPlayer.Get(Owner).AddStamina(10.0);
+
             projectile.penetrate++;
 
             OnHit?.Invoke(this, target);
@@ -52,6 +57,9 @@ namespace TBAR.Projectiles.Stands
         public override void ModifyHitPvp(Player target, ref int damage, ref bool crit)
         {
             projectile.penetrate++;
+
+            TBARPlayer.Get(Owner).AddStylePoints(10);
+            TBARPlayer.Get(Owner).AddStamina(10.0);
 
             OnHit?.Invoke(this, target);
         }

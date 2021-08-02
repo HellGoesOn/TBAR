@@ -15,6 +15,7 @@ namespace TBAR.Projectiles.Stands.Italy.Aerosmith
 
         public override void SetDefaults()
         {
+            projectile.ToggleModifierDependency();
             projectile.width = 12;
             projectile.height = 12;
             projectile.timeLeft = 240;

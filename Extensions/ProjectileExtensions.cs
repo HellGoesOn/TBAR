@@ -43,5 +43,10 @@ namespace TBAR.Extensions
         {
             return p.projectile.GetGlobalProjectile<TBARGlobalProjectile>();
         }
+
+        public static void ToggleModifierDependency(this Projectile p, bool value = true)
+        {
+            p.GetGlobalProjectile<TBARGlobalProjectile>().IsAffectedByGlobalModifier = value;
+        }
     }
 }

@@ -18,6 +18,8 @@ namespace TBAR.Input
             ComboButton3 = mod.RegisterHotKey("Combo Button 3", "V");
 
             OpenStandAlbum = mod.RegisterHotKey("Open Stand Album", "O");
+
+            UIAdjustmentMode = mod.RegisterHotKey("Toggle UI Adjustment Mode", Keys.OemOpenBrackets.ToString());
         }
 
         public static void Unload()
@@ -27,6 +29,8 @@ namespace TBAR.Input
             ComboButton2 = null;
             ComboButton3 = null;
             OpenStandAlbum = null;
+
+            UIAdjustmentMode = null;
         }
 
         public static ModHotKey OpenStandAlbum { get; set; }
@@ -36,5 +40,6 @@ namespace TBAR.Input
         public static ModHotKey ComboButton1 { get; set; }
         public static ModHotKey ComboButton2 { get; set; }
         public static ModHotKey ComboButton3 { get; set; }
+        public static ModHotKey UIAdjustmentMode { get; set; }
     }
 }

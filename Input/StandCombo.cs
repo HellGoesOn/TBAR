@@ -1,14 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Xna.Framework;
 using System;
-using Terraria;
-using Terraria.ModLoader;
+using System.Collections.Generic;
 using TBAR.Enums;
-using Terraria.ID;
 using TBAR.Helpers;
-using Microsoft.Xna.Framework;
-using TBAR.Players.Visuals;
 using TBAR.Players;
 using TBAR.UI.Elements;
+using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace TBAR.Input
 {
@@ -32,7 +31,7 @@ namespace TBAR.Input
         public bool TryActivate(Player player, List<ComboInput> inputs)
         {
             // if received input count is lower, we won't be able to activate the combo
-            if (inputs.Count < RequiredInputs.Count)
+            if (inputs.Count < RequiredInputs.Count || !TBARPlayer.Get(player).CheckStaminaCost(Cost))
                 return false;
 
             if (SteamHelper.AmIBanned)
@@ -77,9 +76,13 @@ namespace TBAR.Input
             packet.Send(-1, fromWho);
         }
 
+        public int Style { get; set; }
+
         public string Description { get; set; }
 
         public string ComboName { get; }
+
+        public double Cost { get; set; }
 
         public List<ComboInput> RequiredInputs { get; } = new List<ComboInput>();
     }

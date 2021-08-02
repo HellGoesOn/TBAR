@@ -5,6 +5,7 @@ using TBAR.Input;
 using TBAR.ScreenModifiers;
 using TBAR.Stands;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
@@ -12,6 +13,10 @@ namespace TBAR.Players
 {
     public partial class TBARPlayer : ModPlayer
     {
+        public TBARPlayer()
+        {
+            InitializeStaminaModifiers();
+        }
         /// <summary>
         /// Easier access to TBARPlayer
         /// </summary>
@@ -40,7 +45,21 @@ namespace TBAR.Players
 
         public override void ResetEffects()
         {
+            ResetRepeatCount();
             UpdateArrowUseProgress();
+
+            if (StyleHitCounterResetTimer > 0)
+                StyleHitCounterResetTimer--;
+            else
+                StyleHitCounter = 0;
+
+            if (StyleDecayTimer > 0)
+                StyleDecayTimer--;
+            else
+            {
+                RepeatCount = 0;
+                StylePoints = 0;
+            }
 
             if (IsStandUser)
             {

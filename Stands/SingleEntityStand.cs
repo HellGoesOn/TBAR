@@ -38,16 +38,39 @@ namespace TBAR.Stands
             if (player.whoAmI != Main.myPlayer || receivedInputs.Count <= 0)
                 return;
 
+            TBARPlayer plr = TBARPlayer.Get(player);
+
             if (IsActive)
             {
                 foreach (StandCombo combo in NormalCombos)
                     if (combo.TryActivate(player, receivedInputs))
+                    {
+                        AddStylePoints(plr, combo);
+
                         return;
+                    }
             }
 
             foreach (StandCombo combo in GlobalCombos)
                 if (combo.TryActivate(player, receivedInputs))
+                {
+                    AddStylePoints(plr, combo);
                     return;
+                }
+        }
+
+        private static void AddStylePoints(TBARPlayer plr, StandCombo combo)
+        {
+            if (plr.LastUsedCombo == combo.ComboName)
+                plr.RepeatCount++;
+            else
+                plr.RepeatCount = 0;
+
+            plr.RepeatCountResetTimer = Global.SecondsToTicks(10);
+
+            plr.LastUsedCombo = combo.ComboName;
+
+            plr.AddStylePoints(combo.Style);
         }
 
         public override void HandleImmediateInputs(Player player, ImmediateInput input)

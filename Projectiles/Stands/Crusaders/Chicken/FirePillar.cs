@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using TBAR.Components;
+using TBAR.Players;
 using TBAR.Structs;
 using Terraria;
 using Terraria.ID;
@@ -34,6 +35,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
 
         public override void OnHitPvp(Player target, int damage, bool crit)
         {
+            TBARPlayer.Get(Main.player[projectile.owner]).AddStylePoints(5);
             projectile.penetrate++;
         }
 
@@ -44,6 +46,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
 
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
+            TBARPlayer.Get(Main.player[projectile.owner]).AddStylePoints(5);
             projectile.penetrate++;
 
             npcs.Add(target);

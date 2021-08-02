@@ -25,6 +25,7 @@ namespace TBAR.Stands.Crusaders
             StandCombo falconPunch = new StandCombo("Fist of Flaming Fury", ComboInput.Action1, ComboInput.Action1, ComboInput.Action2);
 
             falconPunch.OnActivate += FalconPunch_OnActivate;
+            falconPunch.Style = 1000;
 
             StandCombo zxcursed = new StandCombo("Fireraze", ComboInput.Action1, ComboInput.Action2, ComboInput.Action3)
             {
@@ -32,13 +33,14 @@ namespace TBAR.Stands.Crusaders
             };
 
             zxcursed.OnActivate += Zxcursed_OnActivate;
-
+            zxcursed.Style = 500;
             StandCombo desrucxz = new StandCombo("Firequake", ComboInput.Action1, ComboInput.Action2, ComboInput.Action1)
             {
                 Description = "Releases Pillars of Flames in both directions"
             };
 
             desrucxz.OnActivate += Desrucxz_OnActivate;
+            desrucxz.Style = 250;
 
             AddNormalCombos(falconPunch, zxcursed, desrucxz);
         }
@@ -60,7 +62,7 @@ namespace TBAR.Stands.Crusaders
 
         public override bool CanAcquire(TBARPlayer player)
         {
-            return false;
+            return true;
         }
 
         public override DamageType StandDamageType => DamageType.Magic;
