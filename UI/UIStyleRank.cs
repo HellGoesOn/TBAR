@@ -10,19 +10,17 @@ namespace TBAR.UI
 {
     public class UIStyleRank : UIDraggableElement
     {
+        private readonly List<FallingLetter> letters = new List<FallingLetter>();
+
         private float scale = 0.8f;
 
-        private int delay;
+        private StyleRank lastRank;
 
-        private readonly int[] bumpDelays = new int[] { 160, 120, 60, 40, 20, 20, 20 };
+        private float delay;
 
-        private readonly float[] pulseSpeeds = new float[] { 0.02f, 0.025f, 0.03f, 0.035f, 0.04f, 0.04f, 0.05f };
+        private readonly float[] bumpDelays = new float[] { 160, 120, 60, 40, 20, 20, 20 };
 
-        private readonly string[] noRepeats = new string[] { "Good!", "Superb!", "Rocking!" };
-
-        private readonly string[] singleRepeat = new string[] { "Stagnating", "A Step Back", "An Old One" };
-
-        private readonly string[] twoRepeats = new string[] { "Copycat", "One-Trick Pony", "Awful"};
+        private readonly float[] pulseSpeeds = new float[] { 2f, 2.5f, 3f, 3.5f, 4f, 4f, 5f };
 
         private readonly Dictionary<int, string[]> texts = new Dictionary<int, string[]>();
 
@@ -49,16 +47,31 @@ namespace TBAR.UI
             if (LongBool)
                 Main.isMouseLeftConsumedByUI = true;
 
-
             TBARPlayer plr = TBARPlayer.Get();
 
-            if (delay <= 0 && (scale += pulseSpeeds[(int)plr.CurrentStyleRank]) > 1.4f)
+            if (delay <= 0 && (scale += pulseSpeeds[(int)plr.CurrentStyleRank] * (float)gameTime.ElapsedGameTime.TotalSeconds) > 1.4f)
             {
                 delay = bumpDelays[(int)plr.CurrentStyleRank];
                 scale = 0.8f;
             }
 
-            delay--;
+            if (lastRank != plr.CurrentStyleRank)
+            {
+                var kek = Main.rand.NextBool();
+                var l = new FallingLetter(lastRank);
+                l.Position = this.GetDimensions().Position();
+                l.velocity = new Vector2(kek ? -190f : 191f, -130f);
+                letters.Add(l);
+            }
+
+            foreach (FallingLetter l in letters)
+                l.Update(gameTime);
+
+            letters.RemoveAll(x => x.Opacity <= 0);
+
+            lastRank = plr.CurrentStyleRank;
+
+            delay -= 60 * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             base.Update(gameTime);
         }
@@ -79,7 +92,7 @@ namespace TBAR.UI
             Color clr = plr.StylePoints > 0 ? Color.White : Color.White * 0f;
             Color pulseClr = delay <= 0 ? Color.White * 0.35f : Color.White * 0;
 
-            float offXvideos = Main.fontMouseText.MeasureString(plr.StylePoints.ToString()).X / 3;
+            float offXvideos = Main.fontMouseText.MeasureString(plr.StylePoints.ToString()).X / 3 + 16;
 
             Utils.DrawBorderStringFourWay(spriteBatch, Main.fontMouseText, "Style Points: " + plr.StylePoints, position.X - offXvideos, position.Y + 44, colors[(int)plr.CurrentStyleRank], Color.Black, Vector2.Zero);
 
@@ -111,6 +124,9 @@ namespace TBAR.UI
 
             if (LongBool)
                 DrawHelper.DrawRectangle(position, (int)Width.Pixels, (int)Height.Pixels, Color.DeepSkyBlue * 0.66f, spriteBatch);
+
+            foreach(FallingLetter l in letters)
+                l.Draw(spriteBatch);
         }
 
         public override void MouseDown(UIMouseEvent evt)
@@ -128,7 +144,6 @@ namespace TBAR.UI
 
             base.MouseDown(evt);
         }
-
 
         public bool LongBool => UIManager.Instance.StandAlbumLayer.State.Visible || TBAR.IsAdjustingUI;
     }

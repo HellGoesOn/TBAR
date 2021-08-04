@@ -22,8 +22,8 @@ namespace TBAR.UI
             runner.Left.Set(Main.screenWidth / 2, 0);
 
             UIStyleRank rank = new UIStyleRank();
-            rank.Top.Set(60, 0);
-            rank.Left.Set(Main.screenWidth * 0.5f, 0);
+            rank.Top.Set(Main.screenHeight - 200, 0);
+            rank.Left.Set(Main.screenWidth * 0.45f, 0);
 
             base.Append(rank);
             base.Append(runner);
