@@ -13,7 +13,7 @@ namespace TBAR.Backgrounds
 
         public override bool ChooseBgStyle()
         {
-            return TBAR.TimeSkipManager.IsTimeSkipped;
+            return TBAR.TimeSkipManager != null && TBAR.TimeSkipManager.IsTimeSkipped;
         }
 
         public override bool PreDrawCloseBackground(SpriteBatch spriteBatch)
@@ -38,7 +38,7 @@ namespace TBAR.Backgrounds
     {
         public override bool ChooseBgStyle()
         {
-            return TBAR.TimeSkipManager.IsTimeSkipped;
+            return TBAR.TimeSkipManager != null && TBAR.TimeSkipManager.IsTimeSkipped;
         }
 
         public override void FillTextureArray(int[] textureSlots)

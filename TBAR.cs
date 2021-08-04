@@ -29,14 +29,15 @@ namespace TBAR
         public TBAR()
         {
             Tracks = new List<TBARMusic>();
-            TimeStopManager = new TimeStopManager();
-            TimeSkipManager = new TimeSkipManager();
             Instance = this;
         }
 
         public override void Load()
         {
             base.Load();
+			
+            TimeStopManager = new TimeStopManager();
+            TimeSkipManager = new TimeSkipManager();
 
             if(!Main.dedServ)
             {

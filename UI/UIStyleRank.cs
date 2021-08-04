@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
 using TBAR.Helpers;
 using TBAR.Players;
 using Terraria;
@@ -23,14 +24,21 @@ namespace TBAR.UI
 
         private readonly string[] twoRepeats = new string[] { "Copycat", "One-Trick Pony", "Awful"};
 
+        private readonly Dictionary<int, string[]> texts = new Dictionary<int, string[]>();
+
         private readonly Color[] repeatColors = new Color[] { Color.Lime, Color.Gold, Color.Crimson };
 
         private readonly Color[] colors = new Color[] { Color.Brown, Color.Cyan, Color.Lime, Color.Red, Color.Goldenrod, Color.Gold, Color.LightGoldenrodYellow };
 
         public UIStyleRank()
         {
-            this.Width.Set(64, 0);
+            this.Width.Set(99, 0);
             this.Height.Set(64, 0);
+            
+            /// no repeats pool
+            texts.Add(0, new string[] { "Good!", "Superb!", "Rocking!" });
+            texts.Add(1, new string[] { "Stagnating", "A Step Back", "An Old One" });
+            texts.Add(2, new string[] { "Copycat", "One-Trick Pony", "Awful" });
         }
 
         public override void Update(GameTime gameTime)
@@ -66,18 +74,18 @@ namespace TBAR.UI
             ///shit solution but i don't give a fuck
             int killMe = (int)MathHelper.Clamp(plr.RepeatCount, 0, 2);
 
-            Rectangle rect = new Rectangle(0, 64 * frame, 64, 64);
+            Rectangle rect = new Rectangle(0, 42 * frame, 99, 42);
 
             Color clr = plr.StylePoints > 0 ? Color.White : Color.White * 0f;
             Color pulseClr = delay <= 0 ? Color.White * 0.35f : Color.White * 0;
 
             float offXvideos = Main.fontMouseText.MeasureString(plr.StylePoints.ToString()).X / 3;
 
-            Utils.DrawBorderStringFourWay(spriteBatch, Main.fontMouseText, "Style Points: " + plr.StylePoints, position.X - offXvideos - 24, position.Y + 66, colors[(int)plr.CurrentStyleRank], Color.Black, Vector2.Zero);
+            Utils.DrawBorderStringFourWay(spriteBatch, Main.fontMouseText, "Style Points: " + plr.StylePoints, position.X - offXvideos, position.Y + 44, colors[(int)plr.CurrentStyleRank], Color.Black, Vector2.Zero);
 
-            string text = "";
+            string text = texts[plr.RepeatCount][plr.PoolID];
 
-            switch(plr.RepeatCount)
+            /*switch(plr.RepeatCount)
             {
                 case 0:
                     text = noRepeats[plr.PoolID];
@@ -88,18 +96,18 @@ namespace TBAR.UI
                 case 2:
                     text = twoRepeats[plr.PoolID];
                     break;
-            }
+            }*/
 
             float off = Main.fontMouseText.MeasureString("Style: ").Y;
             float offX = Main.fontMouseText.MeasureString(text).X / 2;
 
             if(plr.LastUsedCombo != "")
-                Utils.DrawBorderStringFourWay(spriteBatch, Main.fontMouseText, "Quality: " + text, position.X - offX, position.Y + 62 + off, repeatColors[killMe], Color.Black, Vector2.Zero);
+                Utils.DrawBorderStringFourWay(spriteBatch, Main.fontMouseText, "Quality: " + text, position.X - offX + 10, position.Y + 40 + off, repeatColors[killMe], Color.Black, Vector2.Zero);
 
-            spriteBatch.Draw(Textures.StyleRanks, position + new Vector2(32), rect, clr, 0f, new Vector2(32), 1f, SpriteEffects.None, 1);
+            spriteBatch.Draw(Textures.StyleRanks, position + new Vector2(49.5f, 21), rect, clr, 0f, new Vector2(49.5f, 21), 1f, SpriteEffects.None, 1);
 
             if(plr.StylePoints > 0)
-            spriteBatch.Draw(Textures.StyleRanks, position + new Vector2(32), rect, pulseClr, 0f, new Vector2(32), scale, SpriteEffects.None, 1);
+            spriteBatch.Draw(Textures.StyleRanks, position + new Vector2(49.5f, 21), rect, pulseClr, 0f, new Vector2(49.5f, 21), scale, SpriteEffects.None, 1);
 
             if (LongBool)
                 DrawHelper.DrawRectangle(position, (int)Width.Pixels, (int)Height.Pixels, Color.DeepSkyBlue * 0.66f, spriteBatch);

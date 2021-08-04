@@ -107,14 +107,17 @@ namespace TBAR.Players
 
                 if (StylePoints < 4000)
                     return StyleRank.C;
-
-                if (StylePoints < 8000)
-                    return StyleRank.A;
+				
+				if(StylePoints < 8000)
+					return StyleRank.B;
 
                 if (StylePoints < 12000)
+                    return StyleRank.A;
+
+                if (StylePoints < 14000)
                     return StyleRank.S;
 
-                if (StylePoints < 16000)
+                if (StylePoints < 18000)
                     return StyleRank.SS;
 
                 return StyleRank.SSS;
@@ -152,8 +155,8 @@ namespace TBAR.Players
     public enum StyleRank
     {
         D,
-        B,
         C,
+        B,
         A,
         S,
         SS,
