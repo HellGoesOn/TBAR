@@ -25,7 +25,6 @@ namespace TBAR.Stands.Crusaders
         {
             StandCombo tsCombo = new StandCombo("Time Stop", ComboInput.Action1, ComboInput.Action2, ComboInput.Action2, ComboInput.Action3);
             tsCombo.OnActivate += TimeStop;
-            tsCombo.Cost = 500;
             tsCombo.Style = 1000;
 
             StandCombo offensiveTimeStop = new StandCombo("Offensive Time Stop", ComboInput.Up, ComboInput.Action1, ComboInput.Up, ComboInput.Action2);
@@ -37,7 +36,6 @@ namespace TBAR.Stands.Crusaders
             StandCombo slamDunk = new StandCombo("Road Roller", ComboInput.Up, ComboInput.Action1, ComboInput.Action2, ComboInput.Action3, ComboInput.Up);
             slamDunk.OnActivate += SlamDunk_OnActivate;
             slamDunk.Description = "Drops a Road Roller from hammerspace onto your Mouse Position.\nRoad Roller deals damage on impact and after it explodes";
-            slamDunk.Cost = 1000;
             slamDunk.Style = 500;
 
             StandCombo barrage = new StandCombo("Barrage", ComboInput.Action2, ComboInput.Action1, ComboInput.Action2);

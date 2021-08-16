@@ -204,7 +204,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld
         private void SummonState_OnStateUpdate(StandState sender)
         {
             SpriteFX = Owner.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-            projectile.Center = Vector2.Lerp(projectile.Center, Owner.Center + new Vector2(-30 * Owner.direction, -32), 0.12f);
+            projectile.Center = Vector2.SmoothStep(projectile.Center, Owner.Center + new Vector2(-30 * Owner.direction, -32), 0.15f);
         }
 
         public override void PostAI()
@@ -236,7 +236,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld
             NonTimedAttack = false;
             HitNPCs.RemoveAll(x => !x.IsTimed);
             SpriteFX = Owner.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-            projectile.Center = Vector2.Lerp(projectile.Center, Owner.Center + new Vector2(-30 * Owner.direction, -32), 0.12f);
+            projectile.Center = Vector2.SmoothStep(projectile.Center, Owner.Center + new Vector2(-30 * Owner.direction, -32), 0.18f);
         }
 
         public override void PostDraw(SpriteBatch spriteBatch, Color lightColor)

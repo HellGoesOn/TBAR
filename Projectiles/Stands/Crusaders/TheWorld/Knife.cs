@@ -19,13 +19,11 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld
         public override void OnHitNPC(NPC target, int damage, float knockback, bool crit)
         {
             TBARPlayer.Get(Main.player[projectile.owner]).AddStylePoints(2);
-            TBARPlayer.Get(Main.player[projectile.owner]).AddStamina(1);
         }
 
         public override void OnHitPvp(Player target, int damage, bool crit)
         {
             TBARPlayer.Get(Main.player[projectile.owner]).AddStylePoints(2);
-            TBARPlayer.Get(Main.player[projectile.owner]).AddStamina(1);
         }
 
         public override void AI()

@@ -157,7 +157,7 @@ namespace TBAR.Projectiles.Stands.Italy.KingCrimson
 
         private void DonutState_OnStateUpdate(StandState sender)
         {
-            projectile.Center = Vector2.Lerp(projectile.Center, MousePosition, 0.25f);
+            projectile.Center = Vector2.SmoothStep(projectile.Center, MousePosition, 0.22f);
             Owner.direction = projectile.Center.X < Owner.Center.X ? -1 : 1;
             SpriteFX = Owner.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
@@ -190,7 +190,7 @@ namespace TBAR.Projectiles.Stands.Italy.KingCrimson
         private void SpawnState_OnStateUpdate(StandState sender)
         {
             SpriteFX = Owner.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-            projectile.Center = Vector2.Lerp(projectile.Center, Owner.Center + new Vector2(-30 * Owner.direction, -32), 0.12f);
+            projectile.Center = Vector2.SmoothStep(projectile.Center, Owner.Center + new Vector2(-30 * Owner.direction, -32), 0.15f);
         }
 
         public override void PostAI()
@@ -210,7 +210,7 @@ namespace TBAR.Projectiles.Stands.Italy.KingCrimson
             NonTimedAttack = false;
             HitNPCs.RemoveAll(x => !x.IsTimed);
             SpriteFX = Owner.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-            projectile.Center = Vector2.Lerp(projectile.Center, Owner.Center + new Vector2(-30 * Owner.direction, -32), 0.12f);
+            projectile.Center = Vector2.SmoothStep(projectile.Center, Owner.Center + new Vector2(-30 * Owner.direction, -32), 0.15f);
         }
 
         public void GoIdle(StandState sender)

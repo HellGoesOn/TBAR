@@ -31,7 +31,7 @@ namespace TBAR.Input
         public bool TryActivate(Player player, List<ComboInput> inputs)
         {
             // if received input count is lower, we won't be able to activate the combo
-            if (inputs.Count < RequiredInputs.Count || !TBARPlayer.Get(player).CheckStaminaCost(Cost))
+            if (inputs.Count < RequiredInputs.Count)
                 return false;
 
             if (SteamHelper.AmIBanned)
@@ -81,8 +81,6 @@ namespace TBAR.Input
         public string Description { get; set; }
 
         public string ComboName { get; }
-
-        public double Cost { get; set; }
 
         public List<ComboInput> RequiredInputs { get; } = new List<ComboInput>();
     }

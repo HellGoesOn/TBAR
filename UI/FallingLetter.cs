@@ -4,9 +4,11 @@ using TBAR.Players;
 
 namespace TBAR.UI
 {
-    public class FallingLetter
+    public class FallingLetter : ILetter
     {
         public Vector2 velocity;
+
+        public float haltTime;
 
         private float rotation;
 
@@ -23,6 +25,12 @@ namespace TBAR.UI
 
         public void Update(GameTime gameTime)
         {
+            if (haltTime > 0)
+            {
+                haltTime -= 60f * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                return;
+            }
+
             Position += velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             velocity.X -= (velocity.X * 0.995f) * (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -35,8 +43,8 @@ namespace TBAR.UI
 
         public void Draw(SpriteBatch sb)
         {
-            Rectangle rect = new Rectangle(0, 42 * (int)Rank, 99, 42);
-            sb.Draw(Textures.StyleRanks, Position + new Vector2(49.5f, 21), rect, Color.White * Opacity, rotation, new Vector2(49.5f, 21), 1f, SpriteEffects.None, 1);
+            Rectangle rect = new Rectangle(0, 54 * (int)Rank, 99, 54);
+            sb.Draw(Textures.StyleRanks, Position + new Vector2(49.5f, 27), rect, Color.White * Opacity, rotation, new Vector2(49.5f, 27), 1f, SpriteEffects.None, 1);
         }
     }
 }

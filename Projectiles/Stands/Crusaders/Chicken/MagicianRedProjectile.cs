@@ -193,7 +193,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
             NonTimedAttack = false;
             HitNPCs.RemoveAll(x => !x.IsTimed);
             SpriteFX = Owner.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-            projectile.Center = Vector2.Lerp(projectile.Center, Owner.Center + new Vector2(-30 * Owner.direction, -32), 0.12f);
+            projectile.Center = Vector2.SmoothStep(projectile.Center, Owner.Center + new Vector2(-30 * Owner.direction, -32), 0.15f);
         }
 
         private void GoIdle(StandState sender)
@@ -207,7 +207,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
                 projectile.Center = Owner.Center + new Vector2(-30 * Owner.direction, -32);
 
             SpriteFX = Owner.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-            projectile.Center = Vector2.Lerp(projectile.Center, Owner.Center + new Vector2(-30 * Owner.direction, -32), 0.12f);
+            projectile.Center = Vector2.SmoothStep(projectile.Center, Owner.Center + new Vector2(-30 * Owner.direction, -32), 0.15f);
         }
 
         protected override int PunchAnimationIDOffset()

@@ -30,7 +30,6 @@ namespace TBAR.Stands.Italy
             StandCombo timeErase = new StandCombo("Court of the Crimson King", ComboInput.Action1, ComboInput.Action2, ComboInput.Action2, ComboInput.Action1);
             timeErase.OnActivate += TimeErase_OnActivate;
             timeErase.Description = "'Rips time apart, allowing you to slip out of it.'\nImmune to damage during this effect.";
-            timeErase.Cost = 1000;
             timeErase.Style = 250;
 
             StandCombo cut = new StandCombo("Evisceration", ComboInput.Action1, ComboInput.Up, ComboInput.Down);

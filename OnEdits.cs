@@ -1,8 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
+using TBAR.Extensions;
+using TBAR.Helpers;
 using TBAR.NPCs;
 using TBAR.TimeStop;
 using Terraria;
+using Terraria.ID;
 
 namespace TBAR
 {
@@ -141,7 +144,7 @@ namespace TBAR
 
         private void NPC_VanillaAI(On.Terraria.NPC.orig_VanillaAI orig, NPC self)
         {
-            if (!TimeStopped || TimeStopStockOwner(self))
+            if ((!TimeStopped || TimeStopStockOwner(self)))
                 orig.Invoke(self);
         }
 
@@ -165,7 +168,7 @@ namespace TBAR
 
         private void NPC_UpdateNPC(On.Terraria.NPC.orig_UpdateNPC orig, NPC self, int i)
         {
-            if (!TimeStopped || TimeStopStockOwner(self))
+            if ((!TimeStopped || TimeStopStockOwner(self)))
                 orig.Invoke(self, i);
             else
             {

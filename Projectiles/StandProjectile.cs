@@ -170,8 +170,6 @@ namespace TBAR.Projectiles.Stands
             if (State == value)
                 return;
 
-            LastState = State;
-
             State = value;
 
             CurrentState.BeginState();
@@ -191,8 +189,6 @@ namespace TBAR.Projectiles.Stands
                 States.Add(s.Key, s);
             }
         }
-
-        public string LastState { get; private set; }
 
         public string State { get; private set; }
 

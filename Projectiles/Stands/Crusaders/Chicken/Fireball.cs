@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using TBAR.Buffs.MagicianRed;
 using TBAR.Extensions;
 using TBAR.Helpers;
 using TBAR.Players;
@@ -82,6 +83,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
         {
             TBARPlayer.Get(Main.player[projectile.owner]).AddStylePoints(5);
             target.AddBuff(BuffID.OnFire, 180);
+            target.AddBuff(ModContent.BuffType<RedBindDebuff>(), 180);
         }
 
         public override bool PreDraw(SpriteBatch spriteBatch, Color lightColor)

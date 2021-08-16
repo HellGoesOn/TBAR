@@ -35,16 +35,6 @@ namespace TBAR.Players
             return base.PreHurt(pvp, quiet, ref damage, ref hitDirection, ref crit, ref customDamage, ref playSound, ref genGore, ref damageSource);
         }
 
-        private double _stamina;
-        public double Stamina
-        {
-            get => _stamina;
-            set
-            {
-                _stamina = (double)MathHelper.Clamp((float)value, 0, 1000);
-            }
-        }
-
         public int PoolID { get; private set; }
         public ushort _repeatCount;
         public ushort RepeatCount
@@ -100,6 +90,35 @@ namespace TBAR.Players
 
         public StyleRank CurrentStyleRank
         {
+            set
+            {
+                switch (value)
+                {
+                    case StyleRank.D:
+                        StylePoints = 1999;
+                        break;
+                    case StyleRank.C:
+                        StylePoints = 2000;
+                        break;
+                    case StyleRank.B:
+                        StylePoints = 4000;
+                        break;
+                    case StyleRank.A:
+                        StylePoints = 8000;
+                        break;
+                    case StyleRank.S:
+                        StylePoints = 12000;
+                        break;
+                    case StyleRank.SS:
+                        StylePoints = 14000;
+                        break;
+                    default:
+                        StylePoints = 18000;
+                        break;
+                }
+
+                StyleDecayTimer = 600;
+            }
             get
             {
                 if (StylePoints < 2000)
@@ -133,22 +152,6 @@ namespace TBAR.Players
                 StyleDecayTimer = 600;
 
             StylePoints += resultValue;
-        }
-
-        public bool CheckStaminaCost(double cost)
-        {
-            if (Stamina - cost >= 0)
-            {
-                Stamina -= cost;
-                return true;
-            }
-            return false;
-        }
-
-        public void AddStamina(double value = 1.0)
-        {
-            Stamina += (double)(value * StaminaGainModifiers[CurrentStyleRank]);
-            Main.NewText("Curretn Stamina: " + Stamina);
         }
     }
 

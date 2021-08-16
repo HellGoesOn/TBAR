@@ -62,7 +62,7 @@ namespace TBAR.Stands.Crusaders
 
         public override bool CanAcquire(TBARPlayer player)
         {
-            return true;
+            return false;
         }
 
         public override DamageType StandDamageType => DamageType.Magic;

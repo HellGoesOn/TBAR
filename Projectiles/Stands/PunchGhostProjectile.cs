@@ -37,7 +37,6 @@ namespace TBAR.Projectiles.Stands
         public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
         {
             TBARPlayer.Get(Owner).AddStylePoints(10);
-            TBARPlayer.Get(Owner).AddStamina(10.0);
 
             projectile.penetrate++;
 
@@ -59,7 +58,6 @@ namespace TBAR.Projectiles.Stands
             projectile.penetrate++;
 
             TBARPlayer.Get(Owner).AddStylePoints(10);
-            TBARPlayer.Get(Owner).AddStamina(10.0);
 
             OnHit?.Invoke(this, target);
         }
@@ -103,7 +101,7 @@ namespace TBAR.Projectiles.Stands
 
         protected void UpdatePunch(StandState _)
         {
-            projectile.Center = Vector2.Lerp(projectile.Center, MousePosition, 0.25f);
+            projectile.Center = Vector2.SmoothStep(projectile.Center, MousePosition, 0.22f);
             Owner.direction = (Owner.Center + PunchDirection).X < Owner.Center.X ? -1 : 1;
             SpriteFX = Owner.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
         }

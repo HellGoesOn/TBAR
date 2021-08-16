@@ -24,7 +24,6 @@ namespace TBAR.Stands.Crusaders
         {
             StandCombo timeStop = new StandCombo("Time Stop", ComboInput.Action1, ComboInput.Action1, ComboInput.Action2);
             timeStop.OnActivate += StopTime;
-            timeStop.Cost = 500;
 
             StandCombo upperCut = new StandCombo("Upper Cut", ComboInput.Up, ComboInput.Up, ComboInput.Action1);
             upperCut.OnActivate += UpperCut_OnActivate;

@@ -5,12 +5,13 @@ using TBAR.Helpers;
 using TBAR.Players;
 using Terraria;
 using Terraria.UI;
+using System.Linq;
 
 namespace TBAR.UI
 {
     public class UIStyleRank : UIDraggableElement
     {
-        private readonly List<FallingLetter> letters = new List<FallingLetter>();
+        private readonly List<ILetter> letters = new List<ILetter>();
 
         private float scale = 0.8f;
 
@@ -57,17 +58,28 @@ namespace TBAR.UI
 
             if (lastRank != plr.CurrentStyleRank)
             {
-                var kek = Main.rand.NextBool();
                 var l = new FallingLetter(lastRank);
+
+                var kek = Main.rand.NextBool();
                 l.Position = this.GetDimensions().Position();
                 l.velocity = new Vector2(kek ? -190f : 191f, -130f);
                 letters.Add(l);
+
+                if (lastRank < plr.CurrentStyleRank)
+                {
+                    l.haltTime = 90;
+                    var slap = new SlappingLetter(plr.CurrentStyleRank)
+                    {
+                        Position = this.GetInnerDimensions().Position()
+                    };
+                    letters.Add(slap);
+                }
             }
 
-            foreach (FallingLetter l in letters)
+            foreach (ILetter l in letters)
                 l.Update(gameTime);
 
-            letters.RemoveAll(x => x.Opacity <= 0);
+            letters.RemoveAll(x => (x is FallingLetter y && y.Opacity <= 0) || (x is SlappingLetter z && z.scale <= 1f));
 
             lastRank = plr.CurrentStyleRank;
 
@@ -87,14 +99,14 @@ namespace TBAR.UI
             ///shit solution but i don't give a fuck
             int killMe = (int)MathHelper.Clamp(plr.RepeatCount, 0, 2);
 
-            Rectangle rect = new Rectangle(0, 42 * frame, 99, 42);
+            Rectangle rect = new Rectangle(0, 54 * frame, 99, 54);
 
             Color clr = plr.StylePoints > 0 ? Color.White : Color.White * 0f;
             Color pulseClr = delay <= 0 ? Color.White * 0.35f : Color.White * 0;
 
-            float offXvideos = Main.fontMouseText.MeasureString(plr.StylePoints.ToString()).X / 3 + 16;
+            float offXvideos = Main.fontMouseText.MeasureString(plr.StylePoints.ToString()).X / 2 + 8;
 
-            Utils.DrawBorderStringFourWay(spriteBatch, Main.fontMouseText, "Style Points: " + plr.StylePoints, position.X - offXvideos, position.Y + 44, colors[(int)plr.CurrentStyleRank], Color.Black, Vector2.Zero);
+            Utils.DrawBorderStringFourWay(spriteBatch, Main.fontMouseText, "Style Points: " + plr.StylePoints, position.X - offXvideos, position.Y + 54, colors[(int)plr.CurrentStyleRank], Color.Black, Vector2.Zero);
 
             string text = texts[plr.RepeatCount][plr.PoolID];
 
@@ -115,17 +127,19 @@ namespace TBAR.UI
             float offX = Main.fontMouseText.MeasureString(text).X / 2;
 
             if(plr.LastUsedCombo != "")
-                Utils.DrawBorderStringFourWay(spriteBatch, Main.fontMouseText, "Quality: " + text, position.X - offX + 10, position.Y + 40 + off, repeatColors[killMe], Color.Black, Vector2.Zero);
+                Utils.DrawBorderStringFourWay(spriteBatch, Main.fontMouseText, "Quality: " + text, position.X - offX + 6, position.Y + 48 + off, repeatColors[killMe], Color.Black, Vector2.Zero);
 
-            spriteBatch.Draw(Textures.StyleRanks, position + new Vector2(49.5f, 21), rect, clr, 0f, new Vector2(49.5f, 21), 1f, SpriteEffects.None, 1);
+            if (letters.Count(x => x is SlappingLetter) <= 0 && lastRank == plr.CurrentStyleRank)
+            {
+                spriteBatch.Draw(Textures.StyleRanks, position + new Vector2(49.5f, 27), rect, clr, 0f, new Vector2(49.5f, 27), 1f, SpriteEffects.None, 1);
 
-            if(plr.StylePoints > 0)
-            spriteBatch.Draw(Textures.StyleRanks, position + new Vector2(49.5f, 21), rect, pulseClr, 0f, new Vector2(49.5f, 21), scale, SpriteEffects.None, 1);
-
+                if (plr.StylePoints > 0)
+                    spriteBatch.Draw(Textures.StyleRanks, position + new Vector2(49.5f, 27), rect, pulseClr, 0f, new Vector2(49.5f, 27), scale, SpriteEffects.None, 1);
+            }
             if (LongBool)
                 DrawHelper.DrawRectangle(position, (int)Width.Pixels, (int)Height.Pixels, Color.DeepSkyBlue * 0.66f, spriteBatch);
 
-            foreach(FallingLetter l in letters)
+            foreach(ILetter l in letters)
                 l.Draw(spriteBatch);
         }
 

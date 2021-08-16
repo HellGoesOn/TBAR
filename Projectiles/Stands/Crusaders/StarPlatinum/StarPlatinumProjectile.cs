@@ -189,14 +189,14 @@ namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
             if (Opacity < 1f)
                 Opacity += 0.05f;
 
-            projectile.Center = Vector2.Lerp(projectile.Center, Owner.Center + new Vector2(-30 * Owner.direction, -32), 0.12f);
+            projectile.Center = Vector2.SmoothStep(projectile.Center, Owner.Center + new Vector2(-30 * Owner.direction, -32), 0.15f);
         }
 
         private void Despawn(StandState sender)
         {
             SpriteFX = Owner.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Opacity -= 0.05f;
-            projectile.Center = Vector2.Lerp(projectile.Center, Owner.Center + new Vector2(-12 * Owner.direction, -12), 0.12f);
+            projectile.Center = Vector2.SmoothStep(projectile.Center, Owner.Center + new Vector2(-12 * Owner.direction, -12), 0.15f);
         }
 
         private void OnDespawnEnd(StandState sender)
@@ -210,7 +210,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
             NonTimedAttack = false;
             HitNPCs.RemoveAll(x => !x.IsTimed);
             SpriteFX = Owner.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-            projectile.Center = Vector2.Lerp(projectile.Center, Owner.Center + new Vector2(-30 * Owner.direction, -32), 0.12f);
+            projectile.Center = Vector2.SmoothStep(projectile.Center, Owner.Center + new Vector2(-30 * Owner.direction, -32), 0.15f);
         }
 
         protected override int PunchAnimationIDOffset()
