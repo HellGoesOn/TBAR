@@ -1,6 +1,8 @@
-﻿using System;
-using TBAR.Components;
+﻿using TBAR.Components;
+using TBAR.Input;
+using TBAR.Players;
 using TBAR.Projectiles.Stands.Donator.SoulOfCinder;
+using Terraria;
 
 namespace TBAR.Stands.Donator
 {
@@ -15,9 +17,39 @@ namespace TBAR.Stands.Donator
             return new SpriteAnimation("Projectiles/Stands/Donator/SoulOfCinder/Idle", 10, 15, true);
         }
 
+        public override void HandleImmediateInputs(Player player, ImmediateInput input)
+        {
+            base.HandleImmediateInputs(player, input);
+
+            if(ActiveInstance != null)
+                switch (input)
+                {
+                    case ImmediateInput.Action1:
+                        if (ActiveInstance.swingCounter > 1 && (ActiveInstance.IsIdle || ActiveInstance.State == SOCStates.Swing.ToString()))
+                        {
+                            ActiveInstance.swingCounter = 0;
+                            ActiveInstance.SetState(SOCStates.Ability1.ToString());
+                        }
+                        break;
+                    case ImmediateInput.Action2:
+                        if (ActiveInstance.IsIdle)
+                        ActiveInstance.SetState(SOCStates.SoulStream.ToString());
+                        break;
+                }
+        }
+
         public override void InitializeCombos()
         {
+            StandCombo ability1 = new StandCombo("Flame Path", ComboInput.Action1);
+            ability1.Description = "Sends a flaming snake along the ground.\nCan only be done if used a third swing in a swing chain.";
 
+            StandCombo soulStream = new StandCombo("Soul Stream", ComboInput.Action2);
+            AddNormalCombos(ability1, soulStream);
+        }
+
+        public override bool CanAcquire(TBARPlayer player)
+        {
+            return false;
         }
     }
 }

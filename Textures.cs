@@ -41,6 +41,9 @@ namespace TBAR
         [Loadable("TBAR/Textures/Ranks2")]
         public static Texture2D StyleRanks { get; internal set; }
 
+        [Loadable("TBAR/Textures/Laser")]
+        public static Texture2D Laser { get; internal set; }
+
         public static string EmptinessPath => "TBAR/Textures/EmptyPixel";
     }
 }

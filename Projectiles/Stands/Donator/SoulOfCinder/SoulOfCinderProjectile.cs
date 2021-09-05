@@ -2,9 +2,11 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using TBAR.Components;
+using TBAR.Extensions;
 using TBAR.Input;
 using TBAR.Stands;
 using Terraria;
+using Terraria.ModLoader;
 
 namespace TBAR.Projectiles.Stands.Donator.SoulOfCinder
 {
@@ -14,7 +16,7 @@ namespace TBAR.Projectiles.Stands.Donator.SoulOfCinder
         {
         }
 
-        private int swingCounter = 0;
+        public int swingCounter = 0;
 
         private readonly int[] swingBaseDamage = new int[] { 180, 190, 200 };
 
@@ -24,16 +26,21 @@ namespace TBAR.Projectiles.Stands.Donator.SoulOfCinder
 
         public override void InitializeStates(Projectile projectile)
         {
+            Range = 3.5f;
+
             AttackSpeed = 30;
 
             string path = "Projectiles/Stands/Donator/SoulOfCinder/";
             SpriteAnimation spawn = new SpriteAnimation(path + "Spawn", 20, 12);
             SpriteAnimation despawn = new SpriteAnimation(path + "Spawn", 20, 12) { IsReversed = true };
             SpriteAnimation idle = new SpriteAnimation(path + "Idle", 10, 15, true);
+            SpriteAnimation ability1 = new SpriteAnimation(path + "Ability1", 18, 15);
 
             SpriteAnimation swingOne = new SpriteAnimation(path + "Attack1", 8, 10);
             SpriteAnimation swingTwo = new SpriteAnimation(path + "Attack2", 7, 10);
             SpriteAnimation swingThree = new SpriteAnimation(path + "Attack3", 10, 14);
+
+            SpriteAnimation soulMagic = new SpriteAnimation(path + "SoulMagic", 9, 10);
 
             StandState spawnState = new StandState(SOCStates.Spawn.ToString(), spawn);
             spawnState.OnStateBegin += SummonState_OnStateBegin;
@@ -59,10 +66,49 @@ namespace TBAR.Projectiles.Stands.Donator.SoulOfCinder
             StandState idleState = new StandState(SOCStates.Idle.ToString(), idle);
             idleState.OnStateUpdate += Idle;
 
-            AddStates(spawnState, idleState, swingState, despawnState);
+            StandState ability1State = new StandState(SOCStates.Ability1.ToString(), ability1);
+            ability1State.OnStateEnd += GoIdle;
+            ability1State.OnStateEnd += Ability1State_OnStateEnd;
+            ability1State.OnStateUpdate += Ability1State_OnStateUpdate;
+            ability1State.OnStateBegin += Ability1State_OnStateBegin;
+            ability1State.Duration = 68;
+
+            StandState soulStreamState = new StandState(SOCStates.SoulStream.ToString(), soulMagic);
+            soulStreamState.OnStateEnd += GoIdle;
+            soulStreamState.OnStateUpdate += SoulStreamState_OnStateUpdate;
+            soulStreamState.Duration = 240;
+
+            AddStates(spawnState, idleState, swingState, despawnState, ability1State, soulStreamState);
 
             SetState(SOCStates.Spawn.ToString());
         }
+
+        private void SoulStreamState_OnStateUpdate(StandState sender)
+        {
+            SpriteFX = Owner.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            projectile.Center = Vector2.SmoothStep(projectile.Center, Owner.Center + new Vector2(30 * Owner.direction, 10), 0.15f);
+
+            if (sender.Duration == 180)
+                Projectile.NewProjectile(projectile.Center, Owner.Center.ToMouse(16), ModContent.ProjectileType<SoulBeam>(), 150, 5.75f, Owner.whoAmI, projectile.whoAmI);
+        }
+
+        private void Ability1State_OnStateBegin(StandState sender)
+        {
+            projectile.damage = 600;
+        }
+
+        private void Ability1State_OnStateEnd(StandState sender)
+        {
+            projectile.damage = 0;
+            Projectile.NewProjectile(projectile.Bottom + new Vector2(40 * Owner.direction, -46), new Vector2(Owner.direction, 0), ModContent.ProjectileType<GroundFire>(), 150, 5.75f, Owner.whoAmI, 15, Owner.direction);
+        }
+
+        private void Ability1State_OnStateUpdate(StandState sender)
+        {
+            SpriteFX = Owner.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            projectile.Center = Vector2.SmoothStep(projectile.Center, Owner.Center + new Vector2(64 * Owner.direction, -44), 0.22f);
+        }
+
         public override void PostAI()
         {
             base.PostAI();
@@ -136,8 +182,16 @@ namespace TBAR.Projectiles.Stands.Donator.SoulOfCinder
                     return false;
             }
 
+            if(State == SOCStates.Ability1.ToString())
+            {
+                if (CurrentState.CurrentAnimation.CurrentFrame < 14)
+                    return false;
+            }
+
             return base.CanHitNPC(target);
         }
+
+        public override bool CanPunch => State == SOCStates.Idle.ToString();
 
         protected override int GetPunchDamage()
         {
@@ -149,6 +203,8 @@ namespace TBAR.Projectiles.Stands.Donator.SoulOfCinder
         Spawn,
         Idle,
         Despawn,
-        Swing
+        Swing,
+        Ability1,
+        SoulStream
     }
 }

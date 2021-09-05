@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.ModLoader;
 using Terraria.ID;
+using TBAR.Stands.Donator;
 
 namespace TBAR.Items.Tools
 {
@@ -22,6 +23,11 @@ namespace TBAR.Items.Tools
             item.expert = true;
             item.useStyle = ItemUseStyleID.SwingThrow;
             item.rare = 12;
+        }
+
+        public override bool CanUseItem(Player player)
+        {
+            return !(TBARPlayer.Get(player).PlayerStand is SoulOfCinder);
         }
 
         public override bool UseItem(Player player)

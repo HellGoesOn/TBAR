@@ -109,5 +109,17 @@ namespace TBAR.Helpers
                      1
                  );
         }
+
+        public static void Line(SpriteBatch sb, Vector2 a, Vector2 b, float thickness, Color cl)
+        {
+            Vector2 tan = (b - a);
+            float rot = (float)Math.Atan2(tan.Y, tan.X);
+            Vector2 scale = new Vector2(tan.Length(), thickness);
+            Vector2 middleOrigin = new Vector2(0, Textures.Laser.Height / 2f);
+
+            SpriteEffects sprfx = SpriteEffects.None;
+
+            sb.Draw(Textures.Laser, a - Main.screenPosition, null, cl, rot, middleOrigin, scale, sprfx, 0f);
+        }
     }
 }

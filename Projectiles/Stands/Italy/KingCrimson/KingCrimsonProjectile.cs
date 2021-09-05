@@ -105,6 +105,7 @@ namespace TBAR.Projectiles.Stands.Italy.KingCrimson
 
             barrageState.OnStateEnd += delegate
             {
+                Barrage.Kill();
                 PunchDirection = Vector2.Zero;
                 Barrage = null;
                 SetState(KCStates.Idle.ToString());
