@@ -12,6 +12,8 @@ namespace TBAR.Stands
 
         public event StandStateEventHandler OnStateEnd;
 
+        public int timeLeft;
+
         private StandState()
         {
             AssignedAnimations = new List<SpriteAnimation>();
@@ -48,7 +50,7 @@ namespace TBAR.Stands
 
         public void BeginState()
         {
-            duration = _maxDuration;
+            timeLeft = _maxDuration;
             OnStateBegin?.Invoke(sender: this);
         }
 
@@ -58,7 +60,7 @@ namespace TBAR.Stands
                 return;*/
 
             if(HasDuration)
-                duration--;
+                timeLeft--;
 
             OnStateUpdate?.Invoke(sender: this);
             CurrentAnimation.Update();
@@ -81,18 +83,17 @@ namespace TBAR.Stands
 
         public string Key { get; set; }
 
-        private int duration;
         private int _maxDuration;
         public int Duration
         {
-            get => duration;
+            get => timeLeft;
             set
             {
                 _maxDuration = value;
             }
         }
 
-        public bool Active => duration > 0 || !HasDuration;
+        public bool Active => timeLeft > 0 || !HasDuration;
 
         public bool HasDuration => _maxDuration > 0;
     }

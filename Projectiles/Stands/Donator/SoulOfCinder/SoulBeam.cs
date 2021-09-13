@@ -1,8 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;
-using TBAR.Extensions;
 using TBAR.Helpers;
+using TBAR.Input;
 using TBAR.Players;
 using Terraria;
 using Terraria.ID;
@@ -12,6 +12,8 @@ namespace TBAR.Projectiles.Stands.Donator.SoulOfCinder
 {
     public class SoulBeam : ModProjectile
     {
+        public bool heldButton;
+
         private float range = 0;
 
         private float ballScale = 0.6f;
@@ -44,10 +46,17 @@ namespace TBAR.Projectiles.Stands.Donator.SoulOfCinder
 
         public override void AI()
         {
+            heldButton = false;
             projectile.netUpdate = true;
 
             if (range < 100)
                 range += 2;
+
+            if (TBARInputs.ComboButton2.Current && Main.myPlayer == Owner.whoAmI)
+            {
+                heldButton = true;
+                projectile.timeLeft = 78;
+            }
 
             int id = (int)projectile.ai[0];
 
@@ -71,8 +80,11 @@ namespace TBAR.Projectiles.Stands.Donator.SoulOfCinder
                 Main.dust[dust].noGravity = true;
                 Main.dust[dust].scale = 1f;
             }
+
             if (projectile.timeLeft <= 75)
                 thickness -= 0.25f;
+            else if (thickness < 18)
+                thickness += 0.25f;
 
             if ((ballScale += 0.08f) > 1f)
                 ballScale = 0.6f;
@@ -97,9 +109,9 @@ namespace TBAR.Projectiles.Stands.Donator.SoulOfCinder
             if (thickness <= 0)
                 return;
 
-            spriteBatch.Draw(Main.projectileTexture[projectile.type], projectile.Center - Main.screenPosition, null, Color.CornflowerBlue * 0.3f, projectile.rotation, new Vector2(16), ballScale + 0.6f, SpriteEffects.None, 1f);
-            spriteBatch.Draw(Main.projectileTexture[projectile.type], projectile.Center - Main.screenPosition, null, Color.Cyan * 0.5f, projectile.rotation, new Vector2(16), ballScale, SpriteEffects.None, 1f);
-            spriteBatch.Draw(Main.projectileTexture[projectile.type], projectile.Center - Main.screenPosition, null, Color.White * 0.9f, projectile.rotation, new Vector2(16), ballScale - 0.6f, SpriteEffects.None, 1f); ;
+            spriteBatch.Draw(Main.projectileTexture[projectile.type], projectile.Center - Main.screenPosition, null, Color.CornflowerBlue * 0.5f, projectile.rotation, new Vector2(16), ballScale + 0.6f, SpriteEffects.None, 1f);
+            spriteBatch.Draw(Main.projectileTexture[projectile.type], projectile.Center - Main.screenPosition, null, Color.Cyan * 0.6f, projectile.rotation, new Vector2(16), ballScale, SpriteEffects.None, 1f);
+            spriteBatch.Draw(Main.projectileTexture[projectile.type], projectile.Center - Main.screenPosition, null, Color.White * 1f, projectile.rotation, new Vector2(16), ballScale - 0.6f, SpriteEffects.None, 1f); ;
 
             Vector2 end = projectile.Center + projectile.velocity * range;
             DrawHelper.Line(spriteBatch, projectile.Center, end, thickness * 1.6f, Color.CornflowerBlue * 0.4f);
@@ -110,11 +122,13 @@ namespace TBAR.Projectiles.Stands.Donator.SoulOfCinder
         public override void SendExtraAI(BinaryWriter writer)
         {
             writer.Write(angle);
+            writer.Write(heldButton);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
         {
             angle = reader.ReadSingle();
+            heldButton = reader.ReadBoolean();
         }
 
         public Player Owner => Main.player[projectile.owner];

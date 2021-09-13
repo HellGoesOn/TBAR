@@ -18,7 +18,7 @@ namespace TBAR.Projectiles.Stands.Donator.SoulOfCinder
 
         public int swingCounter = 0;
 
-        private readonly int[] swingBaseDamage = new int[] { 180, 190, 200 };
+        private readonly int[] swingBaseDamage = new int[] { 180, 190 , 200};
 
         private readonly Vector2[] swingsOffsets = new Vector2[] { new Vector2(0, -20), new Vector2(0, -20), new Vector2(0, -40) };
 
@@ -42,6 +42,8 @@ namespace TBAR.Projectiles.Stands.Donator.SoulOfCinder
 
             SpriteAnimation soulMagic = new SpriteAnimation(path + "SoulMagic", 9, 10);
 
+            SpriteAnimation barrage = new SpriteAnimation(path + "Barrage", 11, 15, true);
+
             StandState spawnState = new StandState(SOCStates.Spawn.ToString(), spawn);
             spawnState.OnStateBegin += SummonState_OnStateBegin;
             spawnState.OnStateEnd += GoIdle;
@@ -57,9 +59,8 @@ namespace TBAR.Projectiles.Stands.Donator.SoulOfCinder
                 Key = SOCStates.Swing.ToString()
             };
 
-            swingState.OnStateBegin += BeginPunch;
+            swingState.OnStateBegin += SwingState_OnStateBegin;
             swingState.OnStateUpdate += UpdateSwing;
-            swingState.OnStateEnd += EndPunch;
             swingState.OnStateEnd += SwingState_OnStateEnd;
             swingState.Duration = 50;
 
@@ -78,9 +79,36 @@ namespace TBAR.Projectiles.Stands.Donator.SoulOfCinder
             soulStreamState.OnStateUpdate += SoulStreamState_OnStateUpdate;
             soulStreamState.Duration = 240;
 
-            AddStates(spawnState, idleState, swingState, despawnState, ability1State, soulStreamState);
+            StandState barrageState = new StandState(SOCStates.Barrage.ToString(), barrage);
+            barrageState.OnStateBegin += BarrageState_OnStateBegin;
+            barrageState.OnStateUpdate += UpdateSwing;
+            barrageState.OnStateEnd += BarrageState_OnStateEnd;
+            barrageState.Duration = 240;
+
+            AddStates(spawnState, idleState, swingState, despawnState, ability1State, soulStreamState, barrageState);
 
             SetState(SOCStates.Spawn.ToString());
+        }
+
+        private void SwingState_OnStateBegin(StandState sender)
+        {
+            if (swingCounter >= 3)
+                swingCounter = 0;
+
+            BeginPunch(sender);
+        }
+
+        private void BarrageState_OnStateEnd(StandState sender)
+        {
+            GoIdle(sender);
+            AttackSpeed = 30;
+            projectile.damage = 0;
+        }
+
+        private void BarrageState_OnStateBegin(StandState sender)
+        {
+            AttackSpeed = 6;
+            projectile.damage = 200;
         }
 
         private void SoulStreamState_OnStateUpdate(StandState sender)
@@ -90,6 +118,9 @@ namespace TBAR.Projectiles.Stands.Donator.SoulOfCinder
 
             if (sender.Duration == 180)
                 Projectile.NewProjectile(projectile.Center, Owner.Center.ToMouse(16), ModContent.ProjectileType<SoulBeam>(), 150, 5.75f, Owner.whoAmI, projectile.whoAmI);
+
+            if (TBARInputs.ComboButton2.Current && Main.myPlayer == Owner.whoAmI && sender.Duration < 74)
+                sender.timeLeft = 74;
         }
 
         private void Ability1State_OnStateBegin(StandState sender)
@@ -112,7 +143,7 @@ namespace TBAR.Projectiles.Stands.Donator.SoulOfCinder
         public override void PostAI()
         {
             base.PostAI();
-
+            
             projectile.width = (int)CurrentState.CurrentAnimation.FrameSize.X;
             projectile.height = (int)CurrentState.CurrentAnimation.FrameSize.Y;
 
@@ -125,14 +156,18 @@ namespace TBAR.Projectiles.Stands.Donator.SoulOfCinder
         private void UpdateSwing(StandState _)
         {
             projectile.Center = Vector2.SmoothStep(projectile.Center, MousePosition + swingsOffsets[swingCounter], 0.22f);
-            Owner.direction = (Owner.Center + PunchDirection).X < Owner.Center.X ? -1 : 1;
+            Owner.direction = projectile.Center.X < Owner.Center.X ? -1 : 1;
             SpriteFX = Owner.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
         }
 
         private void SwingState_OnStateEnd(StandState sender)
         {
-            if (++swingCounter > 2)
-                swingCounter = 0;
+            PunchStartPoint = PunchDirection = Vector2.Zero;
+            projectile.damage = 0;
+
+            swingCounter++;
+
+            GoIdle(sender);
         }
 
         private void SummonState_OnStateBegin(StandState sender)
@@ -205,6 +240,7 @@ namespace TBAR.Projectiles.Stands.Donator.SoulOfCinder
         Despawn,
         Swing,
         Ability1,
-        SoulStream
+        SoulStream,
+        Barrage
     }
 }

@@ -125,7 +125,7 @@ namespace TBAR
                 if (!Main.hardMode)
                     return 0.5f;
 
-                if (NPC.downedPlantBoss)
+                if (NPC.downedPlantBoss && !NPC.downedMoonlord)
                     return 1f;
 
                 if (NPC.downedMoonlord)
