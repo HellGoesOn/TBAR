@@ -15,7 +15,6 @@ namespace TBAR.Players
     {
         public TBARPlayer()
         {
-            InitializeStaminaModifiers();
         }
         /// <summary>
         /// Easier access to TBARPlayer

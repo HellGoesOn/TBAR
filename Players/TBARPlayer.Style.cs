@@ -1,9 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ModLoader;
@@ -73,19 +68,6 @@ namespace TBAR.Players
 
                 return 0.0f;
             }
-        }
-
-        public readonly Dictionary<StyleRank, double> StaminaGainModifiers = new Dictionary<StyleRank, double>();
-
-        public void InitializeStaminaModifiers()
-        {
-            StaminaGainModifiers.Add(StyleRank.D, 0.1f);
-            StaminaGainModifiers.Add(StyleRank.C, 0.5f);
-            StaminaGainModifiers.Add(StyleRank.B, 1f);
-            StaminaGainModifiers.Add(StyleRank.A, 1.5f);
-            StaminaGainModifiers.Add(StyleRank.S, 2f);
-            StaminaGainModifiers.Add(StyleRank.SS, 4f);
-            StaminaGainModifiers.Add(StyleRank.SSS, 8f);
         }
 
         public StyleRank CurrentStyleRank

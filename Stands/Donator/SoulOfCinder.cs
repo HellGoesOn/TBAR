@@ -20,18 +20,6 @@ namespace TBAR.Stands.Donator
         public override void HandleImmediateInputs(Player player, ImmediateInput input)
         {
             base.HandleImmediateInputs(player, input);
-
-            if(ActiveInstance != null)
-                switch (input)
-                {
-                    case ImmediateInput.Action1:
-                        if (ActiveInstance.swingCounter == 2 && (ActiveInstance.IsIdle || ActiveInstance.State == SOCStates.Swing.ToString()))
-                        {
-                            ActiveInstance.swingCounter = 0;
-                            ActiveInstance.SetState(SOCStates.Ability1.ToString());
-                        }
-                        break;
-                }
         }
 
         public override void InitializeCombos()
@@ -40,6 +28,7 @@ namespace TBAR.Stands.Donator
             {
                 Description = "Sends a flaming snake along the ground.\nCan only be done if used a third swing in a swing chain."
             };
+            ability1.OnActivate += Ability1_OnActivate;
 
             StandCombo soulStream = new StandCombo("Soul Stream", ComboInput.Action2);
             soulStream.OnActivate += SoulStream_OnActivate;
@@ -49,8 +38,25 @@ namespace TBAR.Stands.Donator
                 Style = 500
             };
 
+            StandCombo grab = new StandCombo("Grab", ComboInput.Action2, ComboInput.Up, ComboInput.Up);
+            grab.OnActivate += Grab_OnActivate;
+
             barrage.OnActivate += Barrage_OnActivate;
-            AddNormalCombos(ability1, soulStream, barrage);
+            AddNormalCombos(ability1, soulStream, barrage, grab);
+        }
+
+        private void Ability1_OnActivate(Player player)
+        {
+            if (ActiveInstance.swingCounter == 2 && (ActiveInstance.IsIdle || ActiveInstance.State == SOCStates.Swing.ToString()))
+            {
+                ActiveInstance.swingCounter = 0;
+                ActiveInstance.SetState(SOCStates.Ability1.ToString());
+            }
+        }
+
+        private void Grab_OnActivate(Player player)
+        {
+            ActiveInstance.SetState(SOCStates.GrabPrep.ToString());
         }
 
         private void SoulStream_OnActivate(Player player)

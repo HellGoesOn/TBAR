@@ -6,6 +6,7 @@ using TBAR.Extensions;
 using TBAR.Input;
 using TBAR.Stands;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace TBAR.Projectiles.Stands.Donator.SoulOfCinder
@@ -43,6 +44,9 @@ namespace TBAR.Projectiles.Stands.Donator.SoulOfCinder
             SpriteAnimation soulMagic = new SpriteAnimation(path + "SoulMagic", 9, 10);
 
             SpriteAnimation barrage = new SpriteAnimation(path + "Barrage", 11, 15, true);
+
+            SpriteAnimation grabPrep = new SpriteAnimation(path + "GrabPrep", 16, 15);
+            SpriteAnimation grab = new SpriteAnimation(path + "Grab", 13, 14);
 
             StandState spawnState = new StandState(SOCStates.Spawn.ToString(), spawn);
             spawnState.OnStateBegin += SummonState_OnStateBegin;
@@ -85,9 +89,41 @@ namespace TBAR.Projectiles.Stands.Donator.SoulOfCinder
             barrageState.OnStateEnd += BarrageState_OnStateEnd;
             barrageState.Duration = 240;
 
-            AddStates(spawnState, idleState, swingState, despawnState, ability1State, soulStreamState, barrageState);
+            StandState grabPrepState = new StandState(SOCStates.GrabPrep.ToString(), grabPrep);
+            grabPrepState.OnStateEnd += delegate { SetState(SOCStates.Grab.ToString()); };
+            grabPrepState.Duration = 60;
+
+            StandState grabState = new StandState(SOCStates.Grab.ToString(), grab);
+            grabState.OnStateBegin += GrabState_OnStateBegin;
+            grabState.OnStateUpdate += GrabState_OnStateUpdate;
+            grabState.OnStateEnd += GrabState_OnStateEnd;
+            grabState.Duration = 68;
+
+            AddStates(spawnState, idleState, swingState, despawnState, ability1State, soulStreamState, barrageState, grabPrepState, grabState);
 
             SetState(SOCStates.Spawn.ToString());
+        }
+
+        private void GrabState_OnStateEnd(StandState sender)
+        {
+            projectile.damage = 0;
+            GoIdle(sender);
+        }
+
+        private void GrabState_OnStateBegin(StandState sender)
+        {
+            NonTimedAttack = true;
+            projectile.damage = 700;
+        }
+
+        private void GrabState_OnStateUpdate(StandState sender)
+        {
+            projectile.Center = Vector2.SmoothStep(projectile.Center, MousePosition - new Vector2(20 * Owner.direction, 0), 0.22f);
+            Owner.direction = projectile.Center.X < Owner.Center.X ? -1 : 1;
+            SpriteFX = Owner.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+
+            if (sender.Duration == 30)
+                Main.PlaySound(SoundID.Item74, projectile.position);
         }
 
         private void SwingState_OnStateBegin(StandState sender)
@@ -223,6 +259,9 @@ namespace TBAR.Projectiles.Stands.Donator.SoulOfCinder
                     return false;
             }
 
+            if (State == SOCStates.Grab.ToString() && CurrentState.CurrentAnimation.CurrentFrame < 8)
+                return false;
+
             return base.CanHitNPC(target);
         }
 
@@ -241,6 +280,8 @@ namespace TBAR.Projectiles.Stands.Donator.SoulOfCinder
         Swing,
         Ability1,
         SoulStream,
-        Barrage
+        Barrage,
+        GrabPrep,
+        Grab
     }
 }
