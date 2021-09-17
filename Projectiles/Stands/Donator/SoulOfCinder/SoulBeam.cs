@@ -37,6 +37,7 @@ namespace TBAR.Projectiles.Stands.Donator.SoulOfCinder
         {
             target.immune[projectile.owner] = 8;
             TBARPlayer.Get(Owner).AddStylePoints(8);
+            damage = projectile.damage;
         }
 
         public override bool ShouldUpdatePosition()

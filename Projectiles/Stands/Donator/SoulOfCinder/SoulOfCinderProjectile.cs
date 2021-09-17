@@ -19,7 +19,7 @@ namespace TBAR.Projectiles.Stands.Donator.SoulOfCinder
 
         public int swingCounter = 0;
 
-        private readonly int[] swingBaseDamage = new int[] { 180, 190 , 200};
+        private readonly int[] swingBaseDamage = new int[] { 90, 95 , 100};
 
         private readonly Vector2[] swingsOffsets = new Vector2[] { new Vector2(0, -20), new Vector2(0, -20), new Vector2(0, -40) };
 
@@ -47,6 +47,10 @@ namespace TBAR.Projectiles.Stands.Donator.SoulOfCinder
 
             SpriteAnimation grabPrep = new SpriteAnimation(path + "GrabPrep", 16, 15);
             SpriteAnimation grab = new SpriteAnimation(path + "Grab", 13, 14);
+
+            SpriteAnimation ability2 = new SpriteAnimation(path + "Ability2", 13, 12);
+
+            SpriteAnimation ability3 = new SpriteAnimation(path + "Ability3", 12, 12);
 
             StandState spawnState = new StandState(SOCStates.Spawn.ToString(), spawn);
             spawnState.OnStateBegin += SummonState_OnStateBegin;
@@ -99,9 +103,62 @@ namespace TBAR.Projectiles.Stands.Donator.SoulOfCinder
             grabState.OnStateEnd += GrabState_OnStateEnd;
             grabState.Duration = 68;
 
-            AddStates(spawnState, idleState, swingState, despawnState, ability1State, soulStreamState, barrageState, grabPrepState, grabState);
+            StandState ability2State = new StandState(SOCStates.Ability2.ToString(), ability2);
+            ability2State.OnStateEnd += Ability2State_OnStateEnd;
+            ability2State.OnStateBegin += Ability2State_OnStateBegin;
+            ability2State.OnStateUpdate += Ability2State_OnStateUpdate;
+            ability2State.Duration = 70;
+
+            StandState ability3State = new StandState(SOCStates.Ability3.ToString(), ability3);
+            ability3State.OnStateUpdate += Ability3State_OnStateUpdate;
+            ability3State.OnStateEnd += GoIdle;
+            ability3State.Duration = 120;
+
+            AddStates(spawnState, idleState, swingState, despawnState, ability1State, soulStreamState, barrageState, grabPrepState, grabState, ability2State, ability3State);
 
             SetState(SOCStates.Spawn.ToString());
+        }
+
+        private void Ability3State_OnStateUpdate(StandState sender)
+        {
+            if (sender.Duration >= 60)
+            {
+                projectile.Center = Vector2.SmoothStep(projectile.Center, MousePosition - new Vector2(20 * Owner.direction, 0), 0.22f);
+                Owner.direction = projectile.Center.X < Owner.Center.X ? -1 : 1;
+                SpriteFX = Owner.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            }
+
+            if (sender.Duration == 60)
+                Projectile.NewProjectile(projectile.Center + new Vector2(-20 * Owner.direction, 40), Vector2.Zero, ModContent.ProjectileType<SOCExplosion>(), 1000, 0, projectile.whoAmI);
+        }
+
+        private void Ability2State_OnStateUpdate(StandState sender)
+        {
+            projectile.Center = Vector2.SmoothStep(projectile.Center, MousePosition - new Vector2(20 * Owner.direction, 0), 0.22f);
+            Owner.direction = projectile.Center.X < Owner.Center.X ? -1 : 1;
+            SpriteFX = Owner.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+
+            if (sender.Duration == 24)
+                for (int i = 0; i < 25; i++)
+                {
+                    int dust = Dust.NewDust(projectile.Center + new Vector2(10 * Owner.direction, 0), 20, 20, DustID.Fire, 0, 0, 0, default, 1.5f);
+                    Main.dust[dust].velocity = new Vector2(Main.rand.Next(2, 6) * Owner.direction, -Main.rand.Next(4));
+                }
+        }
+
+        private void Ability2State_OnStateBegin(StandState sender)
+        {
+            NonTimedAttack = true;
+            projectile.damage = 75;
+            projectile.direction = MousePosition.X < Owner.Center.X ? -1 : 1;
+            projectile.knockBack = 15f;
+        }
+
+        private void Ability2State_OnStateEnd(StandState sender)
+        {
+            projectile.damage = 0;
+            projectile.knockBack = 0f;
+            GoIdle(sender);
         }
 
         private void GrabState_OnStateEnd(StandState sender)
@@ -113,7 +170,7 @@ namespace TBAR.Projectiles.Stands.Donator.SoulOfCinder
         private void GrabState_OnStateBegin(StandState sender)
         {
             NonTimedAttack = true;
-            projectile.damage = 700;
+            projectile.damage = 350;
         }
 
         private void GrabState_OnStateUpdate(StandState sender)
@@ -144,7 +201,7 @@ namespace TBAR.Projectiles.Stands.Donator.SoulOfCinder
         private void BarrageState_OnStateBegin(StandState sender)
         {
             AttackSpeed = 6;
-            projectile.damage = 200;
+            projectile.damage = 150;
         }
 
         private void SoulStreamState_OnStateUpdate(StandState sender)
@@ -153,7 +210,7 @@ namespace TBAR.Projectiles.Stands.Donator.SoulOfCinder
             projectile.Center = Vector2.SmoothStep(projectile.Center, Owner.Center + new Vector2(30 * Owner.direction, 10), 0.15f);
 
             if (sender.Duration == 180)
-                Projectile.NewProjectile(projectile.Center, Owner.Center.ToMouse(16), ModContent.ProjectileType<SoulBeam>(), 150, 5.75f, Owner.whoAmI, projectile.whoAmI);
+                Projectile.NewProjectile(projectile.Center, Owner.Center.ToMouse(16), ModContent.ProjectileType<SoulBeam>(), 275, 5.75f, Owner.whoAmI, projectile.whoAmI);
 
             if (TBARInputs.ComboButton2.Current && Main.myPlayer == Owner.whoAmI && sender.Duration < 74)
                 sender.timeLeft = 74;
@@ -161,7 +218,7 @@ namespace TBAR.Projectiles.Stands.Donator.SoulOfCinder
 
         private void Ability1State_OnStateBegin(StandState sender)
         {
-            projectile.damage = 600;
+            projectile.damage = 110;
         }
 
         private void Ability1State_OnStateEnd(StandState sender)
@@ -222,11 +279,14 @@ namespace TBAR.Projectiles.Stands.Donator.SoulOfCinder
 
         private void GoIdle(StandState sender)
         {
+            NonTimedAttack = false;
+            HitNPCs.RemoveAll(x => !x.IsTimed);
             SetState(SOCStates.Idle.ToString());
         }
 
         private void SummonState_OnStateUpdate(StandState sender)
         {
+            projectile.ToggleModifierDependency(false);
             Owner.heldProj = projectile.whoAmI;
 
             if (sender.CurrentAnimation.CurrentFrame == 0)
@@ -262,6 +322,9 @@ namespace TBAR.Projectiles.Stands.Donator.SoulOfCinder
             if (State == SOCStates.Grab.ToString() && CurrentState.CurrentAnimation.CurrentFrame < 8)
                 return false;
 
+            if (State == SOCStates.Ability2.ToString() && CurrentState.CurrentAnimation.CurrentFrame < 8)
+                return false;
+
             return base.CanHitNPC(target);
         }
 
@@ -270,6 +333,30 @@ namespace TBAR.Projectiles.Stands.Donator.SoulOfCinder
         protected override int GetPunchDamage()
         {
             return swingBaseDamage[swingCounter];
+        }
+
+        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        {
+            base.ModifyHitNPC(target, ref damage, ref knockback, ref crit, ref hitDirection);
+
+            damage = projectile.damage;
+        }
+
+        public override void HandleImmediateInputs(ImmediateInput input)
+        {
+            switch (input)
+            {
+                case ImmediateInput.LeftClick:
+                    if (CanPunch)
+                        SetState(PunchState);
+                    break;
+                case ImmediateInput.RightClick:
+                    if (CanPunch)
+                        SetState(SOCStates.Ability2.ToString());
+                    break;
+                default:
+                    return;
+            }
         }
     }
     public enum SOCStates
@@ -282,6 +369,8 @@ namespace TBAR.Projectiles.Stands.Donator.SoulOfCinder
         SoulStream,
         Barrage,
         GrabPrep,
-        Grab
+        Grab,
+        Ability2,
+        Ability3
     }
 }

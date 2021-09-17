@@ -17,11 +17,6 @@ namespace TBAR.Stands.Donator
             return new SpriteAnimation("Projectiles/Stands/Donator/SoulOfCinder/Idle", 10, 15, true);
         }
 
-        public override void HandleImmediateInputs(Player player, ImmediateInput input)
-        {
-            base.HandleImmediateInputs(player, input);
-        }
-
         public override void InitializeCombos()
         {
             StandCombo ability1 = new StandCombo("Flame Path", ComboInput.Action1)
@@ -42,7 +37,16 @@ namespace TBAR.Stands.Donator
             grab.OnActivate += Grab_OnActivate;
 
             barrage.OnActivate += Barrage_OnActivate;
-            AddNormalCombos(ability1, soulStream, barrage, grab);
+
+            StandCombo megumin = new StandCombo("Explosion", ComboInput.Down, ComboInput.Action1, ComboInput.Down);
+            megumin.OnActivate += Megumin_OnActivate;
+
+            AddNormalCombos(ability1, soulStream, barrage, grab, megumin);
+        }
+
+        private void Megumin_OnActivate(Player player)
+        {
+            ActiveInstance?.SetState(SOCStates.Ability3.ToString());
         }
 
         private void Ability1_OnActivate(Player player)

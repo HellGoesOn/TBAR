@@ -60,7 +60,7 @@ namespace TBAR.Projectiles.Stands.Donator.SoulOfCinder
 
         public override void AI()
         {
-            if(!hasPlayedSound)
+            if (!hasPlayedSound)
             {
                 hasPlayedSound = true;
                 Main.PlaySound(SoundID.Item45);
@@ -95,7 +95,14 @@ namespace TBAR.Projectiles.Stands.Donator.SoulOfCinder
         {
             spriteBatch.Draw(anim.SpriteSheet, projectile.Center + new Vector2(0, anim.DrawOrigin.Y - 6) - Main.screenPosition, anim.FrameRect, Color.White, 0, anim.DrawOrigin, 1f, SpriteEffects.None, 0f);
         }
-        public override string Texture => Textures.EmptinessPath;
-    }
 
+        public override string Texture => Textures.EmptinessPath;
+
+        public override void ModifyHitNPC(NPC target, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        {
+            base.ModifyHitNPC(target, ref damage, ref knockback, ref crit, ref hitDirection);
+
+            damage = projectile.damage;
+        }
+    }
 }
