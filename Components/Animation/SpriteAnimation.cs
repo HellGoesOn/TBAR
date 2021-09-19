@@ -14,10 +14,10 @@ namespace TBAR.Components
 
         private readonly string pathForClone;
 
-        public SpriteAnimation(string sheetPath, int frameCount, float fps = 5f, bool looping = false)
+        public SpriteAnimation(string sheetPath, int frameCount, float fps = 5f, bool looping = false, string modName = "TBAR")
         {
             if(!Main.dedServ) // if we attempted to load a texture on a server we'd get a crash
-                SpriteSheet = ModContent.GetTexture("TBAR/" + sheetPath);
+                SpriteSheet = ModContent.GetTexture(modName +"/" + sheetPath);
 
             pathForClone = sheetPath;
 

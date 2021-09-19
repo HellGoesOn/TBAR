@@ -152,23 +152,22 @@ namespace TBAR.Players
             if (!IsStandUser)
                 return "None";
 
-            return PlayerStand.GetType().FullName;
+            return PlayerStand.StandName;
         }
 
         private void LoadStand(TagCompound tag)
         {
             PlayerStand = null;
 
-            if (tag.GetString("StandName") == "None")
+            string loadedName = tag.GetString("StandName");
+
+            if (loadedName == "None")
                 return;
 
-            if (tag.ContainsKey("StandName"))
-            {
-                Type type = Assembly.GetAssembly(typeof(Stand)).GetType(tag.GetString("StandName"));
+            Stand attempt = StandLoader.Instance.Get(loadedName);
 
-                if (type != null)
-                    PlayerStand = (Stand)Activator.CreateInstance(type);
-            }
+            if (attempt != null)
+                PlayerStand = attempt;
         }
 
         public Stand PlayerStand { get; set; }

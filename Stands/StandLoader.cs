@@ -70,7 +70,7 @@ namespace TBAR.Stands
                     return (Stand)Activator.CreateInstance(s.GetType());
             }
 
-            throw new Exception("Invalid stand name");
+            return null;
         }
 
         public int StandCount => Stands.Count;

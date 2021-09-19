@@ -113,7 +113,6 @@ namespace TBAR.Projectiles.Stands.Italy.Aerosmith
         {
             if (CurrentState.Duration % 4 == 0)
             {
-                Main.NewText(CurrentState.Duration);
                 Vector2 position = projectile.Center;
                 Vector2 velocity = new Vector2(16, 0).RotatedBy(Angle);
                 int type = ModContent.ProjectileType<AerosmithBullet>();

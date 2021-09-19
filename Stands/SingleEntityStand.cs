@@ -5,6 +5,7 @@ using TBAR.Input;
 using TBAR.Players;
 using TBAR.Projectiles.Stands;
 using Terraria;
+using Terraria.ModLoader;
 
 namespace TBAR.Stands
 {
@@ -22,7 +23,7 @@ namespace TBAR.Stands
 
         public override void TryActivate(Player player)
         {
-            int standIndex = Projectile.NewProjectile(player.Center, Vector2.Zero, TBAR.Instance.ProjectileType(AttachedStandProjectile.GetType().Name), 0, 1f, player.whoAmI);
+            int standIndex = Projectile.NewProjectile(player.Center, Vector2.Zero, ModContent.ProjectileType<T>(), 0, 1f, player.whoAmI);
             ActiveInstance = (T)Main.projectile[standIndex].modProjectile;
             IsActive = true;
         }
