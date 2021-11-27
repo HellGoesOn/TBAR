@@ -38,10 +38,6 @@ namespace TBAR.TimeStop
 
             if (!HaveITimeStopped(owner))
                 AddEffect(new TimeStopInstance(owner, duration, soundPath));
-            else
-            {
-                FindAndRemoveInstance(owner);
-            }
         }
 
         public void TryStopTime(TimeStopInstance instance)
@@ -50,10 +46,6 @@ namespace TBAR.TimeStop
 
             if (!HaveITimeStopped(owner))
                 AddEffect(instance);
-            else
-            {
-                FindAndRemoveInstance(owner);
-            }
         }
 
         public void ForceStop(TimeStopInstance instance)

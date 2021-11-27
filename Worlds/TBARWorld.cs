@@ -15,7 +15,7 @@ namespace TBAR.Worlds
                 TBAR.TimeStopManager.Update();
                 TBAR.TimeSkipManager.UpdateVisuals();
                 TBAR.TimeSkipManager.Update(x => x.Duration <= 0);
-                UIManager.Instance.StandAlbumLayer?.State?.Card?.Idle?.Update();
+                UIManager.Instance.StandAlbumLayer?.State?.Card?.Idle?.UpdateAnimation();
             }
         }
 
@@ -26,7 +26,7 @@ namespace TBAR.Worlds
                 TBAR.TimeStopManager.Update();
                 TBAR.TimeSkipManager.UpdateVisuals();
                 TBAR.TimeSkipManager.Update(x => x.Duration <= 0);
-                UIManager.Instance.StandAlbumLayer?.State?.Card?.Idle?.Update();
+                UIManager.Instance.StandAlbumLayer?.State?.Card?.Idle?.UpdateAnimation();
             }
         }
     }

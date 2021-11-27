@@ -38,14 +38,14 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld.RoadRoller
         public override void SetDefaults()
         {
             projectile.ToggleModifierDependency();
-            projectile.timeLeft = 600;
+            projectile.timeLeft = 300;
             ExplodeScaling = 0f;
             projectile.width = 134;
             projectile.height = 72;
             projectile.penetrate = 1;
             projectile.friendly = true;
             projectile.netUpdate = true;
-            projectile.velocity = new Vector2(0, 16);
+            projectile.velocity = new Vector2(0, 26);
             projectile.tileCollide = false;
             HitEntities = new List<HitEntityData>();
         }
@@ -144,7 +144,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld.RoadRoller
                     {
                         if (tw.State == "Punch")
                         {
-                            ExplodeScaling += 0.5f;
+                            ExplodeScaling += 1f;
                             p.GetGlobal().HitRoadRollerInLifeTime = true;
                             continue;
                         }
@@ -154,12 +154,12 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld.RoadRoller
 
                     if (p.modProjectile is PunchBarrage)
                     {
-                        ExplodeScaling += 0.2f;
+                        ExplodeScaling += 0.4f;
                         p.GetGlobal().HitRoadRollerInLifeTime = true;
                         continue;
                     }
 
-                    ExplodeScaling += 0.05f;
+                    ExplodeScaling += 0.1f;
                     p.GetGlobal().HitRoadRollerInLifeTime = true;
                 }
             }
@@ -201,7 +201,10 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld.RoadRoller
             TBARPlayer.Get(Main.player[projectile.owner]).AddStylePoints(500);
             HasHitSomething = true;
             projectile.penetrate++;
-            Target = target;
+
+            if(Target == null)
+                Target = target;
+
             projectile.netUpdate = true;
 
             HitEntities.Add(new HitEntityData(target.whoAmI, 0));

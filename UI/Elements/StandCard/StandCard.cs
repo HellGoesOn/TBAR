@@ -56,7 +56,7 @@ namespace TBAR.UI.Elements.StandCard
             if (Unlocked)
             {*/
                 Vector2 anchor = dims.Position() + new Vector2(16, 160);
-                spriteBatch.Draw(Idle.SpriteSheet, dims.Position() + new Vector2(70), Idle.FrameRect, Color.White, 0f, Idle.DrawOrigin, 1f, SpriteEffects.FlipHorizontally, 1f);
+                spriteBatch.Draw(Idle.SpriteSheet, dims.Position() + new Vector2(70), Idle.FrameRect, Color.White, 0f, Idle.FrameCenter, 1f, SpriteEffects.FlipHorizontally, 1f);
                 Utils.DrawBorderString(spriteBatch, StandDisplayName, anchor, Color.White, 1);
             //}
         }
@@ -67,7 +67,7 @@ namespace TBAR.UI.Elements.StandCard
 
         public string CallPath { get; }
 
-        public SpriteAnimation Idle { get; private set; }
+        public Animation2D Idle { get; private set; }
 
         public Stand Stand { get; private set; }
     }

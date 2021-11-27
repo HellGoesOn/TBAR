@@ -29,69 +29,51 @@ namespace TBAR.Projectiles.Stands.Italy.KingCrimson
             AttackSpeed = 18;
 
             string path = "Projectiles/Stands/Italy/KingCrimson/";
-            SpriteAnimation spawn = new SpriteAnimation(path + "KCSpawn", 7, 20);
-            SpriteAnimation despawn = new SpriteAnimation(path + "KCSpawn", 7, 20)
-            {
-                IsReversed = true
-            };
-            despawn.Reset();
 
-            SpriteAnimation punchMidLeft = new SpriteAnimation(path + "KCPunchRight", 4, 10);
-            SpriteAnimation punchMidRight = new SpriteAnimation(path + "KCPunchLeft", 4, 10);
+            AddAnimation(KCStates.Spawn.ToString(), path + "KCSpawn", 7, 20);
+            AddAnimation(KCStates.Despawn.ToString(), path + "KCSpawn", 7, 20).AsReversed();
+            AddAnimation("PunchMid1", path + "KCPunchRight", 4, 10);
+            AddAnimation("PunchMid2", path + "KCPunchLeft", 4, 10);
+            AddAnimation("PunchUp1", path + "KCPunchRightU", 4, 10);
+            AddAnimation("PunchUp2", path + "KCPunchLeftU", 4, 10);
+            AddAnimation("PunchDown1", path + "KCPunchRightD", 4, 10);
+            AddAnimation("PunchDown2", path + "KCPunchLeftD", 4, 10);
+            AddAnimation(KCStates.Idle.ToString(), path + "KCIdle", 5, 5, true);
+            AddAnimation(KCStates.Slice.ToString(), path + "KCYeet", 13, 12);
+            AddAnimation(KCStates.Donut, path + "KCDonutCommit", 6, 10);
+            AddAnimation("DonutEnd", path + "KCDonutUndo", 12, 12);
+            AddAnimation("DonutMiss", path + "KCDonutMiss", 7, 12);
+            AddAnimation(KCStates.Barrage, path + "KCRush", 4, 15, true);
 
-            SpriteAnimation punchUpLeft = new SpriteAnimation(path + "KCPunchRightU", 4, 10);
-            SpriteAnimation punchUpRight = new SpriteAnimation(path + "KCPunchLeftU", 4, 10);
-
-            SpriteAnimation punchDownLeft = new SpriteAnimation(path + "KCPunchRightD", 4, 10);
-            SpriteAnimation punchDownRight = new SpriteAnimation(path + "KCPunchLeftD", 4, 10);
-
-            SpriteAnimation idle = new SpriteAnimation(path + "KCIdle", 5, 5, true);
-
-            SpriteAnimation cut = new SpriteAnimation(path + "KCYeet", 13, 12);
-
-            SpriteAnimation donut = new SpriteAnimation(path + "KCDonutCommit", 6, 10);
-            SpriteAnimation donutUndo = new SpriteAnimation(path + "KCDonutUndo", 12, 12);
-            SpriteAnimation donutMiss = new SpriteAnimation(path + "KCDonutMiss", 7, 12);
-
-            StandState spawnState = new StandState(KCStates.Spawn.ToString(), spawn);
+            StandState spawnState = AddState(KCStates.Spawn, 20);
             spawnState.OnStateUpdate += SpawnState_OnStateUpdate;
             spawnState.OnStateEnd += GoIdle;
-            spawnState.Duration = 20;
 
-            StandState idleState = new StandState(KCStates.Idle.ToString(), idle);
+            StandState idleState = AddState(KCStates.Idle);
             idleState.OnStateUpdate += Idle;
 
-            StandState despawnState = new StandState(KCStates.Despawn.ToString(), despawn);
+            StandState despawnState = AddState(KCStates.Despawn.ToString(), 14);
             despawnState.OnStateEnd += delegate { projectile.Kill(); };
-            despawnState.Duration = 20;
-            StandState punchState = new StandState
-                (punchMidLeft, punchMidRight, punchDownLeft, punchDownRight, punchUpRight, punchUpLeft)
-            { Key = KCStates.Punch.ToString() };
 
+            StandState punchState = AddState(KCStates.Punch, AttackSpeed);
             punchState.OnStateBegin += BeginPunch;
             punchState.OnStateUpdate += UpdatePunch;
             punchState.OnStateEnd += EndPunch;
-            punchState.Duration = 20;
 
-            StandState cutState = new StandState(KCStates.Slice.ToString(), cut);
+            StandState cutState = AddState(KCStates.Slice.ToString(), 60);
             cutState.OnStateBegin += CutState_OnStateBegin;
             cutState.OnStateUpdate += UpdatePunch;
             cutState.OnStateEnd += EndPunch;
-            cutState.Duration = 60;
 
-            StandState donutState = new StandState(donut) { Key = KCStates.Donut.ToString()};
+            StandState donutState = AddState(KCStates.Donut, 40);
             donutState.OnStateUpdate += DonutState_OnStateUpdate;
             donutState.OnStateEnd += DonutState_OnStateEnd;
             donutState.OnStateBegin += DonutState_OnStateBegin;
-            donutState.Duration = 40;
 
-            StandState donutEndState = new StandState(donutUndo, donutMiss) { Key = KCStates.DonutEnd.ToString() };
-            donutEndState.Duration = 60;
+            StandState donutEndState = AddState(KCStates.DonutEnd, 60);
             donutEndState.OnStateEnd += GoIdle;
-            StandState barrageState = new StandState(path + "KCRush", 4, 15, true)
-            {
-                Key = KCStates.Barrage.ToString()
-            };
+
+            StandState barrageState = AddState(KCStates.Barrage, 180);
 
             barrageState.OnStateBegin += BarrageState_OnStateBegin;
 
@@ -110,10 +92,6 @@ namespace TBAR.Projectiles.Stands.Italy.KingCrimson
                 Barrage = null;
                 SetState(KCStates.Idle.ToString());
             };
-
-            barrageState.Duration = 180;
-
-            AddStates(spawnState, idleState, despawnState, punchState, cutState, donutState, donutEndState, barrageState);
             
             SetState(KCStates.Spawn.ToString());
         }
@@ -131,29 +109,8 @@ namespace TBAR.Projectiles.Stands.Italy.KingCrimson
 
         private void DonutState_OnStateEnd(StandState sender)
         {
-            if (sender.CurrentAnimationID == 0)
-            {
-                if (!HasMissedDonut)
-                {
-                    States[KCStates.DonutEnd.ToString()].CurrentAnimationID = 0;
-                    SetState(KCStates.DonutEnd.ToString());
-                    return;
-                }
-                else if (HasMissedDonut)
-                {
-                    States[KCStates.DonutEnd.ToString()].CurrentAnimationID = 1;
-                    SetState(KCStates.DonutEnd.ToString());
-                    return;
-                }
-            }
-
             MyDonutPunch = null;
-
-            if (sender.CurrentAnimationID != 0)
-            {
-                sender.CurrentAnimationID = 0;
-                GoIdle(sender);
-            }
+            SetState(KCStates.DonutEnd, "Donut" + (HasMissedDonut ? "Miss" : "End"));
         }
 
         private void DonutState_OnStateUpdate(StandState sender)
@@ -162,7 +119,8 @@ namespace TBAR.Projectiles.Stands.Italy.KingCrimson
             Owner.direction = projectile.Center.X < Owner.Center.X ? -1 : 1;
             SpriteFX = Owner.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
-            if (sender.CurrentAnimationID == 0 && sender.CurrentAnimation.CurrentFrame == 3 && MyDonutPunch == null)
+            // bad code; state shouldnt care about which animation is playing
+            if (Animations[CurrentAnimation].CurrentFrame == 3 && MyDonutPunch == null)
             {
                 int proj = Projectile.NewProjectile(projectile.Center, Vector2.Zero, ModContent.ProjectileType<DonutPunch>(), DonutImpactDamage, 0, Owner.whoAmI, projectile.whoAmI, -1);
                 MyDonutPunch = Main.projectile[proj].modProjectile as DonutPunch;
@@ -246,19 +204,6 @@ namespace TBAR.Projectiles.Stands.Italy.KingCrimson
                 reverseOffsetGain = !reverseOffsetGain;
 
             offset += reverseOffsetGain ? -0.1f : 0.1f;
-        }
-
-        protected override int PunchAnimationIDOffset()
-        {
-            int offset = 0;
-
-            if (MousePosition.Y > Owner.Center.Y + 120)
-                offset = 2;
-
-            if (MousePosition.Y < Owner.Center.Y - 120)
-                offset = 4;
-
-            return Main.rand.Next(0, 2) + offset;
         }
 
         protected override int GetPunchDamage()

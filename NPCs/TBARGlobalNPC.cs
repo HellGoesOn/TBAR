@@ -22,12 +22,25 @@ namespace TBAR.NPCs
 
         public override void SetDefaults(NPC npc)
         {
+            NPCID.Sets.UsesNewTargetting[npc.type] = true;
             CustomBuffs = new List<TBARBuff>();
             TimeSkipStates = new List<TimeSkipData>();
             DefaultAI = new float[npc.ai.Length];
 
             for (int i = 0; i < npc.ai.Length; i++)
                 DefaultAI[i] = npc.ai[i];
+        }
+
+        public override void ModifyHitByItem(NPC npc, Player player, Item item, ref int damage, ref float knockback, ref bool crit)
+        {
+            if (TBAR.TimeStopManager.IsTimeStopped)
+                damage = (int)(damage * 1.4f);
+        }
+
+        public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        {
+            if (TBAR.TimeStopManager.IsTimeStopped)
+                damage = (int)(damage * 1.4f);
         }
 
         public static TBARGlobalNPC Get(NPC npc) => npc.GetGlobalNPC<TBARGlobalNPC>();

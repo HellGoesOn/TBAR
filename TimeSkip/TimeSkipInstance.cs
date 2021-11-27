@@ -36,7 +36,7 @@ namespace TBAR.TimeSkip
             }
         }
 
-        private void Animation_AnimationPlay(SpriteAnimation sender)
+        private void Animation_AnimationPlay(Animation2D sender)
         {
             if (sender.CurrentFrame == sender.FrameCount / 3)
                 TBAR.Instance.PlaySound("Sounds/StandAbilityEffects/TimeSkip");

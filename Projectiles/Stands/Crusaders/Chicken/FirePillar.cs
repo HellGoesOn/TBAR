@@ -14,7 +14,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
     {
         private HashSet<NPC> npcs;
 
-        private SpriteAnimation anim;
+        private Animation2D anim;
 
         private bool hasSpawned, hasPlayedSound;
 
@@ -30,7 +30,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
 
             hasSpawned = false;
 
-            anim = new SpriteAnimation("Projectiles/Stands/Crusaders/Chicken/FirePillar", 11, 15);
+            anim = new Animation2D("Projectiles/Stands/Crusaders/Chicken/FirePillar", 11, 15);
         }
 
         public override void OnHitPvp(Player target, int damage, bool crit)
@@ -65,7 +65,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
                 Main.PlaySound(SoundID.Item45);
             }
 
-            anim.Update();
+            anim.UpdateAnimation();
 
             if (anim.CurrentFrame == 2 && !hasSpawned)
             {
@@ -92,7 +92,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
 
         public override void PostDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            spriteBatch.Draw(anim.SpriteSheet, projectile.Center - Main.screenPosition, anim.FrameRect, Color.White, 0, anim.DrawOrigin, 1f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(anim.SpriteSheet, projectile.Center - Main.screenPosition, anim.FrameRect, Color.White, 0, anim.FrameCenter, 1f, SpriteEffects.None, 0f);
         }
         public override string Texture => Textures.EmptinessPath;
     }

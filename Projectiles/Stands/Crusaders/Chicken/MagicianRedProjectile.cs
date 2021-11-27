@@ -27,67 +27,59 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
 
             string path = "Projectiles/Stands/Crusaders/Chicken/";
 
-            SpriteAnimation summon = new SpriteAnimation(path + "Spawn", 23, 18);
-            SpriteAnimation despawn = new SpriteAnimation(path + "Spawn", 23, 18) { IsReversed = true };
-            SpriteAnimation idle = new SpriteAnimation(path + "Idle", 7, 5, true);
+            AddAnimation(MRStates.Spawn,path + "Spawn", 23, 18);
 
-            SpriteAnimation punchMidLeft = new SpriteAnimation(path + "FlameThrow1", 6, 12);
-            SpriteAnimation punchMidRight = new SpriteAnimation(path + "FlameThrow2", 8, 12);
+            AddAnimation(MRStates.Despawn, path + "Spawn", 23, 18).AsReversed();
 
-            SpriteAnimation punchUpLeft = new SpriteAnimation(path + "FlameUpThrow1", 4, 12);
-            SpriteAnimation punchUpRight = new SpriteAnimation(path + "FlameUpThrow2", 4, 12);
+            AddAnimation(MRStates.Idle, path + "Idle", 7, 5, true);
 
-            SpriteAnimation punchDownLeft = new SpriteAnimation(path + "DownThrow1", 4, 12);
-            SpriteAnimation punchDownRight = new SpriteAnimation(path + "FlameDownThrow2", 4, 12);
+            AddAnimation("PunchMid1", path + "FlameThrow1", 6, 12);
+            AddAnimation("PunchMid2", path + "FlameThrow2", 8, 12);
 
-            SpriteAnimation falconPunch = new SpriteAnimation(path + "ChargePUNCHFULL", 27, 18);
+            AddAnimation("PunchUp1", path + "FlameUpThrow1", 4, 12);
+            AddAnimation("PunchUp2", path + "FlameUpThrow2", 4, 12);
 
-            SpriteAnimation cursed = new SpriteAnimation(path + "SummonPillars2", 16, 18);
-            SpriteAnimation desruc = new SpriteAnimation(path + "SummonPillars", 7, 15);
+            AddAnimation("PunchDown1",path + "DownThrow1", 4, 12);
+            AddAnimation("PunchDown2",path + "FlameDownThrow2", 4, 12);
 
-            StandState summonState = new StandState(MRStates.Spawn.ToString(), summon);
+            AddAnimation(MRStates.FalconPunch,path + "ChargePUNCHFULL", 27, 18);
+
+            AddAnimation(MRStates.Cursed, path + "SummonPillars2", 16, 18);
+            AddAnimation(MRStates.Desruc, path + "SummonPillars", 7, 15);
+
+            StandState summonState = AddState(MRStates.Spawn, 70);
             summonState.OnStateBegin += SummonState_OnStateBegin;
             summonState.OnStateEnd += GoIdle;
             summonState.OnStateUpdate += SummonState_OnStateUpdate;
-            summonState.Duration = 70;
 
-            StandState idleState = new StandState(MRStates.Idle.ToString(), idle);
+            StandState idleState = AddState(MRStates.Idle.ToString());
             idleState.OnStateUpdate += Idle;
 
-            StandState despawnState = new StandState(MRStates.Despawn.ToString(), despawn);
+            StandState despawnState = AddState(MRStates.Despawn.ToString(), 80);
             despawnState.OnStateEnd += delegate { projectile.Kill(); };
-            despawnState.Duration = 80;
 
-            StandState punchState = new StandState
-                (punchMidLeft, punchMidRight, punchDownLeft, punchDownRight, punchUpRight, punchUpLeft)
-            { Key = MRStates.Punch.ToString() };
+            StandState punchState = AddState(MRStates.Punch, AttackSpeed);
 
             punchState.OnStateBegin += BeginPunch;
             punchState.OnStateUpdate += UpdatePunch;
             punchState.OnStateEnd += EndPunch;
             punchState.OnStateEnd += PunchState_OnStateEnd;
-            punchState.Duration = AttackSpeed;
 
-            StandState falconState = new StandState(MRStates.FalconPunch.ToString(), falconPunch);
+            StandState falconState = AddState(MRStates.FalconPunch.ToString(), 180);
             falconState.OnStateBegin += FalconState_OnStateBegin;
             falconState.OnStateUpdate += UpdatePunch;
             falconState.OnStateUpdate += FalconState_OnStateUpdate;
             falconState.OnStateEnd += EndPunch;
             falconState.OnStateEnd += FalconState_OnStateEnd;
-            falconState.Duration = 100;
 
-            StandState cursedState = new StandState(MRStates.Cursed.ToString(), cursed);
+            StandState cursedState = AddState(MRStates.Cursed.ToString(), 51);
             cursedState.OnStateEnd += CursedState_OnStateBegin;
             cursedState.OnStateEnd += GoIdle;
             cursedState.OnStateUpdate += CursedState_OnStateUpdate;
-            cursedState.Duration = 51;
 
-            StandState desrucState = new StandState(MRStates.Desruc.ToString(), desruc);
+            StandState desrucState = AddState(MRStates.Desruc.ToString(), 24);
             desrucState.OnStateEnd += DesrucState_OnStateBegin;
             desrucState.OnStateEnd += GoIdle;
-            desrucState.Duration = 24;
-
-            AddStates(summonState, idleState, despawnState, punchState, falconState, cursedState, desrucState);
 
             SetState(MRStates.Spawn.ToString());
         }
@@ -114,15 +106,15 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
 
         private void FalconState_OnStateUpdate(StandState sender)
         {
-            if (sender.Duration == 30)
+            if (sender.TimeLeft == 30)
             {
                 Main.PlaySound(SoundID.Item45);
                 Projectile.NewProjectile(projectile.Center - projectile.Center.ToMouse(24f), Owner.Center.ToMouse(2f), ModContent.ProjectileType<Falcon>(), BirdDamage, 0f, projectile.owner);
                 Main.PlaySound(SoundID.Item74);
             }
-            if (sender.Duration <= 30 && sender.Duration > 15)
+            if (sender.TimeLeft <= 30 && sender.TimeLeft > 15)
                 projectile.damage = FalconDamage;
-            else if (sender.Duration <= 15)
+            else if (sender.TimeLeft <= 15)
                 projectile.damage = 0;
         }
 
@@ -203,24 +195,11 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
 
         private void SummonState_OnStateUpdate(StandState sender)
         {
-            if (sender.CurrentAnimation.CurrentFrame == 0)
+            if (Animations[CurrentAnimation].CurrentFrame == 0)
                 projectile.Center = Owner.Center + new Vector2(-30 * Owner.direction, -32);
 
             SpriteFX = Owner.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             projectile.Center = Vector2.SmoothStep(projectile.Center, Owner.Center + new Vector2(-30 * Owner.direction, -32), 0.15f);
-        }
-
-        protected override int PunchAnimationIDOffset()
-        {
-            int offset = 0;
-
-            if (MousePosition.Y > Owner.Center.Y + 120)
-                offset = 2;
-
-            if (MousePosition.Y < Owner.Center.Y - 120)
-                offset = 4;
-
-            return Main.rand.Next(0, 2) + offset;
         }
 
         private int BirdDamage => 50 + (int)(BaseDPS * 1.35f);

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using TBAR.Buffs.Negative;
 using TBAR.Components;
 using TBAR.Enums;
 using TBAR.Extensions;
@@ -48,6 +49,12 @@ namespace TBAR.Stands.Crusaders
 
         private void SlamDunk_OnActivate(Player player)
         {
+            TBARPlayer p = TBARPlayer.Get(player);
+            if (p.ShatteredTime)
+                return;
+
+            player.AddBuff(ModContent.BuffType<ShatteredTime>(), Global.SecondsToTicks(16));
+
             if (ActiveInstance != null && ActiveInstance is TheWorldProjectile tw)
             {
                 tw.SetState("FlyUp");
@@ -59,12 +66,12 @@ namespace TBAR.Stands.Crusaders
                 ScreenModifier.AddModifiersToPlayer(player, holdPos, smoothStep, holdPos2);
             }
 
-            TBARMusic.AddTrackToQueue("Sounds/Music/TWTheme", Global.SecondsToTicks(21));
+            TBARMusic.AddTrackToQueue("Sounds/Music/TWTheme", Global.SecondsToTicks(11));
 
             bool isTimeStopped = TBAR.TimeStopManager.IsTimeStopped;
             string path = isTimeStopped ? "" : "Sounds/TheWorld/TheWorld_ZaWarudoSFX";
 
-            TimeStopInstance ts = new TimeStopInstance(player, Global.SecondsToTicks(20), path) { EndSoundEffect = "Sounds/TheWorld/TheWorld_ZaWarudoReleaseSFX" };
+            TimeStopInstance ts = new TimeStopInstance(player, Global.SecondsToTicks(10), path) { EndSoundEffect = "Sounds/TheWorld/TheWorld_ZaWarudoReleaseSFX" };
 
             Projectile.NewProjectile(player.Center, Vector2.Zero, ModContent.ProjectileType<TimeStopVFX>(), 0, 0, player.whoAmI);
 
@@ -88,10 +95,17 @@ namespace TBAR.Stands.Crusaders
 
         private void TimeStop(Player player)
         {
+            TBARPlayer p = TBARPlayer.Get(player);
+
+            if (p.ShatteredTime)
+                return;
+
+            player.AddBuff(ModContent.BuffType<ShatteredTime>(), Global.SecondsToTicks(12));
+
             bool isTimeStopped = TBAR.TimeStopManager.IsTimeStopped;
             string path = isTimeStopped ? "" : "Sounds/TheWorld/TheWorld_ZaWarudoSFX";
 
-            TimeStopInstance ts = new TimeStopInstance(player, Global.SecondsToTicks(10), path) { EndSoundEffect = "Sounds/TheWorld/TheWorld_ZaWarudoReleaseSFX" };
+            TimeStopInstance ts = new TimeStopInstance(player, Global.SecondsToTicks(4), path) { EndSoundEffect = "Sounds/TheWorld/TheWorld_ZaWarudoReleaseSFX" };
 
             if (!isTimeStopped)
             {
@@ -99,7 +113,7 @@ namespace TBAR.Stands.Crusaders
                 TBAR.Instance.PlaySound("Sounds/TheWorld/TimeStop");
             }
             else
-                TBAR.Instance.PlaySound("Sounds/TheWorld/TimeResume");
+                p.RepeatCount--;
 
             TBAR.TimeStopManager.TryStopTime(ts);
         }
@@ -151,9 +165,9 @@ namespace TBAR.Stands.Crusaders
             plr.OnRightClick -= Plr_OnRightClick;
         }
 
-        public override SpriteAnimation AlbumEntryAnimation()
+        public override Animation2D AlbumEntryAnimation()
         {
-            return new SpriteAnimation("Projectiles/Stands/Crusaders/TheWorld/TheWorldIdle", 8, 10, true);
+            return new Animation2D("Projectiles/Stands/Crusaders/TheWorld/TheWorldIdle", 8, 10, true);
         }
 
         public override string GetDamageScalingText => "30 + 120% DPS";

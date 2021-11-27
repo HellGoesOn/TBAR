@@ -44,6 +44,12 @@ namespace TBAR
         [Loadable("TBAR/Textures/Laser")]
         public static Texture2D Laser { get; internal set; }
 
+        [Loadable("TBAR/Textures/Circle")]
+        public static Texture2D Circle { get; internal set; }
+
+        [Loadable("TBAR/Textures/Forgor")]
+        public static Texture2D Forgor { get; internal set; }
+
         public static string EmptinessPath => "TBAR/Textures/EmptyPixel";
     }
 }

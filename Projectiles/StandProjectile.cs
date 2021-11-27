@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using TBAR.Components;
@@ -14,6 +15,8 @@ namespace TBAR.Projectiles.Stands
 {
     public abstract class StandProjectile : ModProjectile
     {
+        public Dictionary<string, Animation2D> Animations { get; private set; }
+
         public StandProjectile(string name)
         {
             StandName = name;
@@ -26,6 +29,7 @@ namespace TBAR.Projectiles.Stands
 
         public sealed override void SetDefaults()
         {
+            Animations = new Dictionary<string, Animation2D>();
             States = new Dictionary<string, StandState>();
 
             projectile.ignoreWater = true;
@@ -36,11 +40,18 @@ namespace TBAR.Projectiles.Stands
             projectile.friendly = true;
 
             States.Clear();
+            Animations.Clear();
 
             Scale = Vector2.One;
 
             if (projectile.active)
                 InitializeStates(projectile);
+
+            if (Animations.Count <= 0)
+            {
+                Animations.Add("Forgor", new Animation2D("Textures/Forgor", 1));
+                CurrentAnimation = "Forgor";
+            }
 
             SafeSetDefaults();
         }
@@ -57,6 +68,9 @@ namespace TBAR.Projectiles.Stands
 
             if (Main.myPlayer == Owner.whoAmI)
                 MousePosition = Main.MouseWorld;
+
+            if (CurrentAnimation != null && Animations.Count > 0)
+                Animations[CurrentAnimation].UpdateAnimation();
 
             if (States.Count > 0)
             {
@@ -80,6 +94,7 @@ namespace TBAR.Projectiles.Stands
             writer.Write(MousePosition.Y);
 
             writer.Write((string)State);
+            writer.Write(CurrentAnimation);
         }
 
         public override void ReceiveExtraAI(BinaryReader reader)
@@ -87,10 +102,11 @@ namespace TBAR.Projectiles.Stands
             MousePosition = new Vector2(reader.ReadSingle(), reader.ReadSingle());
 
             string receivedState = reader.ReadString();
+            string receivedAnimation = reader.ReadString();
 
             if (States.ContainsKey(receivedState))
             {
-                SetState(receivedState);
+                SetState(receivedState, Animations.ContainsKey(receivedAnimation) ? receivedAnimation : "None");
             }
         }
 
@@ -110,9 +126,12 @@ namespace TBAR.Projectiles.Stands
 
         public void DrawDefault(SpriteBatch spriteBatch, Vector2 position, Color color, SpriteEffects fx = SpriteEffects.None)
         {
-            SpriteAnimation animation = CurrentState.AssignedAnimations[CurrentState.CurrentAnimationID];
+            if (CurrentAnimation != null)
+            {
+                Animation2D animation = Animations[CurrentAnimation];
 
-            spriteBatch.Draw(animation.SpriteSheet, position - Main.screenPosition, animation.FrameRect, color * Opacity, 0f, animation.DrawOrigin, Scale, fx, 1f);
+                spriteBatch.Draw(animation.SpriteSheet, position - Main.screenPosition, animation.FrameRect, color * Opacity, 0f, animation.FrameCenter, Scale, fx, 1f);
+            }
         }
 
         public Player Owner => Main.player[projectile.owner];
@@ -165,28 +184,80 @@ namespace TBAR.Projectiles.Stands
             return currentDamage;
         }
 
-        public void SetState(string value)
+        /// <summary>
+        /// Sets Stand's AI state to the one with the provided key
+        /// </summary>
+        /// <param name="state">State key</param>
+        /// <param name="animationKey">Animation key <para>If no animation key is provided, will look for animation with the same key as state.</para><para>In case no key is found, does not switch the animation</para></param>
+        public void SetState(string state, string animationKey = "None")
         {
-            if (State == value)
+            if (State == state)
                 return;
 
-            State = value;
+            if (animationKey == "None")
+            {
+                if(Animations.ContainsKey(state))
+                    CurrentAnimation = state;
+            }
+            else
+                CurrentAnimation = animationKey;
+
+            State = state;
 
             CurrentState.BeginState();
         }
 
-        /// <summary>
-        /// Allows you to add multiple states in one line
-        /// </summary>
-        /// <param name="states">Every specified state needs to contain a Key</param>
-        protected void AddStates(params StandState[] states)
-        {
-            foreach (StandState s in states)
-            {
-                if (s.Key == null || s.Key == "")
-                    throw new System.Exception("Invalid AddStates usage: State contained no Key");
+        public void SetState(Enum state, string animationkey = "") => SetState(state.ToString(), animationkey);
 
-                States.Add(s.Key, s);
+        protected StandState AddState(string key, int duration = 0)
+        {
+            StandState output = new StandState(duration);
+            States.Add(key, output);
+            return output;
+        }
+
+        //lazy
+        protected StandState AddState(Enum key, int duration = 0) => AddState(key.ToString(), duration);
+
+        protected Animation2D AddAnimation(Enum key, string sheetPath, int frameCount, float fps = 10f, bool looping = false, string modName = "TBAR")
+        {
+            return AddAnimation(key.ToString(), sheetPath, frameCount, fps, looping, modName);
+        }
+
+        protected Animation2D AddAnimation(string key, string sheetPath, int frameCount, float fps = 10f, bool looping = false, string modName = "TBAR")
+        {
+            Animation2D result = new Animation2D(sheetPath, frameCount, fps, looping, modName);
+
+            Animations.Add(key, result);
+
+            return result;
+        }
+        
+        protected Animation2D AddAnimation(Enum key, Animation2D animation)
+        {
+            return AddAnimation(key.ToString(), animation);
+        }
+
+        protected Animation2D AddAnimation(string key, Animation2D animation)
+        {
+            Animation2D result = animation;
+
+            Animations.Add(key, result);
+
+            return result;
+        }
+
+        private string curAnim;
+        public string CurrentAnimation
+        {
+            get => curAnim;
+            set
+            {
+                if(curAnim != null && curAnim != "" && Animations.ContainsKey(curAnim))
+                    Animations[curAnim].Reset();
+
+                curAnim = value;
+                Animations[curAnim].Reset();
             }
         }
 

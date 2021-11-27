@@ -111,7 +111,7 @@ namespace TBAR.Stands
 
         public virtual bool CanAcquire(TBARPlayer player) => true;
 
-        public abstract SpriteAnimation AlbumEntryAnimation();
+        public abstract Animation2D AlbumEntryAnimation();
 
         public virtual DamageType StandDamageType => DamageType.Any;
     }

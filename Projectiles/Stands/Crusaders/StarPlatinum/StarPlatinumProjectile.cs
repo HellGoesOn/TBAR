@@ -40,50 +40,44 @@ namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
             AttackSpeed = 12;
 
             string path = "Projectiles/Stands/Crusaders/StarPlatinum/";
+            AddAnimation(SPStates.Summon.ToString(), path + "SPSummon", 10, 15);
+            AddAnimation(SPStates.Despawn.ToString(), path + "SPDespawn", 6, 12);
+            AddAnimation(SPStates.Idle.ToString(), path + "SPIdle", 14, 15, true);
+            AddAnimation(SPStates.Barrage.ToString(), path + "SPRush_Middle", 4, 15, true);
+            AddAnimation(SPStates.Uppercut.ToString(), path + "SPDonutPunch", 15, 12);
+            AddAnimation("PunchUp1", path + "SPPunch_Up_LeftHand", 3, 10);
+            AddAnimation("PunchUp2", path + "SPPunch_Up_RightHand", 3, 10);
+            AddAnimation("PunchMid1", path + "SPPunch_Middle_LeftHand", 3, 10);
+            AddAnimation("PunchMid2", path + "SPPunch_Middle_RightHand", 3, 10);
+            AddAnimation("PunchDown1", path + "SPPunch_Down_LeftHand", 3, 10);
+            AddAnimation("PunchDown2", path + "SPPunch_Down_RightHand", 3, 10);
 
-            StandState summon = new StandState(path + "SPSummon", 10, 15);
+            StandState summon = AddState(SPStates.Summon.ToString(), 40);
 
             summon.OnStateBegin += OnSummon; 
             summon.OnStateUpdate += Summon;
             summon.OnStateEnd += delegate { SetState(SPStates.Idle.ToString()); };
-            summon.Duration = 40;
 
-            StandState despawn = new StandState(path + "SPDespawn", 6, 12);
+            StandState despawn = AddState(SPStates.Despawn.ToString(), 40);
             despawn.OnStateUpdate += Despawn;
             despawn.OnStateEnd += OnDespawnEnd;
-            despawn.Duration = 40;
 
-            StandState idle = new StandState(path + "SPIdle", 14, 15, true);
+            StandState idle = AddState(SPStates.Idle.ToString());
             idle.OnStateUpdate += Idle;
 
-            SpriteAnimation upperCut = new SpriteAnimation(path + "SPDonutPunch", 15, 12);
-
-            StandState upperCutState = new StandState(upperCut);
+            StandState upperCutState = AddState(SPStates.Uppercut.ToString(), 80);
             upperCutState.OnStateBegin += UpperCutState_OnStateBegin;
             upperCutState.OnStateUpdate += UpperCutState_OnStateUpdate;
             upperCutState.OnStateEnd += UpperCutState_OnStateEnd;
-            upperCutState.Duration = 80;
 
-            SpriteAnimation punchMidLeft = new SpriteAnimation(path + "SPPunch_Middle_LeftHand", 3, 10);
-            SpriteAnimation punchMidRight = new SpriteAnimation(path + "SPPunch_Middle_RightHand", 3, 10);
-
-            SpriteAnimation punchUpLeft = new SpriteAnimation(path + "SPPunch_Up_LeftHand", 3, 10);
-            SpriteAnimation punchUpRight = new SpriteAnimation(path + "SPPunch_Up_RightHand", 3, 10);
-
-            SpriteAnimation punchDownLeft = new SpriteAnimation(path + "SPPunch_Down_LeftHand", 3, 10);
-            SpriteAnimation punchDownRight = new SpriteAnimation(path + "SPPunch_Down_RightHand", 3, 10);
-
-            StandState punchState = new StandState
-                (punchMidLeft, punchMidRight, punchDownLeft, punchDownRight, punchUpRight, punchUpLeft);
+            StandState punchState = AddState(SPStates.Punch.ToString(), AttackSpeed + 3);
 
             punchState.OnStateBegin += BeginPunch;
             punchState.OnStateUpdate += UpdatePunch;
             punchState.OnStateEnd += EndPunch;
-            punchState.Duration = AttackSpeed + 3;
 
-            StandState barrageState = new StandState(path + "SPRush_Middle", 4, 15, true);
+            StandState barrageState = AddState(SPStates.Barrage.ToString(), 180);
             barrageState.OnStateBegin += BarrageState_OnStateBegin;
-            barrageState.Duration = 180;
 
             barrageState.OnStateUpdate += delegate
             {
@@ -99,13 +93,6 @@ namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
                 Barrage = null;
                 SetState(SPStates.Idle.ToString());
             };
-
-            States.Add(SPStates.Summon.ToString(), summon);
-            States.Add(SPStates.Idle.ToString(), idle);
-            States.Add(SPStates.Despawn.ToString(), despawn);
-            States.Add(SPStates.Punch.ToString(), punchState);
-            States.Add(SPStates.Barrage.ToString(), barrageState);
-            States.Add(SPStates.Uppercut.ToString(), upperCutState);
 
             SetState(SPStates.Summon.ToString());
         }
@@ -211,19 +198,6 @@ namespace TBAR.Projectiles.Stands.Crusaders.StarPlatinum
             HitNPCs.RemoveAll(x => !x.IsTimed);
             SpriteFX = Owner.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             projectile.Center = Vector2.SmoothStep(projectile.Center, Owner.Center + new Vector2(-30 * Owner.direction, -32), 0.15f);
-        }
-
-        protected override int PunchAnimationIDOffset()
-        {
-            int offset = 0;
-
-            if (MousePosition.Y > Owner.Center.Y + 120)
-                offset = 2;
-
-            if (MousePosition.Y < Owner.Center.Y - 120)
-                offset = 4;
-
-            return Main.rand.Next(0, 2) + offset;
         }
 
         protected override int GetPunchDamage()

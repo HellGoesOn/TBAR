@@ -32,40 +32,34 @@ namespace TBAR.Projectiles.Stands.Italy.Aerosmith
             IsEngineOn = true;
 
             // Wait, its all "Idle"?
-            SpriteAnimation spawn = new SpriteAnimation(path + "Idle", 18, 12);
-            SpriteAnimation idle = new SpriteAnimation(path + "Idle", 18, 12, true);
-            SpriteAnimation returnAnimation = new SpriteAnimation(path + "Idle", 18, 12, true);
-            SpriteAnimation despawn = new SpriteAnimation(path + "Idle", 18, 24);
-            SpriteAnimation barrage = new SpriteAnimation(path + "Idle", 18, 12, true);
+            AddAnimation(ASStates.Spawn, path + "Idle", 18, 12);
+            AddAnimation(ASStates.Idle, path + "Idle", 18, 12, true);
+            AddAnimation(ASStates.Return, path + "Idle", 18, 12, true);
+            AddAnimation(ASStates.Despawn, path + "Idle", 18, 12);
+            AddAnimation(ASStates.Barrage, path + "Idle", 18, 12, true);
             // Always has been *cocks gun*
 
-            StandState spawnState = new StandState(ASStates.Spawn.ToString(), spawn);
+            StandState spawnState = AddState(ASStates.Spawn.ToString(), 90);
             spawnState.OnStateBegin += SpawnState_OnStateBegin;
             spawnState.OnStateUpdate += SpawnState_OnStateUpdate;
             spawnState.OnStateEnd += SpawnState_OnStateEnd;
-            spawnState.Duration = 90;
 
-            StandState idleState = new StandState(ASStates.Idle.ToString(), idle);
+            StandState idleState = AddState(ASStates.Idle.ToString());
             idleState.OnStateUpdate += IdleState_OnStateUpdate;
 
-            StandState despawnState = new StandState(ASStates.Despawn.ToString(), despawn);
+            StandState despawnState = AddState(ASStates.Despawn.ToString(), 90);
             despawnState.OnStateUpdate += DespawnState_OnStateUpdate;
             despawnState.OnStateEnd += DespawnState_OnStateEnd;
             despawnState.OnStateBegin += DespawnState_OnStateBegin;
 
-            despawnState.Duration = 90;
-
-            StandState barrageState = new StandState(ASStates.Barrage.ToString(), barrage);
+            StandState barrageState = AddState(ASStates.Barrage.ToString(), 12);
             barrageState.OnStateUpdate += IdleState_OnStateUpdate;
             barrageState.OnStateUpdate += BarrageState_OnStateUpdate;
             barrageState.OnStateEnd += BarrageState_OnStateEnd;
-            barrageState.Duration = 12;
 
-            StandState returnState = new StandState(ASStates.Return.ToString(), returnAnimation);
+            StandState returnState = AddState(ASStates.Return.ToString());
             returnState.OnStateUpdate += ReturnState_OnStateUpdate;
             returnState.OnStateBegin += DespawnState_OnStateBegin;
-
-            AddStates(spawnState, idleState, despawnState, barrageState, returnState);
 
             SetState(ASStates.Spawn.ToString());
         }
@@ -111,7 +105,7 @@ namespace TBAR.Projectiles.Stands.Italy.Aerosmith
 
         private void BarrageState_OnStateUpdate(StandState sender)
         {
-            if (CurrentState.Duration % 4 == 0)
+            if (CurrentState.TimeLeft % 4 == 0)
             {
                 Vector2 position = projectile.Center;
                 Vector2 velocity = new Vector2(16, 0).RotatedBy(Angle);
@@ -291,10 +285,10 @@ namespace TBAR.Projectiles.Stands.Italy.Aerosmith
 
         public override void PostDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            SpriteAnimation animation = CurrentState.AssignedAnimations[CurrentState.CurrentAnimationID];
+            Animation2D animation = Animations[CurrentAnimation];
 
             float angleDerp = SpriteFX == SpriteEffects.FlipHorizontally ? 0f : MathHelper.Pi;
-            spriteBatch.Draw(animation.SpriteSheet, projectile.Center - Main.screenPosition, animation.FrameRect, Color.White * Opacity, Angle + angleDerp, animation.DrawOrigin, Scale, SpriteFX, 1f);
+            spriteBatch.Draw(animation.SpriteSheet, projectile.Center - Main.screenPosition, animation.FrameRect, Color.White * Opacity, Angle + angleDerp, animation.FrameCenter, Scale, SpriteFX, 1f);
         }
 
         public Vector2 FlightVector { get; set; }

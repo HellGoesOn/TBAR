@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
+﻿using System.Collections.Generic;
+using TBAR.Enums;
 using TBAR.Input;
 using TBAR.ScreenModifiers;
 using TBAR.Stands;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
@@ -16,6 +14,11 @@ namespace TBAR.Players
         public TBARPlayer()
         {
         }
+
+        internal int[] damageCaps;
+
+        public bool ShatteredTime { get; set; }
+
         /// <summary>
         /// Easier access to TBARPlayer
         /// </summary>
@@ -30,6 +33,7 @@ namespace TBAR.Players
 
         public override void Initialize()
         {
+            damageCaps = new int[] { 10, 10, 10, 10, 10 };
             BeamVisuals = new List<Visuals.BeamVisual>();
             InputBlockers = new List<InputBlocker>();
             CurrentComboInputs = new List<ComboInput>(10);
@@ -46,6 +50,8 @@ namespace TBAR.Players
         {
             ResetRepeatCount();
             UpdateArrowUseProgress();
+
+            ShatteredTime = false;
 
             if (StyleHitCounterResetTimer > 0)
                 StyleHitCounterResetTimer--;
@@ -136,7 +142,8 @@ namespace TBAR.Players
         {
             TagCompound tag = new TagCompound()
             {
-                {"StandName", SaveStand() }
+                {"StandName", SaveStand() },
+                {"DamageCaps", damageCaps }
             };
 
             return tag;
@@ -145,6 +152,11 @@ namespace TBAR.Players
         public override void Load(TagCompound tag)
         {
             LoadStand(tag);
+            var retardedFuckingArrayBullshit = tag.GetIntArray("DamageCaps");
+
+            if (retardedFuckingArrayBullshit.Length == 5)
+                for (int i = 0; i < 5; i++)
+                    damageCaps[i] = retardedFuckingArrayBullshit[i];
         }
 
         private string SaveStand()

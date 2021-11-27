@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using TBAR.Buffs.Negative;
 using TBAR.Components;
 using TBAR.Enums;
 using TBAR.Extensions;
@@ -49,23 +50,32 @@ namespace TBAR.Stands.Crusaders
             }
         }
 
-        public override SpriteAnimation AlbumEntryAnimation()
+        public override Animation2D AlbumEntryAnimation()
         {
-            return new SpriteAnimation("Projectiles/Stands/Crusaders/StarPlatinum/SPIdle", 14, 15, true);
+            return new Animation2D("Projectiles/Stands/Crusaders/StarPlatinum/SPIdle", 14, 15, true);
         }
 
         private void StopTime(Player player)
         {
+            TBARPlayer p = TBARPlayer.Get(player);
+
+            if (p.ShatteredTime)
+                return;
+
+            player.AddBuff(ModContent.BuffType<ShatteredTime>(), Global.SecondsToTicks(12));
+
             bool isTimeStopped = TBAR.TimeStopManager.IsTimeStopped;
             string path = isTimeStopped ? "" : "Sounds/StarPlatinum/SP_TimeStopSignal";
 
-            TimeStopInstance ts = new TimeStopInstance(player, Global.SecondsToTicks(10), path) { EndSoundEffect = "Sounds/StarPlatinum/SP_TimeRestore" };
+            TimeStopInstance ts = new TimeStopInstance(player, Global.SecondsToTicks(4), path) { EndSoundEffect = "Sounds/StarPlatinum/SP_TimeRestore" };
 
             if (!isTimeStopped)
             {
                 Projectile.NewProjectile(player.Center, Vector2.Zero, ModContent.ProjectileType<TimeStopVFX>(), 0, 0, player.whoAmI);
                 TBAR.Instance.PlayVoiceLine("Sounds/StarPlatinum/SP_TimeStopCall");
             }
+            else
+                p.RepeatCount--;
 
             TBAR.TimeStopManager.TryStopTime(ts);
         }

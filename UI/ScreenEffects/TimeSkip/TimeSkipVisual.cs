@@ -26,7 +26,7 @@ namespace TBAR.UI.ScreenEffects.TimeSkip
         public TimeSkipVisual()
         {
             Animation =
-                new SpriteAnimation("Textures/TimeSkipVFX", 22, 30)
+                new Animation2D("Textures/TimeSkipVFX", 22, 30)
                 { Active = true };
         }
 
@@ -47,11 +47,11 @@ namespace TBAR.UI.ScreenEffects.TimeSkip
         {
             if (Animation.Active)
             {
-                Animation.Update();
-                Animation.UpdateEvent();
+                Animation.UpdateAnimation();
+                Animation.RunPlayEvent();
             }
         }
 
-        public SpriteAnimation Animation { get; }
+        public Animation2D Animation { get; }
     }
 }

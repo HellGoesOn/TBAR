@@ -3,6 +3,7 @@ using TBAR.Components;
 using TBAR.Enums;
 using TBAR.Extensions;
 using TBAR.Input;
+using TBAR.NPCs;
 using TBAR.Players;
 using TBAR.Players.Visuals;
 using TBAR.Projectiles.Stands;
@@ -11,6 +12,7 @@ using TBAR.Projectiles.Visual;
 using TBAR.TimeSkip;
 using TBAR.UI.ScreenEffects.TimeSkip;
 using Terraria;
+using Terraria.ModLoader;
 
 namespace TBAR.Stands.Italy
 {
@@ -20,9 +22,9 @@ namespace TBAR.Stands.Italy
         {
         }
 
-        public override SpriteAnimation AlbumEntryAnimation()
+        public override Animation2D AlbumEntryAnimation()
         {
-            return new SpriteAnimation("Projectiles/Stands/Italy/KingCrimson/KCIdle", 5, 5, true);
+            return new Animation2D("Projectiles/Stands/Italy/KingCrimson/KCIdle", 5, 5, true);
         }
 
         public override void InitializeCombos()
@@ -84,14 +86,16 @@ namespace TBAR.Stands.Italy
 
         private void TimeErase_OnActivate(Player player)
         {
+            NPC.NewNPC((int)player.Center.X, (int)player.Center.Y, ModContent.NPCType<PlayerBaitNPC>());
+            Projectile.NewProjectile(player.Center, Vector2.Zero, ModContent.ProjectileType<PlayerBaitProjectile>(), 0, 0, player.whoAmI);
             TBARMusic.AddTrackToQueue("Sounds/Music/KingCrimsonMusic", Global.SecondsToTicks(10));
             FakeTilesProjectile.Create(player.Center);
             TimeSkipVisual vs = TimeSkipVisual.Start();
             vs.Animation.AnimationPlay += Animation_AnimationPlay;
-            TBAR.TimeSkipManager.AddEffect(new TimeSkipInstance(player, Global.SecondsToTicks(10)));
+            TBAR.TimeSkipManager.AddEffect(new TimeSkipInstance(player, Global.SecondsToTicks(6 )));
         }
 
-        private void Animation_AnimationPlay(SpriteAnimation sender)
+        private void Animation_AnimationPlay(Animation2D sender)
         {
             if (sender.CurrentFrame == sender.FrameCount / 3)
                 TBAR.Instance.PlaySound("Sounds/StandAbilityEffects/BigTimeSkip");

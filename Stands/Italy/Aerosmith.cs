@@ -11,10 +11,10 @@ namespace TBAR.Stands.Italy
         {
         }
 
-        public override SpriteAnimation AlbumEntryAnimation()
+        public override Animation2D AlbumEntryAnimation()
         {
             string path = "Projectiles/Stands/Italy/Aerosmith/";
-            return new SpriteAnimation(path + "Idle", 18, 12, true);
+            return new Animation2D(path + "Idle", 18, 12, true);
         }
 
         public override void InitializeCombos()

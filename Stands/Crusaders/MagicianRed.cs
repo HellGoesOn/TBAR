@@ -15,9 +15,9 @@ namespace TBAR.Stands.Crusaders
         {
         }
 
-        public override SpriteAnimation AlbumEntryAnimation()
+        public override Animation2D AlbumEntryAnimation()
         {
-            return new SpriteAnimation("Projectiles/Stands/Crusaders/Chicken/Idle", 7, 15, true);
+            return new Animation2D("Projectiles/Stands/Crusaders/Chicken/Idle", 7, 15, true);
         }
 
         public override void InitializeCombos()

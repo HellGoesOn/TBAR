@@ -81,15 +81,13 @@ namespace TBAR.Projectiles.Stands
             HitNPCs.RemoveAll(x => x.IsTimed && (x.TimeOfHit + AttackSpeed) < ElapsedTime);
 
             if (CanPunch && Owner.controlUseItem && Owner.whoAmI == Main.myPlayer)
-                SetState(PunchState);
+                SetState(PunchState, GetPunchVariation());
         }
 
         protected abstract string PunchState { get; }
 
         protected void BeginPunch(StandState sender)
         {
-            sender.CurrentAnimationID = PunchAnimationIDOffset();
-
             PunchStartPoint = Owner.Center;
 
             Owner.direction = MousePosition.X < Owner.Center.X ? -1 : 1;
@@ -119,16 +117,24 @@ namespace TBAR.Projectiles.Stands
             {
                 case ImmediateInput.LeftClick:
                     if(CanPunch)
-                        SetState(PunchState);
+                        SetState(PunchState, GetPunchVariation());
                     break;
                 default:
                     return;
             }
         }
 
-        protected virtual int PunchAnimationIDOffset()
+        protected virtual string GetPunchVariation()
         {
-            return 0;
+            string dir = "Mid";
+
+            if (MousePosition.Y > Owner.Center.Y + 120)
+                dir = "Down";
+
+            if (MousePosition.Y < Owner.Center.Y - 120)
+                dir = "Up";
+
+            return "Punch" + dir + Main.rand.Next(1, 3);
         }
 
         protected void ClearOnHitEffects()

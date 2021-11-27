@@ -2,5 +2,5 @@
 
 namespace TBAR.Components
 {
-    public delegate void AnimationEventHandler(SpriteAnimation sender);
+    public delegate void AnimationEventHandler(Animation2D sender);
 }

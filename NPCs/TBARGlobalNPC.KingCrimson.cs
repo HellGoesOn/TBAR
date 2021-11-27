@@ -6,6 +6,7 @@ using TBAR.TimeSkip;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.Utilities;
 
 namespace TBAR.NPCs
 {
@@ -25,6 +26,7 @@ namespace TBAR.NPCs
 
             if (IsTimeSkipped)
             {
+
                 elapsedTime++;
                 if (elapsedTime == 6)
                 {

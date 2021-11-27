@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using TBAR.Enums;
+using TBAR.Extensions;
 using TBAR.Input;
 using TBAR.UI;
 using Terraria;
@@ -25,6 +27,11 @@ namespace TBAR.Players
             {
                 if(!PlayerStand.IsActive)
                     PlayerStand.TryActivate(player);
+
+                if (player.HeldItem.GetDamageData(player).DPS > damageCaps[(int)PlayerStand.StandDamageType])
+                {
+                    damageCaps[(int)PlayerStand.StandDamageType] = player.HeldItem.GetDamageData(player).DPS;
+                }
             }
 
             if(TBARInputs.OpenStandAlbum.JustPressed)

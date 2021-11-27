@@ -21,7 +21,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
             projectile.tileCollide = false;
             fade = 0.8f;
 
-            anim = new SpriteAnimation("Projectiles/Stands/Crusaders/Chicken/Falcon", 9, 12);
+            anim = new Animation2D("Projectiles/Stands/Crusaders/Chicken/Falcon", 9, 12);
         }
 
         public override void AI()
@@ -33,7 +33,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
                 Main.dust[dust].noGravity = true;
             }*/
 
-            anim.Update();
+            anim.UpdateAnimation();
 
             if (anim.CurrentFrame == anim.FrameCount - 1)
             {
@@ -95,11 +95,6 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
 
             TBARPlayer.Get(Main.player[projectile.owner]).AddStylePoints(20);
 
-            if (!target.boss)
-            {
-                target.velocity = projectile.velocity * 1.5f;
-            }
-
             target.AddBuff(BuffID.OnFire, 180);
         }
 
@@ -114,7 +109,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
             if (projectile.timeLeft > 110)
                 rect = anim.FrameRect;
 
-            spriteBatch.Draw(anim.SpriteSheet, projectile.Center - Main.screenPosition, rect, Color.White * fade, projectile.velocity.ToRotation() + MathHelper.Pi, anim.DrawOrigin, 1f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(anim.SpriteSheet, projectile.Center - Main.screenPosition, rect, Color.White * fade, projectile.velocity.ToRotation() + MathHelper.Pi, anim.FrameCenter, 1f, SpriteEffects.None, 0f);
         }
 
         private bool spedUp;
@@ -124,6 +119,6 @@ namespace TBAR.Projectiles.Stands.Crusaders.Chicken
         private float fade;
         private bool reverse;
 
-        private SpriteAnimation anim;
+        private Animation2D anim;
     }
 }

@@ -23,9 +23,17 @@ namespace TBAR.Stands
 
         public override void TryActivate(Player player)
         {
-            int standIndex = Projectile.NewProjectile(player.Center, Vector2.Zero, ModContent.ProjectileType<T>(), 0, 1f, player.whoAmI);
-            ActiveInstance = (T)Main.projectile[standIndex].modProjectile;
-            IsActive = true;
+            try
+            {
+                int standIndex = Projectile.NewProjectile(player.Center, Vector2.Zero, ModContent.ProjectileType<T>(), 0, 1f, player.whoAmI);
+                ActiveInstance = (T)Main.projectile[standIndex].modProjectile;
+                IsActive = true;
+            }
+            catch
+            {
+                ActiveInstance = null;
+                IsActive = false;
+            }
         }
 
         public override void Update()
