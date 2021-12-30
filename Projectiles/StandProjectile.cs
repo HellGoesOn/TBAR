@@ -207,7 +207,7 @@ namespace TBAR.Projectiles.Stands
             CurrentState.BeginState();
         }
 
-        public void SetState(Enum state, string animationkey = "") => SetState(state.ToString(), animationkey);
+        public void SetState(Enum state, string animationkey = "None") => SetState(state.ToString(), animationkey);
 
         protected StandState AddState(string key, int duration = 0)
         {

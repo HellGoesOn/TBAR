@@ -1,11 +1,9 @@
-﻿using Microsoft.Xna.Framework;
-using TBAR.Components;
+﻿using TBAR.Components;
 using TBAR.Enums;
 using TBAR.Input;
 using TBAR.Players;
 using TBAR.Projectiles.Stands.Crusaders.Chicken;
 using Terraria;
-using Terraria.ModLoader;
 
 namespace TBAR.Stands.Crusaders
 {
