@@ -20,6 +20,9 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
 
         private int attackDir;
 
+        private float moveItMoveIt;
+
+        private Vector2 twentyMeterSplashSpawnPoint;
 
         public HierophantProjectile() : base("Hierophant Green")
         {
@@ -34,7 +37,8 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
             string path = "Projectiles/Stands/Crusaders/Hierophant/";
 
             AddAnimation(HieroAI.Summon, path + "Summon", 15);
-            AddAnimation(HieroAI.Idle, path + "Idle", 6, 10, true);
+            //AddAnimation(HieroAI.Idle, path + "Idle", 6, 10, true);
+            AddAnimation(HieroAI.Idle, path + "Test2", 1, 10, true);
             AddAnimation(HieroAI.NormalAttack, path + "NormalAttack", 9, 20);
             AddAnimation(HieroAI.EmeraldSplash, path + "EmeraldSplash", 6, 20, true);
 
@@ -63,7 +67,40 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
             hentai.OnStateEnd += Hentai_OnStateEnd;
             hentai.OnStateUpdate += Hentai_OnStateUpdate;
 
+            var twentyMeterSplash = AddState(HieroAI.TwentyMeterSplash, 40);
+            twentyMeterSplash.OnStateEnd += TwentyMeterSplash_OnStateEnd;
+            twentyMeterSplash.OnStateUpdate += TwentyMeterSplash_OnStateUpdate;
+            twentyMeterSplash.OnStateBegin += TwentyMeterSplash_OnStateBegin; ;
+
             SetState(HieroAI.Summon.ToString());
+        }
+
+        private void TwentyMeterSplash_OnStateBegin(StandState sender)
+        {
+            twentyMeterSplashSpawnPoint = MousePosition;
+        }
+
+        private void TwentyMeterSplash_OnStateUpdate(StandState sender)
+        {
+            var type = ModContent.ProjectileType<Tripwire>();
+
+            if (sender.TimeLeft % 4 == 0)
+            {
+                var shotNum = sender.TimeLeft % 4;
+
+                var x = 640;
+                var y = 0;
+                var xx = Main.rand.Next(0, 200);
+                var yy = 0;
+                var spawnOffset = twentyMeterSplashSpawnPoint - new Vector2(x, y).RotatedByRandom(MathHelper.TwoPi);
+                var velocity = spawnOffset.DirectTo(twentyMeterSplashSpawnPoint + new Vector2(xx, yy).RotatedByRandom(MathHelper.TwoPi));
+                Projectile.NewProjectile(spawnOffset, velocity, type, EmeraldDamage, 0f, projectile.owner);
+            }
+        }
+
+        private void TwentyMeterSplash_OnStateEnd(StandState sender)
+        {
+            GoIdle();
         }
 
         private void Hentai_OnStateUpdate(StandState sender)
@@ -213,6 +250,16 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
                 SetState(HieroAI.HentaiAttack, GetPunchVariation());
         }
 
+        public override void PostAI()
+        {
+            base.PostAI();
+
+            if (moveItMoveIt <= 1f)
+                moveItMoveIt += 0.0075f;
+            else
+                moveItMoveIt = -1f;
+        }
+
         private void Summon_OnStateEnd(StandState sender)
         {
             GoIdle();
@@ -240,9 +287,35 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
                 case ImmediateInput.Action1:
                     SetState(HieroAI.EmeraldSplash);
                     break;
+                case ImmediateInput.Action2:
+                    SetState(HieroAI.TwentyMeterSplash);
+                    break;
                 default:
                     return;
             }
+        }
+
+        public override void PostDraw(SpriteBatch spriteBatch, Color lightColor)
+        {
+            Scale = Vector2.One;
+            // time get shwifty in here
+            var shader = TBAR.Instance.GetEffect("Effects/HieroShader");
+
+            var anim = Animations[CurrentAnimation];
+            
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone, null, Main.GameViewMatrix.ZoomMatrix);
+
+            shader.GraphicsDevice.Textures[1] = Textures.HieroMask;
+            shader.Parameters["frame"].SetValue(anim.FrameSize + new Vector2(0, anim.FrameSize.Y * anim.CurrentFrame));
+            shader.Parameters["offset"].SetValue(new Vector2(moveItMoveIt));
+            shader.Parameters["size"].SetValue(new Vector2(2000));
+
+            shader.CurrentTechnique.Passes[0].Apply();
+
+            DrawDefault(spriteBatch, projectile.Center, Color.White, SpriteFX); 
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
         }
 
         private int EmeraldDamage => 12 + (int)(BaseDPS * 1.75f);
@@ -255,6 +328,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
         Despawn,
         NormalAttack,
         EmeraldSplash,
-        HentaiAttack
+        HentaiAttack,
+        TwentyMeterSplash
     }
 }

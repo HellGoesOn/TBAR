@@ -14,6 +14,9 @@ namespace TBAR
         [Loadable("TBAR/Textures/DMGLogo")]
         public static Texture2D DamageTypeIcon { get; internal set; }
 
+        [Loadable("TBAR/Textures/HieroMask")]
+        public static Texture2D HieroMask { get; internal set; }
+
         [Loadable("TBAR/Textures/Range")]
         public static Texture2D RangeIcon { get; internal set; }
 

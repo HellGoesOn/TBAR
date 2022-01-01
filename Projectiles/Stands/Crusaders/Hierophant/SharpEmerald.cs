@@ -147,10 +147,20 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
             var emeraldColor = new Color(0.31f, 0.78f, 0.47f);
 
             if (projectile.timeLeft <= 179 && projectile.active)
-            DrawHelper.Line(spriteBatch, startPos, projectile.Center, thickness, emeraldColor * 0.5f);
+                DrawHelper.Line(spriteBatch, startPos, projectile.Center, thickness, emeraldColor * 0.35f);
 
-            if(!shouldDie)
+            if (!shouldDie)
+            {
+                const int trailCount = 4;
+                for (int i = 0; i < trailCount; i++)
+                {
+                    var dogshit = (trailCount - (i + 1));
+                    var off = projectile.velocity * (0.4f * dogshit);
+                    var opacity = 0.75f - (0.15f * dogshit);
+                    spriteBatch.Draw(tex, projectile.Center - off - Main.screenPosition, null, Color.White * opacity, rotation, new Vector2(10, 14), 0.5f, SpriteEffects.None, 1f);
+                }
                 spriteBatch.Draw(tex, projectile.Center - Main.screenPosition, null, Color.White, rotation, new Vector2(10, 14), 0.5f, SpriteEffects.None, 1f);
+            }
         }
     }
 }
