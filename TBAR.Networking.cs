@@ -60,6 +60,12 @@ namespace TBAR
                         plr.SendStandChangedPacket(playerNumber);
                     }
                     break;
+
+                case PacketType.RemoveTimeStopInstance:
+                    var timeStopIndex = reader.ReadInt32();
+
+                    TimeStopManager.RemoveEffectAt(timeStopIndex);
+                    break;
             }
         }
     }

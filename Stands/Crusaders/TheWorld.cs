@@ -100,12 +100,12 @@ namespace TBAR.Stands.Crusaders
             if (p.ShatteredTime)
                 return;
 
-            player.AddBuff(ModContent.BuffType<ShatteredTime>(), Global.SecondsToTicks(12));
+            player.AddBuff(ModContent.BuffType<ShatteredTime>(), Global.SecondsToTicks(30));
 
             bool isTimeStopped = TBAR.TimeStopManager.IsTimeStopped;
             string path = isTimeStopped ? "" : "Sounds/TheWorld/TheWorld_ZaWarudoSFX";
 
-            TimeStopInstance ts = new TimeStopInstance(player, Global.SecondsToTicks(4), path) { EndSoundEffect = "Sounds/TheWorld/TheWorld_ZaWarudoReleaseSFX" };
+            TimeStopInstance ts = new TimeStopInstance(player, Global.SecondsToTicks(10), path) { EndSoundEffect = "Sounds/TheWorld/TheWorld_ZaWarudoReleaseSFX" };
 
             if (!isTimeStopped)
             {

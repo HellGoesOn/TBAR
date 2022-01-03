@@ -37,9 +37,9 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
             string path = "Projectiles/Stands/Crusaders/Hierophant/";
 
             AddAnimation(HieroAI.Summon, path + "Summon", 15);
-            //AddAnimation(HieroAI.Idle, path + "Idle", 6, 10, true);
-            AddAnimation(HieroAI.Idle, path + "Test2", 1, 10, true);
-            AddAnimation(HieroAI.NormalAttack, path + "NormalAttack", 9, 20);
+            AddAnimation(HieroAI.Idle, path + "Idle2", 10, 10, true);
+            AddAnimation(HieroAI.NormalAttack, path + "Test2", 1, 2);
+            AddAnimation("MonkeyFlip", path + "MonkeyFlip", 9, 12);
             AddAnimation(HieroAI.EmeraldSplash, path + "EmeraldSplash", 6, 20, true);
 
             var summon = AddState(HieroAI.Summon, 80);
@@ -62,7 +62,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
             normalAttack.OnStateUpdate += NormalAttack_OnStateUpdate;
             normalAttack.OnStateEnd += NormalAttack_OnStateEnd;
 
-            var hentai = AddState(HieroAI.HentaiAttack, 25);
+            var hentai = AddState(HieroAI.HentaiAttack, 45);
             hentai.OnStateBegin += Hentai_OnStateBegin;
             hentai.OnStateEnd += Hentai_OnStateEnd;
             hentai.OnStateUpdate += Hentai_OnStateUpdate;
@@ -86,8 +86,6 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
 
             if (sender.TimeLeft % 4 == 0)
             {
-                var shotNum = sender.TimeLeft % 4;
-
                 var x = 640;
                 var y = 0;
                 var xx = Main.rand.Next(0, 200);
@@ -109,7 +107,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
             projectile.Center = Vector2.SmoothStep(projectile.Center, Owner.Center + Owner.Center.DirectTo(MousePosition, Range * 32), 0.35f);
 
             Owner.heldProj = projectile.whoAmI;
-            if (Animations[CurrentAnimation].CurrentFrame == 3 && !hasShot)
+            if (Animations[CurrentAnimation].CurrentFrame == 0 && !hasShot)
             {
                 hasShot = true;
                 var type = ModContent.ProjectileType<MILFHunterTendril>();
@@ -121,7 +119,8 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
 
                 if (Main.projectile[proj].modProjectile is MILFHunterTendril tendril)
                 {
-                    tendril.flipped = Main.rand.NextBool();
+                    var flip = true;
+                    tendril.flipped = Owner.direction == -1? !flip : flip;
                 }
             }
         }
@@ -138,6 +137,8 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
 
             Owner.direction = attackDir;
             SpriteFX = Owner.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+
+            CurrentAnimation = "MonkeyFlip";
         }
 
         private void EmeraldSplash_OnStateBegin(StandState sender)
@@ -299,17 +300,25 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
         {
             Scale = Vector2.One;
             // time get shwifty in here
-            var shader = TBAR.Instance.GetEffect("Effects/HieroShader");
+            var shader = TBAR.Instance.GetEffect("Effects/HieroShader2");
 
             var anim = Animations[CurrentAnimation];
+
+            var frame = new Vector4(anim.FrameRect.X, anim.FrameRect.Y, anim.FrameRect.Width, anim.FrameRect.Height);
+
+            var imageSize = new Vector2(anim.SpriteSheet.Width, anim.SpriteSheet.Height);
+            var imageSize2 = new Vector2(86);
+
             
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone, null, Main.GameViewMatrix.ZoomMatrix);
 
             shader.GraphicsDevice.Textures[1] = Textures.HieroMask;
-            shader.Parameters["frame"].SetValue(anim.FrameSize + new Vector2(0, anim.FrameSize.Y * anim.CurrentFrame));
+            shader.Parameters["frame"].SetValue(frame);
             shader.Parameters["offset"].SetValue(new Vector2(moveItMoveIt));
-            shader.Parameters["size"].SetValue(new Vector2(2000));
+            shader.Parameters["imageSize"].SetValue(imageSize);
+            shader.Parameters["imageSize2"].SetValue(imageSize2 / 4);
+            shader.Parameters["pixelation"].SetValue(10);
 
             shader.CurrentTechnique.Passes[0].Apply();
 

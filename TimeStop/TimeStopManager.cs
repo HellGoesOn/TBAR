@@ -7,6 +7,7 @@ using TBAR.NPCs;
 using Terraria;
 using Terraria.ID;
 using Terraria.Enums;
+using Terraria.ModLoader;
 
 namespace TBAR.TimeStop
 {
@@ -93,7 +94,16 @@ namespace TBAR.TimeStop
                         TBAR.Instance.PlaySound(effects[0].EndSoundEffect);
                     }
 
-                    RemoveEffectAt(i);
+                    if(Main.dedServ)
+                    {
+                        ModPacket packet = TBAR.Instance.GetPacket();
+                        packet.Write((byte)PacketType.RemoveTimeStopInstance);
+                        packet.Write((int)i);
+                        packet.Send();
+                    }
+
+                    if(Main.netMode != NetmodeID.MultiplayerClient)
+                        RemoveEffectAt(i);
                 }
             }
 

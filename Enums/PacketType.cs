@@ -4,6 +4,7 @@
     {
         SyncStand,
         StandChanged,
-        UsedCombo
+        UsedCombo,
+        RemoveTimeStopInstance
     }
 }

@@ -52,6 +52,12 @@ namespace TBAR
 
         [Loadable("TBAR/Textures/Forgor")]
         public static Texture2D Forgor { get; internal set; }
+        
+        [Loadable("TBAR/Projectiles/Stands/Crusaders/Hierophant/WhipTail")]
+        public static Texture2D HierophantWhip { get; internal set; }
+
+        [Loadable("TBAR/Projectiles/Stands/Crusaders/Hierophant/WhipEnd")]
+        public static Texture2D HierophantWhipEnd { get; internal set; }
 
         public static string EmptinessPath => "TBAR/Textures/EmptyPixel";
     }

@@ -107,17 +107,20 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
         {
             var texture = Main.projectileTexture[projectile.type];
 
-            var shader = TBAR.Instance.GetEffect("Effects/HieroShader");
+            var shader = TBAR.Instance.GetEffect("Effects/HieroShader2");
 
+            var imageSize2 = new Vector2(86);
             var rot = RotationToExtendPoint - MathHelper.PiOver2;
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.Default, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
 
             shader.GraphicsDevice.Textures[1] = Textures.HieroMask;
-            shader.Parameters["frame"].SetValue(new Vector2(16, 28));
+            shader.Parameters["frame"].SetValue(new Vector4(0, 0, 16, 28));
             shader.Parameters["offset"].SetValue(new Vector2(0, moveItMoveIt));
-            shader.Parameters["size"].SetValue(new Vector2(250));
+            shader.Parameters["imageSize"].SetValue(new Vector2(16, 28));
+            shader.Parameters["imageSize2"].SetValue(imageSize2 / 4);
+            shader.Parameters["pixelation"].SetValue(10);
 
             shader.CurrentTechnique.Passes[0].Apply();
 

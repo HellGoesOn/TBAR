@@ -62,12 +62,12 @@ namespace TBAR.Stands.Crusaders
             if (p.ShatteredTime)
                 return;
 
-            player.AddBuff(ModContent.BuffType<ShatteredTime>(), Global.SecondsToTicks(12));
+            player.AddBuff(ModContent.BuffType<ShatteredTime>(), Global.SecondsToTicks(30));
 
             bool isTimeStopped = TBAR.TimeStopManager.IsTimeStopped;
             string path = isTimeStopped ? "" : "Sounds/StarPlatinum/SP_TimeStopSignal";
 
-            TimeStopInstance ts = new TimeStopInstance(player, Global.SecondsToTicks(4), path) { EndSoundEffect = "Sounds/StarPlatinum/SP_TimeRestore" };
+            TimeStopInstance ts = new TimeStopInstance(player, Global.SecondsToTicks(10), path) { EndSoundEffect = "Sounds/StarPlatinum/SP_TimeRestore" };
 
             if (!isTimeStopped)
             {

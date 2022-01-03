@@ -28,18 +28,21 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
 
         private int deadAss;
 
+        private int previousSegmentIndex;
+
         public override void SetDefaults()
         {
             projectile.timeLeft = 40;
 
-            projectile.width = 20;
-            projectile.height = 20;
+            projectile.width = 16;
+            projectile.height = 16;
             projectile.friendly = true;
 
             projectile.tileCollide = false;
 
             projectile.penetrate = -1;
             childeIndex = -1;
+            previousSegmentIndex = -1;
             deadAss = 0;
         }
 
@@ -47,6 +50,13 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
         public override void AI()
         {
             projectile.netUpdate = true;
+
+            if (projectile.timeLeft <= 10)
+                deadAss--;
+            else if (projectile.timeLeft >= 30)
+                deadAss++;
+
+            var magicTrick = (float)(deadAss / 10.0f);
 
             if (!hasExtended)
             {
@@ -71,17 +81,8 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
                 if (childeIndex != -1 && Childe.modProjectile is MILFHunterTendril tendril && tendril != null)
                 {
                     tendril.flipped = flipped;
+                    tendril.previousSegmentIndex = projectile.whoAmI;
                 }
-            }
-
-            if (Childe != null)
-            {
-                drawAngle = projectile.Center.DirectTo(Childe.Center).ToRotation();
-            }
-
-            if (Childe == null && Parent != null)
-            {
-                drawAngle = projectile.Center.DirectTo(Parent.Center).ToRotation();
             }
 
             angle = MathHelper.Lerp(angle, destinationAngle, turnRate * ((TendrilLength + 1) - projectile.ai[0]));
@@ -92,16 +93,9 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
             if (projectile.timeLeft <= 10 || projectile.timeLeft >= 30)
                 turnRate = 0.0008f;
             else
-                turnRate = 0.009f;
+                turnRate = 0.012f;
 
-            if (projectile.timeLeft <= 10)
-                deadAss--;
-            else if(projectile.timeLeft >= 30)
-                deadAss++;
-
-            var magicTrick = (float)(deadAss / 10.0f);
-
-            var offset = new Vector2((12 * ((TendrilLength + 1) - projectile.ai[0])) * magicTrick, 0).RotatedBy(angle);
+            var offset = new Vector2(16, 0).RotatedBy(angle) + new Vector2((12 * ((TendrilLength + 1) - projectile.ai[0])) * magicTrick, 0).RotatedBy(angle);
 
             if (Parent != null)
                 projectile.Center = Parent.Center + offset;
@@ -124,13 +118,44 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
 
         public override void PostDraw(SpriteBatch spriteBatch, Color lightColor)
         {
-            var tex = Main.projectileTexture[ModContent.ProjectileType<SharpEmerald>()];
+            var tex = Textures.HierophantWhip;
 
-            float angleOff = projectile.ai[0] > 0 ? MathHelper.PiOver2 : MathHelper.Pi + MathHelper.PiOver2;
+            if (childeIndex != -1)
+            {
+                drawAngle = projectile.Center.DirectTo(Childe.Center).ToRotation();
+            }
+            else if(previousSegmentIndex != -1)
+            {
+                drawAngle = projectile.Center.DirectTo(PreviousSegment.Center).ToRotation();
+            }
 
-            float rotation = drawAngle + angleOff;
+            float rotation = drawAngle + MathHelper.PiOver2;
 
-            spriteBatch.Draw(tex, projectile.Center - Main.screenPosition, null, Color.White, rotation, new Vector2(10, 14), 0.5f, SpriteEffects.None, 1f);
+            if (projectile.ai[0] == 0)
+            {
+                rotation += MathHelper.TwoPi;
+                tex = Textures.HierophantWhipEnd;
+            }
+
+            var shader = TBAR.Instance.GetEffect("Effects/HieroShader2");
+
+            var imageSize2 = new Vector2(86);
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullNone, null, Main.GameViewMatrix.ZoomMatrix);
+
+            shader.GraphicsDevice.Textures[1] = Textures.HieroMask;
+            shader.Parameters["frame"].SetValue(new Vector4(0, 0, 5, 28));
+            shader.Parameters["offset"].SetValue(new Vector2(0, 0));
+            shader.Parameters["imageSize"].SetValue(new Vector2(5, 28));
+            shader.Parameters["imageSize2"].SetValue(imageSize2 / 5);
+            shader.Parameters["pixelation"].SetValue(100);
+
+            shader.CurrentTechnique.Passes[0].Apply();
+
+            spriteBatch.Draw(tex, projectile.Center - Main.screenPosition, null, Color.White, rotation, new Vector2(2.5f, 14f), 1f, SpriteEffects.None, 1f);
+
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
         }
 
         public override string Texture => Textures.EmptinessPath;
@@ -153,5 +178,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
                 return Main.projectile[childeIndex];
             }
         }
+
+        private Projectile PreviousSegment => Main.projectile[previousSegmentIndex];
     }
 }
