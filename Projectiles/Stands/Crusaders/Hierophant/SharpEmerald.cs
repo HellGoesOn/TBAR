@@ -54,7 +54,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
             {
                 var momentum = Main.rand.Next(15, 35) * 0.01f;
                 var pos = projectile.position + off;
-                int dust = Dust.NewDust(pos, projectile.width, projectile.height, 89, 0, -3);
+                int dust = Dust.NewDust(pos, projectile.width, projectile.height, DustID.EmeraldBolt, 0, -3);
                 Main.dust[dust].velocity = (projectile.velocity * momentum).RotatedByRandom(0.7f);
                 Main.dust[dust].noGravity = true;
                 Main.dust[dust].scale = 2.25f;

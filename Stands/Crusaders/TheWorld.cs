@@ -82,9 +82,9 @@ namespace TBAR.Stands.Crusaders
         {
             TheWorldProjectile tw = ActiveInstance;
 
-            if (tw?.State == "Idle" || tw?.State == "Punch" || tw?.State == TWStates.KnifeThrow.ToString())
+            if (tw?.State == "Idle" || tw?.State == "Punch" || tw?.State == TheWorldAI.KnifeThrow.ToString())
             {
-                tw?.SetState(TWStates.Barrage.ToString());
+                tw?.SetState(TheWorldAI.Barrage.ToString());
 
                 string path = "Projectiles/Stands/Crusaders/TheWorld/";
                 Projectile projectile = tw.projectile;

@@ -20,20 +20,33 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
 
         private Vector2 extendPoint;
 
+        private float opacity;
+        private bool opacityReverse;
+
         private float moveItMoveIt;
 
         private bool hasSetExtendPoint;
 
         public override void SetDefaults()
         {
-            projectile.timeLeft = 15 * 60;
+            opacity = 1.4f;
+            opacityReverse = false;
+            projectile.timeLeft = 20 * 60;
             projectile.width = projectile.height = 16;
             projectile.tileCollide = false;
         }
 
         public override void AI()
         {
-            if(!hasSetExtendPoint)
+			if(opacity > 1f)
+				opacity -= 0.01f;
+			
+            if (!opacityReverse && ((opacity -= 0.0025f) < 0.08f))
+                opacityReverse = true;
+            else if (opacityReverse && (opacity += 0.0025f) > 0.16f)
+                opacityReverse = false;
+
+            if (!hasSetExtendPoint)
             {
                 extendPoint = projectile.Center + projectile.velocity.SafeNormalize(-Vector2.UnitY) * maxLength;
                 hasSetExtendPoint = true;
@@ -75,12 +88,12 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
             {
                 var pos = projectile.position - new Vector2(16, 0).RotatedBy(RotationToExtendPoint);
                 var pos2 = projectile.position + new Vector2(length - 8, 0).RotatedBy(RotationToExtendPoint);
-                int dust = Dust.NewDust(pos, projectile.width, projectile.height, 89, 0, -3);
+                int dust = Dust.NewDust(pos, projectile.width, projectile.height, DustID.EmeraldBolt, 0, -3);
                 Main.dust[dust].velocity *= 0f;
                 Main.dust[dust].noGravity = true;
                 Main.dust[dust].scale = 1.15f;
                 
-                dust = Dust.NewDust(pos2, projectile.width, projectile.height, 89, 0, -3);
+                dust = Dust.NewDust(pos2, projectile.width, projectile.height, DustID.EmeraldBolt, 0, -3);
                 Main.dust[dust].velocity *= 0f;
                 Main.dust[dust].noGravity = true;
                 Main.dust[dust].scale = 1.15f;
@@ -93,7 +106,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
             for (int i = 0; i < maxLength / 10; i++)
             {
                 var pos = projectile.Center + new Vector2(8 * i, 0).RotatedBy(RotationToExtendPoint);
-                int dust = Dust.NewDust(pos, projectile.width, projectile.height, 89, 0, -3);
+                int dust = Dust.NewDust(pos, projectile.width, projectile.height, DustID.EmeraldBolt, 0, -3);
                 Main.dust[dust].noGravity = true;
                 Main.dust[dust].scale = 1.25f;
             }
@@ -113,7 +126,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
             var rot = RotationToExtendPoint - MathHelper.PiOver2;
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.Default, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointWrap, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
 
             shader.GraphicsDevice.Textures[1] = Textures.HieroMask;
             shader.Parameters["frame"].SetValue(new Vector4(0, 0, 16, 28));
@@ -124,7 +137,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
 
             shader.CurrentTechnique.Passes[0].Apply();
 
-            spriteBatch.Draw(texture, projectile.Center- Main.screenPosition, new Rectangle(0, 0, 8, length), Color.White, rot, new Vector2(4, 14), 1f, SpriteEffects.None, 1f);
+            spriteBatch.Draw(texture, projectile.Center- Main.screenPosition, new Rectangle(0, 0, 8, length), Color.White * opacity, rot, new Vector2(4, 14), 1f, SpriteEffects.None, 1f);
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);

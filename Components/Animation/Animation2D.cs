@@ -107,7 +107,7 @@ namespace TBAR.Components
             Active = true;
         }
 
-        public bool AsReversed() => IsReversed = false;
+        public bool AsReversed() => IsReversed = true;
 
         /// <summary>
         /// Determines whether or not animation should be played backwards

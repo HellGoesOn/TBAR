@@ -13,11 +13,13 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld
 {
     public class TheWorldProjectile : PunchGhostProjectile
     {
+        private int stopSignHitCount;
+
         public TheWorldProjectile() : base("theworld")
         {
         }
 
-        protected override string PunchState => TWStates.Punch.ToString();
+        protected override string PunchState => TheWorldAI.Punch.ToString();
 
         public override void InitializeStates(Projectile projectile)
         {
@@ -27,12 +29,12 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld
 
             string path = "Projectiles/Stands/Crusaders/TheWorld/";
 
-            AddAnimation(TWStates.Summon, path + "TheWorldSpawn", 7, 15);
-            AddAnimation(TWStates.Despawn, path + "TheWorldSpawn", 7, 15).AsReversed();
-            AddAnimation(TWStates.Idle, path + "TheWorldIdle", 8, 10, true);
-            AddAnimation(TWStates.FlyUp, path + "TheWorldIdle", 8, 10, true);
-            AddAnimation(TWStates.SlamDunk, path + "TheWorldSlamDunk", 1, 5, true);
-            AddAnimation(TWStates.KnifeThrow, path + "TheWorldKnifeThrow", 14, 15);
+            AddAnimation(TheWorldAI.Summon, path + "Spawn", 22, 24);
+            AddAnimation(TheWorldAI.Despawn, path + "Spawn", 22, 24).AsReversed();
+            AddAnimation(TheWorldAI.Idle, path + "TheWorldIdle", 8, 10, true);
+            AddAnimation(TheWorldAI.FlyUp, path + "TheWorldIdle", 8, 10, true);
+            AddAnimation(TheWorldAI.SlamDunk, path + "TheWorldSlamDunk", 1, 5, true);
+            AddAnimation(TheWorldAI.KnifeThrow, path + "TheWorldKnifeThrow", 14, 15);
 
             AddAnimation("PunchMid1", path + "TheWorldPunchMiddle", 7, 20);
             AddAnimation("PunchMid2", path + "TheWorldPunchMiddleAlt", 8, 20);
@@ -42,43 +44,63 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld
 
             AddAnimation("PunchDown1", path + "TheWorldPunchDown", 7, 20);
             AddAnimation("PunchDown2", path + "TheWorldPunchDownAlt", 8, 20);
-            AddAnimation(TWStates.Barrage, path + "TheWorldRushMiddle", 4, 15, true);
+            AddAnimation(TheWorldAI.Barrage, path + "TheWorldRushMiddle", 4, 15, true);
 
-            StandState summonState = AddState(TWStates.Summon.ToString(), 40);
-            summonState.OnStateBegin += delegate { TBAR.Instance.PlayVoiceLine("Sounds/TheWorld/Call"); };
+            AddAnimation("Stop_Idle0", path + "Stop_Idle", 8, 15, true);
+            AddAnimation("Stop_Idle1", path + "Stop_IdleDamaged1", 8, 15, true);
+            AddAnimation("Stop_Idle2", path + "Stop_IdleDamaged2", 8, 15, true);
+
+            AddAnimation("Stop_Attack0", path + "Stop_Attack1", 9, 15);
+            AddAnimation("Stop_Attack1", path + "Stop_Attack2", 10, 15);
+            AddAnimation("Stop_Attack2", path + "Stop_Attack3", 11, 15);
+
+            AddAnimation(TheWorldAI.GrabSign, path + "Stop_GetGrounded", 20, 15);
+
+            StandState summonState = AddState(TheWorldAI.Summon.ToString(), 60);
+            summonState.OnStateBegin += SummonState_OnStateBegin;
             summonState.OnStateEnd += GoIdle;
             summonState.OnStateUpdate += SummonState_OnStateUpdate;
 
-            StandState idleState = AddState(TWStates.Idle.ToString());
+            StandState idleState = AddState(TheWorldAI.Idle.ToString());
             idleState.OnStateUpdate += Idle;
 
-            StandState despawnState = AddState(TWStates.Despawn.ToString(), 10);
+            StandState despawnState = AddState(TheWorldAI.Despawn.ToString(), 45);
+            despawnState.OnStateUpdate += DespawnState_OnStateUpdate;
             despawnState.OnStateEnd += delegate { projectile.Kill(); };
 
-            StandState punchState = AddState(TWStates.Punch, AttackSpeed + 5);
+            StandState punchState = AddState(TheWorldAI.Punch, AttackSpeed + 5);
 
-            punchState.OnStateBegin += BeginPunch;
+            punchState.OnStateBegin += PunchState_OnStateBegin;
             punchState.OnStateUpdate += UpdatePunch;
             punchState.OnStateEnd += EndPunch;
 
-            StandState flyUpState = AddState(TWStates.FlyUp, 90);
+            StandState signAttack = AddState(TheWorldAI.StopSignAttack, 60);
+            signAttack.OnStateBegin += SignAttack_OnStateBegin;
+            signAttack.OnStateUpdate += UpdatePunch;
+            signAttack.OnStateEnd += SignAttack_OnStateEnd;
+
+            StandState flyUpState = AddState(TheWorldAI.FlyUp, 90);
             flyUpState.OnStateUpdate += FlyUpState_OnStateUpdate;
             flyUpState.OnStateBegin += FlyUpState_OnStateBegin;
-            flyUpState.OnStateEnd += delegate { SetState(TWStates.SlamDunk.ToString()); };
+            flyUpState.OnStateEnd += delegate { SetState(TheWorldAI.SlamDunk.ToString()); };
 
-            StandState slamDunkState = AddState(TWStates.SlamDunk, 90);
+            StandState slamDunkState = AddState(TheWorldAI.SlamDunk, 90);
             slamDunkState.OnStateEnd += SlamDunkState_OnStateEnd;
             slamDunkState.OnStateBegin += SlamDunkState_OnStateBegin;
             slamDunkState.OnStateUpdate += SlamDunkState_OnStateUpdate;
 
-            StandState knifeThrowState = AddState(TWStates.KnifeThrow, 60);
+            StandState knifeThrowState = AddState(TheWorldAI.KnifeThrow, 60);
             knifeThrowState.OnStateBegin += KnifeThrowState_OnStateBegin;
             knifeThrowState.OnStateEnd += GoIdle;
             knifeThrowState.OnStateEnd += delegate { knifeThrowState.OnStateUpdate += ThrowingKnives; };
             knifeThrowState.OnStateUpdate += ThrowingKnives;
 
-            StandState barrageState = AddState(TWStates.Barrage.ToString(), 180);
+            StandState barrageState = AddState(TheWorldAI.Barrage.ToString(), 180);
             barrageState.OnStateBegin += BarrageState_OnStateBegin;
+
+            StandState signGrab = AddState(TheWorldAI.GrabSign, 90);
+            signGrab.OnStateEnd += SignGrab_OnStateEnd;
+            signGrab.OnStateUpdate += SignGrab_OnStateUpdate;
 
             barrageState.OnStateUpdate += delegate
             {
@@ -92,10 +114,66 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld
             {
                 PunchDirection = Vector2.Zero;
                 Barrage = null;
-                SetState(TWStates.Idle.ToString());
+                SetState(TheWorldAI.Idle.ToString());
             };
 
-            SetState(TWStates.Summon.ToString());
+            SetState(TheWorldAI.Summon.ToString());
+        }
+
+        private void PunchState_OnStateBegin(StandState sender)
+        {
+            AttackSpeed = 15;
+            BeginPunch(sender);
+        }
+
+        private void SignAttack_OnStateEnd(StandState sender)
+        {
+            EndPunch(sender);
+            stopSignHitCount--;
+
+            if (stopSignHitCount <= 0)
+            {
+                projectile.width = 60;
+                projectile.height = 60;
+            }
+
+            if(stopSignHitCount > 0)
+            CurrentAnimation = "Stop_Idle" + (3 - stopSignHitCount).ToString();
+        }
+
+        private void SignAttack_OnStateBegin(StandState sender)
+        {
+            AttackSpeed = 60;
+            BeginPunch(sender);
+            CurrentAnimation = "Stop_Attack" + (3 - stopSignHitCount).ToString();
+        }
+
+        private void DespawnState_OnStateUpdate(StandState sender)
+        {
+            if(Animations[CurrentAnimation].CurrentFrame == 17)
+            TBAR.Instance.PlayVoiceLine("Sounds/TheWorld/Teleport");
+        }
+
+        private void SignGrab_OnStateUpdate(StandState sender)
+        {
+            Owner.heldProj = projectile.whoAmI;
+        }
+
+        private void SignGrab_OnStateEnd(StandState sender)
+        {
+            stopSignHitCount = 3;
+            projectile.width = 160;
+            projectile.height = 160;
+            GoIdle(sender);
+            CurrentAnimation = "Stop_Idle0";
+        }
+
+        private void SummonState_OnStateBegin(StandState sender)
+        {
+            TBAR.Instance.PlayVoiceLine("Sounds/TheWorld/Teleport");
+            TBAR.Instance.PlayVoiceLine("Sounds/TheWorld/Call");
+
+            projectile.Center = Owner.Center + new Vector2(-30 * Owner.direction, -32);
         }
 
         private void KnifeThrowState_OnStateBegin(StandState sender)
@@ -154,11 +232,20 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld
             {
                 case ImmediateInput.LeftClick:
                     if (CanPunch)
-                        SetState(PunchState, GetPunchVariation());
+                    {
+                        if (stopSignHitCount > 0)
+                            SetState(TheWorldAI.StopSignAttack, "Stop_Attack" + (3 - stopSignHitCount).ToString());
+                        else
+                            SetState(PunchState, GetPunchVariation());
+                    }
                     break;
                 case ImmediateInput.RightClick:
-                        SetState(TWStates.KnifeThrow.ToString());
+                        SetState(TheWorldAI.KnifeThrow.ToString());
                         break;
+                case ImmediateInput.Action3:
+                    if (CanPunch && stopSignHitCount <= 0)
+                        SetState(TheWorldAI.GrabSign);
+                    break;
                 default:
                     return;
             }
@@ -189,22 +276,30 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld
 
         private void GoIdle(StandState sender)
         {
-            SetState(TWStates.Idle.ToString());
+            SetState(TheWorldAI.Idle.ToString());
         }
 
         private void SummonState_OnStateUpdate(StandState sender)
         {
             SpriteFX = Owner.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-            projectile.Center = Vector2.SmoothStep(projectile.Center, Owner.Center + new Vector2(-30 * Owner.direction, -32), 0.15f);
+            projectile.Center = Owner.Center + new Vector2(-30 * Owner.direction, -32);
         }
 
         public override void PostAI()
         {
+            if (CanPunch && Owner.controlUseItem && Owner.whoAmI == Main.myPlayer)
+            {
+                if (stopSignHitCount > 0)
+                    SetState(TheWorldAI.StopSignAttack, "Stop_Attack" + (3 - stopSignHitCount).ToString());
+                else
+                    SetState(PunchState, GetPunchVariation());
+            }
+
             base.PostAI();
 
-            if (Owner.whoAmI == Main.myPlayer && TBARInputs.SummonStand.JustPressed && State == TWStates.Idle.ToString())
+            if (Owner.whoAmI == Main.myPlayer && TBARInputs.SummonStand.JustPressed && State == TheWorldAI.Idle.ToString())
             {
-                SetState(TWStates.Despawn.ToString());
+                SetState(TheWorldAI.Despawn.ToString());
             }
         }
         private void Idle(StandState sender)
@@ -221,12 +316,6 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld
             if (!TBARPlayer.Get().IsStandUser)
                 return;
 
-            for (int i = 0; i < 4; i++)
-            {
-                Vector2 offset = new Vector2(4, 0).RotatedBy(MathHelper.PiOver2 * i);
-                DrawDefault(spriteBatch, projectile.Center + offset, AuraColor * 0.5f, SpriteFX);
-            }
-
             DrawDefault(spriteBatch, projectile.Center, Color.White, SpriteFX);
         }
 
@@ -240,10 +329,10 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld
 
         public override int GetBarrageDamage() => (int)(20 + BaseDPS * 0.8f);
 
-        public override bool CanPunch => State == TWStates.Idle.ToString();
+        public override bool CanPunch => State == TheWorldAI.Idle.ToString();
     }
 
-    public enum TWStates
+    public enum TheWorldAI
     {
         Summon,
         Despawn,
@@ -252,6 +341,8 @@ namespace TBAR.Projectiles.Stands.Crusaders.TheWorld
         KnifeThrow,
         Barrage,
         SlamDunk,
-        FlyUp
+        FlyUp,
+        StopSignAttack,
+        GrabSign
     }
 }

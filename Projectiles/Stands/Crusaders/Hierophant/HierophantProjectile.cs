@@ -24,6 +24,8 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
 
         private Vector2 twentyMeterSplashSpawnPoint;
 
+        private bool forwardFlip;
+
         public HierophantProjectile() : base("Hierophant Green")
         {
         }
@@ -36,11 +38,15 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
 
             string path = "Projectiles/Stands/Crusaders/Hierophant/";
 
-            AddAnimation(HieroAI.Summon, path + "Summon", 15);
+            AddAnimation(HieroAI.Summon + "1", path + "Summon", 16, 12);
+            AddAnimation(HieroAI.Summon + "2", path + "Summon2", 18, 16);
             AddAnimation(HieroAI.Idle, path + "Idle2", 10, 10, true);
-            AddAnimation(HieroAI.NormalAttack, path + "Test2", 1, 2);
+            AddAnimation(HieroAI.NormalAttack + "1", path + "Attack1", 8, 15);
+            AddAnimation(HieroAI.NormalAttack + "2", path + "Attack2", 8, 15);
             AddAnimation("MonkeyFlip", path + "MonkeyFlip", 9, 12);
-            AddAnimation(HieroAI.EmeraldSplash, path + "EmeraldSplash", 6, 20, true);
+            AddAnimation("MonkeyFlip2", path + "MonkeyFlip2", 12, 15);
+            AddAnimation(HieroAI.EmeraldSplash, path + "EmeraldSplash", 10, 10);
+            AddAnimation(HieroAI.TwentyMeterSplash, path + "Into20M", 13, 10);
 
             var summon = AddState(HieroAI.Summon, 80);
             summon.OnStateEnd += Summon_OnStateEnd;
@@ -52,7 +58,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
             var idle = AddState(HieroAI.Idle);
             idle.OnStateUpdate += Idle_OnStateUpdate;
 
-            var emeraldSplash = AddState(HieroAI.EmeraldSplash, 80);
+            var emeraldSplash = AddState(HieroAI.EmeraldSplash, 120);
             emeraldSplash.OnStateBegin += EmeraldSplash_OnStateBegin;
             emeraldSplash.OnStateUpdate += EmeraldSplash_OnStateUpdate;
             emeraldSplash.OnStateEnd += EmeraldSplash_OnStateEnd;
@@ -62,15 +68,17 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
             normalAttack.OnStateUpdate += NormalAttack_OnStateUpdate;
             normalAttack.OnStateEnd += NormalAttack_OnStateEnd;
 
-            var hentai = AddState(HieroAI.HentaiAttack, 45);
+            var hentai = AddState(HieroAI.HentaiAttack, 50);
             hentai.OnStateBegin += Hentai_OnStateBegin;
             hentai.OnStateEnd += Hentai_OnStateEnd;
             hentai.OnStateUpdate += Hentai_OnStateUpdate;
 
-            var twentyMeterSplash = AddState(HieroAI.TwentyMeterSplash, 40);
+            var twentyMeterSplash = AddState(HieroAI.TwentyMeterSplash, 120);
             twentyMeterSplash.OnStateEnd += TwentyMeterSplash_OnStateEnd;
             twentyMeterSplash.OnStateUpdate += TwentyMeterSplash_OnStateUpdate;
-            twentyMeterSplash.OnStateBegin += TwentyMeterSplash_OnStateBegin; ;
+            twentyMeterSplash.OnStateBegin += TwentyMeterSplash_OnStateBegin;
+
+            CurrentAnimation = HieroAI.Summon.ToString() + Main.rand.Next(1, 3);
 
             SetState(HieroAI.Summon.ToString());
         }
@@ -84,7 +92,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
         {
             var type = ModContent.ProjectileType<Tripwire>();
 
-            if (sender.TimeLeft % 4 == 0)
+            if (sender.TimeLeft % 12 == 0)
             {
                 var x = 640;
                 var y = 0;
@@ -107,7 +115,10 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
             projectile.Center = Vector2.SmoothStep(projectile.Center, Owner.Center + Owner.Center.DirectTo(MousePosition, Range * 32), 0.35f);
 
             Owner.heldProj = projectile.whoAmI;
-            if (Animations[CurrentAnimation].CurrentFrame == 0 && !hasShot)
+
+            var frameRequired = forwardFlip ? 5 : 3;
+
+            if (Animations[CurrentAnimation].CurrentFrame == frameRequired && !hasShot)
             {
                 hasShot = true;
                 var type = ModContent.ProjectileType<MILFHunterTendril>();
@@ -119,8 +130,8 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
 
                 if (Main.projectile[proj].modProjectile is MILFHunterTendril tendril)
                 {
-                    var flip = true;
-                    tendril.flipped = Owner.direction == -1? !flip : flip;
+                    var flip = forwardFlip;
+                    tendril.flipped = Owner.direction == -1? flip : !flip;
                 }
             }
         }
@@ -138,7 +149,12 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
             Owner.direction = attackDir;
             SpriteFX = Owner.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
-            CurrentAnimation = "MonkeyFlip";
+            forwardFlip = Main.rand.NextBool();
+
+            if (forwardFlip)
+                CurrentAnimation = "MonkeyFlip2";
+            else
+                CurrentAnimation = "MonkeyFlip";
         }
 
         private void EmeraldSplash_OnStateBegin(StandState sender)
@@ -159,16 +175,17 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
         private void EmeraldSplash_OnStateUpdate(StandState sender)
         {
             Owner.heldProj = projectile.whoAmI;
+            Owner.direction = emeraldSplashDirection.X < Owner.Center.X ? -1 : 1;
             SpriteFX = Owner.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-            var offset = Owner.Center.DirectTo(MousePosition, Range * 16) + new Vector2(0, 12);
+            var offset = Owner.Center.DirectTo(MousePosition, Range * 16) + new Vector2(0, 32);
             projectile.Center = Vector2.SmoothStep(projectile.Center, Owner.Center - offset, 0.35f);
 
-            if (CurrentState.TimeLeft % 4 == 0)
+            if (sender.TimeLeft % 4 == 0 && sender.TimeLeft <= 80)
             {
                 hasShot = true;
                 var type = ModContent.ProjectileType<SharpEmerald>();
                 var mult = SpriteFX == SpriteEffects.FlipHorizontally ? 1 : -1;
-                Vector2 off = new Vector2(12 * mult, -4);
+                Vector2 off = new Vector2(-12 * mult, 12);
                 var pos = projectile.Center + off;
 
                 Projectile.NewProjectile(pos, pos.DirectTo(emeraldSplashDirection, 22f).RotatedByRandom(0.027f), type, (int)(EmeraldDamage * 0.75f), 2f, projectile.owner, 3, 2);
@@ -193,10 +210,10 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
             Owner.heldProj = projectile.whoAmI;
             Owner.direction = attackDir;
             SpriteFX = Owner.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-            var offset = Owner.Center.DirectTo(MousePosition, Range * 16) + new Vector2(0, 12);
+            var offset = Owner.Center.DirectTo(MousePosition, Range * 16) + new Vector2(14 * Owner.direction, 16);
             projectile.Center = Vector2.SmoothStep(projectile.Center, Owner.Center - offset, 0.35f);
 
-            if (Animations[CurrentAnimation].CurrentFrame == 5 && !hasShot)
+            if (Animations[CurrentAnimation].CurrentFrame == 4 && !hasShot)
             {
                 hasShot = true;
                 var type = ModContent.ProjectileType<SharpEmerald>();
@@ -212,7 +229,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
         {
             for(int i = 0; i < 100; i++)
             {
-                Dust.NewDust(projectile.position, projectile.width, projectile.height, 89, 0, -3);
+                Dust.NewDust(projectile.position, projectile.width, projectile.height, DustID.EmeraldBolt, 0, -3);
             }
             Main.PlaySound(SoundID.Shatter);
             projectile.Kill();
@@ -221,17 +238,17 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
         private void Summon_OnStateUpdate(StandState sender)
         {
             SpriteFX = Owner.direction == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-            if (Animations[CurrentAnimation].CurrentFrame == 8 && !cocoonBursted)
+            if (Animations[CurrentAnimation].CurrentFrame == 11 && !cocoonBursted && CurrentAnimation == HieroAI.Summon + "1")
             {
                 Main.PlaySound(SoundID.Shatter);
                 cocoonBursted = true;
                 for (int i = 0; i < 50; i++)
                 {
-                    Dust.NewDust(projectile.position, projectile.width, projectile.height, 89, 0, -3);
+                    Dust.NewDust(projectile.position, projectile.width, projectile.height, DustID.EmeraldBolt, 0, -3);
                 }
             }
 
-            projectile.Center = Vector2.SmoothStep(projectile.Center, Owner.Center + new Vector2(-30 * Owner.direction, -24), 0.15f);
+            projectile.Center = Owner.Center + new Vector2(-30 * Owner.direction, -24);
         }
 
         private void Idle_OnStateUpdate(StandState sender)
@@ -270,7 +287,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
 
         protected override string GetPunchVariation()
         {
-            return HieroAI.NormalAttack.ToString();
+            return HieroAI.NormalAttack.ToString() + Main.rand.Next(1, 3);
         }
 
         public override void HandleImmediateInputs(ImmediateInput input)
@@ -338,6 +355,6 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
         NormalAttack,
         EmeraldSplash,
         HentaiAttack,
-        TwentyMeterSplash
+        TwentyMeterSplash,
     }
 }

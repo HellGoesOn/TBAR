@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using TBAR.Extensions;
 using Terraria;
 using Terraria.ModLoader;
+using Terraria.ID;
 
 namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
 {
@@ -95,7 +96,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
             else
                 turnRate = 0.012f;
 
-            var offset = new Vector2(16, 0).RotatedBy(angle) + new Vector2((12 * ((TendrilLength + 1) - projectile.ai[0])) * magicTrick, 0).RotatedBy(angle);
+            var offset = new Vector2((12 * ((TendrilLength + 1) - projectile.ai[0])) * magicTrick, 0).RotatedBy(angle);
 
             if (Parent != null)
                 projectile.Center = Parent.Center + offset;
@@ -109,7 +110,7 @@ namespace TBAR.Projectiles.Stands.Crusaders.Hierophant
         {
             for(int i = 0; i < 3; i++)
             {
-                int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, 89, 0, 0);
+                int dust = Dust.NewDust(projectile.position, projectile.width, projectile.height, DustID.EmeraldBolt, 0, 0);
                 Main.dust[dust].noGravity = true;
             }
         }
